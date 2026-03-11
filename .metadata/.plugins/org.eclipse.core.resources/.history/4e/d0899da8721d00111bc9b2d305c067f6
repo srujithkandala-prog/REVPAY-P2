@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+
+    <Properties>
+        <Property name="LOG_DIR">logs</Property>
+        <Property name="APP_LOG">  ${LOG_DIR}/revpay-app.log</Property>
+        <Property name="ERR_LOG">  ${LOG_DIR}/revpay-errors.log</Property>
+        <Property name="CON_PAT">%d{HH:mm:ss} %highlight{%-5level} [%t] %style{%c{1}}{cyan} - %msg%n</Property>
+        <Property name="FILE_PAT">%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %c{1.} - %msg%n%throwable</Property>
+    </Properties>
+
+    <Appenders>
+
+        <!-- Prints colored logs to the terminal -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${CON_PAT}" disableAnsi="false"/>
+        </Console>
+
+        <!-- Writes ALL logs to revpay-app.log, rotates daily -->
+        <RollingFile name="AppFile"
+                     fileName="${APP_LOG}"
+                     filePattern="${LOG_DIR}/revpay-app-%d{yyyy-MM-dd}.log.gz">
+            <PatternLayout pattern="${FILE_PAT}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+
+        <!-- Writes ONLY ERROR/FATAL logs to revpay-errors.log -->
+        <RollingFile name="ErrFile"
+                     fileName="${ERR_LOG}"
+                     filePattern="${LOG_DIR}/revpay-errors-%d{yyyy-MM-dd}.log.gz">
+            <PatternLayout pattern="${FILE_PAT}"/>
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+
+    </Appenders>
+
+    <Loggers>
+
+        <!-- Your RevPay service classes: show DEBUG and above -->
+        <Logger name="com.revpay.serviceimpl" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="AppFile"/>
+            <AppenderRef ref="ErrFile"/>
+        </Logger>
+
+        <!-- Controllers: show INFO and above -->
+        <Logger name="com.revpay.controller" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="AppFile"/>
+            <AppenderRef ref="ErrFile"/>
+        </Logger>
+
+        <!-- Repositories: only show warnings/errors -->
+        <Logger name="com.revpay.repository" level="WARN" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="AppFile"/>
+            <AppenderRef ref="ErrFile"/>
+        </Logger>
+
+        <!-- Security: track login/logout -->
+        <Logger name="com.revpay.security" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="AppFile"/>
+            <AppenderRef ref="ErrFile"/>
+        </Logger>
+
+        <!-- See actual SQL queries in terminal (change to WARN in production) -->
+        <Logger name="org.hibernate.SQL" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="AppFile"/>
+        </Logger>
+
+        <!-- Suppress noisy Spring/Hibernate framework logs -->
+        <Root level="WARN">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="AppFile"/>
+            <AppenderRef ref="ErrFile"/>
+        </Root>
+
+    </Loggers>
+
+</Configuration>

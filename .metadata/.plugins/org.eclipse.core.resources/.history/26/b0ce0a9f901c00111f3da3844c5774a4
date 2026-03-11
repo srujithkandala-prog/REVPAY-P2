@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<title>Admin Logs</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6f9;
+padding:30px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+th,td{
+padding:12px;
+border:1px solid #ddd;
+}
+
+th{
+background:#0f172a;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Admin Activity Logs</h1>
+
+<table>
+
+<tr>
+<th>Admin</th>
+<th>Action</th>
+<th>Date</th>
+</tr>
+
+<tr th:each="log : ${logs}">
+
+<td th:text="${log.adminEmail}"></td>
+
+<td th:text="${log.action}"></td>
+
+<td th:text="${#temporals.format(log.createdDate,'dd-MM-yyyy HH:mm')}"></td>
+
+</tr>
+
+</table>
+
+</body>
+
+</html>

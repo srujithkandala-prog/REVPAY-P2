@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>Loan Requests</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6f9;
+}
+
+.container{
+width:90%;
+margin:auto;
+margin-top:40px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+th,td{
+padding:12px;
+border:1px solid #ddd;
+text-align:center;
+}
+
+button{
+padding:6px 12px;
+border:none;
+color:white;
+cursor:pointer;
+}
+
+.approve{
+background:#16a34a;
+}
+
+.reject{
+background:#dc2626;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Loan Requests</h2>
+
+<table>
+
+<tr>
+<th>User</th>
+<th>Amount</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+<tr th:each="loan : ${loans}">
+
+<td th:text="${loan.user.email}"></td>
+
+<td th:text="${loan.amount}"></td>
+
+<td th:text="${loan.status}"></td>
+
+<td>
+
+<a th:href="@{'/admin/approve-loan/' + ${loan.id}}">
+<button class="approve">Approve</button>
+</a>
+
+<a th:href="@{'/admin/reject-loan/' + ${loan.id}}">
+<button class="reject">Reject</button>
+</a>
+
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+</body>
+
+</html>

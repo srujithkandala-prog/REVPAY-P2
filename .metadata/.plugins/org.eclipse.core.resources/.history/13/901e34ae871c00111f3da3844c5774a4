@@ -1,0 +1,67 @@
+package com.revpay.serviceimpl;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.revpay.dto.BusinessVerificationDTO;
+import com.revpay.entity.BusinessVerification;
+import com.revpay.repository.BusinessVerificationRepository;
+import com.revpay.service.BusinessVerificationService;
+
+@Service
+public class BusinessVerificationServiceImpl implements BusinessVerificationService {
+
+    @Autowired
+    private BusinessVerificationRepository repository;
+
+    @Override
+    public void submitVerification(BusinessVerificationDTO dto) {
+
+        BusinessVerification v = new BusinessVerification();
+
+        v.setDocumentType(dto.getDocumentType());
+        v.setDocumentPath(dto.getDocumentPath());
+        v.setStatus("PENDING");
+
+        repository.save(v);
+    }
+
+    @Override
+    public List<BusinessVerificationDTO> getPendingVerifications() {
+
+        return repository.findByStatus("PENDING")
+                .stream()
+                .map(v -> {
+                    BusinessVerificationDTO dto = new BusinessVerificationDTO();
+                    dto.setId(v.getId());
+                    dto.setStatus(v.getStatus());
+                    dto.setDocumentType(v.getDocumentType());
+                    return dto;
+                }).collect(Collectors.toList());
+    }
+
+    @Override
+    public void approveVerification(Long id) {
+
+        BusinessVerification v = repository.findById(id).orElse(null);
+
+        if(v != null){
+            v.setStatus("APPROVED");
+            repository.save(v);
+        }
+    }
+
+    @Override
+    public void rejectVerification(Long id) {
+
+        BusinessVerification v = repository.findById(id).orElse(null);
+
+        if(v != null){
+            v.setStatus("REJECTED");
+            repository.save(v);
+        }
+    }
+}

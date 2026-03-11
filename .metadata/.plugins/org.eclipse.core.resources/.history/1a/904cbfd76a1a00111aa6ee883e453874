@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RevPay Admin | Institutional Command Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --navy-dark: #020617;
+            --navy-surface: #0f172a;
+            --gold-accent: #c5a059;
+            --success: #10b981;
+            --text-muted: #94a3b8;
+            --border-glow: rgba(197, 160, 89, 0.2);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--navy-dark);
+            color: white;
+            display: flex;
+        }
+
+        /* ─── SIDEBAR COMMAND DECK ─── */
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background: var(--navy-surface);
+            border-right: 1px solid var(--border-glow);
+            position: fixed;
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+        }
+
+        .admin-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--gold-accent);
+            margin-bottom: 50px;
+            letter-spacing: 1px;
+        }
+
+        .sidebar a {
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 14px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.3s;
+            margin-bottom: 5px;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: rgba(197, 160, 89, 0.1);
+            color: var(--gold-accent);
+        }
+
+        /* ─── MAIN CONTENT ─── */
+        .main {
+            margin-left: 260px;
+            padding: 40px;
+            width: calc(100% - 260px);
+        }
+
+        .header-section {
+            margin-bottom: 40px;
+        }
+
+        .header-section h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .header-section p {
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* ─── ANALYTICS CARDS ─── */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--navy-surface);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid var(--border-glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card h3 {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0 0 15px 0;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--gold-accent);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 3px;
+            background: var(--gold-accent);
+            opacity: 0.3;
+        }
+
+        /* ─── CHARTS SECTION ─── */
+        .charts-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .chart-card {
+            background: var(--navy-surface);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid var(--border-glow);
+        }
+
+        .chart-card h4 {
+            margin: 0 0 20px 0;
+            font-size: 16px;
+            color: white;
+        }
+
+        /* ─── DATA TABLE ─── */
+        .data-card {
+            background: var(--navy-surface);
+            border-radius: 16px;
+            border: 1px solid var(--border-glow);
+            overflow: hidden;
+        }
+
+        .data-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--border-glow);
+            font-weight: 700;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.02);
+            text-align: left;
+            padding: 15px 25px;
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 18px 25px;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .badge-pending { background: rgba(197, 160, 89, 0.1); color: var(--gold-accent); }
+
+        .btn-approve {
+            background: var(--gold-accent);
+            color: var(--navy-dark);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-approve:hover {
+            background: #e2bd78;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="admin-logo">
+            <div style="width:30px; height:30px; background:var(--gold-accent); color:var(--navy-dark); display:flex; align-items:center; justify-content:center; border-radius:6px;">R</div>
+            REVPAY ADMIN
+        </div>
+        <a href="#" class="active">Institutional Overview</a>
+        <a href="#">Compliance Verifications</a>
+        <a href="#">Financial Inquiries</a>
+        <a href="#">System Security</a>
+        <div style="margin-top: auto;">
+            <a href="/logout" style="color: #ef4444;">Terminate Session</a>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="header-section">
+            <h1>Command Dashboard</h1>
+            <p>Institutional Monitoring & Capital Oversight</p>
+        </div>
+
+        <div class="analytics-grid">
+            <div class="stat-card">
+                <h3>Global User Base</h3>
+                <div class="value" th:text="${totalUsers}">0</div>
+                <div style="font-size: 11px; color: var(--success); margin-top: 5px;">↑ 4.2% Growth</div>
+            </div>
+            <div class="stat-card">
+                <h3>System Transactions</h3>
+                <div class="value" th:text="${totalTransactions}">0</div>
+                <div style="font-size: 11px; color: var(--success); margin-top: 5px;">↑ 12.8% Velocity</div>
+            </div>
+            <div class="stat-card">
+                <h3>Active Credit Lines</h3>
+                <div class="value" th:text="${totalLoans}">0</div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Oversight Required</div>
+            </div>
+        </div>
+
+        <div class="charts-container">
+            <div class="chart-card">
+                <h4>Transaction Liquidity Overview</h4>
+                <canvas id="transactionChart" height="100"></canvas>
+            </div>
+            <div class="chart-card">
+                <h4>Capital Allocation</h4>
+                <canvas id="loanChart"></canvas>
+            </div>
+        </div>
+
+        <div class="data-card">
+            <div class="data-header">Pending Capital Disbursement Requests</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Corporate Entity</th>
+                        <th>Requested Amount</th>
+                        <th>Approval Status</th>
+                        <th>Audit Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="l : ${loans}">
+                        <td th:text="${l.businessEmail}">entity@corp.com</td>
+                        <td style="font-weight: 700; color: white;">₹ <span th:text="${l.amount}">0</span></td>
+                        <td>
+                            <span class="badge badge-pending" th:text="${l.status}">PENDING</span>
+                        </td>
+                        <td>
+                            <form th:if="${l.status=='PENDING'}" th:action="@{/approve-loan/{id}(id=${l.id})}" method="get">
+                                <button type="submit" class="btn-approve">Approve Funding</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        let totalTransactions = [[${totalTransactions}]];
+        let approvedLoans = [[${approvedLoans}]];
+        let pendingLoans = [[${pendingLoans}]];
+
+        const ctx1 = document.getElementById('transactionChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                datasets: [{
+                    label: 'Transaction Volume',
+                    data: [totalTransactions * 0.2, totalTransactions * 0.5, totalTransactions * 0.8, totalTransactions],
+                    borderColor: '#c5a059',
+                    backgroundColor: 'rgba(197, 160, 89, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: { 
+                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                }
+            }
+        });
+
+        const ctx2 = document.getElementById('loanChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: ['Approved', 'In Review'],
+                datasets: [{
+                    data: [approvedLoans, pendingLoans],
+                    backgroundColor: ['#c5a059', '#1e293b'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } },
+                cutout: '70%'
+            }
+        });
+    </script>
+</body>
+</html>

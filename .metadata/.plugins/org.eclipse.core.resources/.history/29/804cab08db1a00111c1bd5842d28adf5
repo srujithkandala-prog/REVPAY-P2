@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Revenue</title>
+</head>
+
+<body>
+
+<h2>Platform Revenue</h2>
+
+<h3>Total Revenue:</h3>
+
+<p th:text="${revenue}"></p>
+
+<br>
+
+<a href="/admin-dashboard">Back to Dashboard</a>
+
+</body>
+</html>

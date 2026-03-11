@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>RevPay Dashboard</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#f1f5f9;
+}
+
+/* ===== SIDEBAR ===== */
+
+.sidebar{
+width:230px;
+height:100vh;
+background:linear-gradient(180deg,#1e293b,#020617);
+position:fixed;
+color:white;
+padding-top:15px;
+overflow-y:auto;
+}
+
+.sidebar h2{
+text-align:center;
+margin-bottom:10px;
+}
+
+.category{
+padding:8px 20px;
+font-size:12px;
+color:#94a3b8;
+text-transform:uppercase;
+margin-top:10px;
+}
+
+.sidebar a{
+display:block;
+color:#e2e8f0;
+padding:12px 20px;
+text-decoration:none;
+border-left:3px solid transparent;
+transition:0.25s;
+}
+
+.sidebar a:hover{
+background:#334155;
+border-left:3px solid #38bdf8;
+padding-left:25px;
+}
+
+/* ===== MAIN ===== */
+
+.main{
+margin-left:230px;
+padding:25px;
+}
+
+/* ===== HEADER ===== */
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.header h2{
+margin:0;
+}
+
+/* ===== CARD ===== */
+
+.card{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 4px 15px rgba(0,0,0,0.06);
+margin-bottom:20px;
+}
+
+/* ===== WALLET ===== */
+
+.wallet{
+font-size:32px;
+color:#2563eb;
+font-weight:bold;
+}
+
+/* ===== ANALYTICS ===== */
+
+.analytics{
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+}
+
+.box{
+flex:1;
+min-width:200px;
+background:white;
+padding:15px;
+border-radius:10px;
+box-shadow:0 4px 12px rgba(0,0,0,0.05);
+transition:0.2s;
+}
+
+.box:hover{
+transform:translateY(-3px);
+}
+
+.sent{
+color:#ef4444;
+font-weight:bold;
+}
+
+.received{
+color:#22c55e;
+font-weight:bold;
+}
+
+/* ===== TABLE ===== */
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px;
+}
+
+th{
+background:#1e293b;
+color:white;
+}
+
+table,th,td{
+border:1px solid #e2e8f0;
+padding:10px;
+}
+
+tr:hover{
+background:#f8fafc;
+}
+
+/* ===== FOOTER ===== */
+
+.footer{
+text-align:center;
+margin-top:30px;
+color:#64748b;
+font-size:13px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>RevPay</h2>
+
+<div class="category">General</div>
+
+<a href="/dashboard">Dashboard</a>
+<a href="/profile">Profile</a>
+<a href="/notifications">Notifications 🔔</a>
+
+<div class="category">Payments</div>
+
+<a href="/send-money">Send Money</a>
+<a href="/add-money">Add Money</a>
+<a href="/withdraw-money">Withdraw Money</a>
+<a href="/request-money">Request Money</a>
+
+<div class="category">Requests</div>
+
+<a href="/incoming-requests">Incoming Requests</a>
+<a href="/outgoing-requests">Outgoing Requests</a>
+
+<div class="category">Transactions</div>
+
+<a href="/transactions">Transactions</a>
+<a href="/transactions-history">Transaction History</a>
+
+<div class="category">Invoices</div>
+
+<a href="/my-invoices">My Invoices</a>
+
+<div class="category">Settings</div>
+
+<a href="/payment-methods">Payment Methods</a>
+<a href="/logout">Logout</a>
+
+</div>
+
+<div class="main">
+
+<div class="header">
+
+<h2>
+Welcome,
+<span th:text="${user.fullName}"></span> 👋
+</h2>
+
+<div>
+Account Type:
+<b th:text="${user.role}"></b>
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>Wallet Balance</h3>
+
+<div class="wallet">
+₹ <span th:text="${user.walletBalance}"></span>
+</div>
+
+</div>
+
+<!-- ANALYTICS -->
+
+<div class="analytics">
+
+<div class="box">
+
+<h4>Total Sent</h4>
+
+<p class="sent">
+₹ <span th:text="${totalSent}"></span>
+</p>
+
+</div>
+
+<div class="box">
+
+<h4>Total Received</h4>
+
+<p class="received">
+₹ <span th:text="${totalReceived}"></span>
+</p>
+
+</div>
+
+<div class="box">
+
+<h4>Total Transactions</h4>
+
+<p>
+<b th:text="${transactions.size()}"></b>
+</p>
+
+</div>
+
+</div>
+
+<br>
+
+<div class="card">
+
+<h3>Recent Transactions</h3>
+
+<table th:if="${transactions.size() > 0}">
+
+<tr>
+<th>Type</th>
+<th>Sender</th>
+<th>Receiver</th>
+<th>Amount</th>
+<th>Date</th>
+</tr>
+
+<tr th:each="t,iter : ${transactions}" th:if="${iter.index < 3}">
+
+<td>
+
+<span th:if="${t.senderEmail == user.email}" class="sent">
+SENT
+</span>
+
+<span th:if="${t.receiverEmail == user.email}" class="received">
+RECEIVED
+</span>
+
+</td>
+
+<td th:text="${t.senderEmail}"></td>
+
+<td th:text="${t.receiverEmail}"></td>
+
+<td>
+₹ <span th:text="${t.amount}"></span>
+</td>
+
+<td th:text="${#temporals.format(t.transactionDate,'dd-MM-yyyy HH:mm')}"></td>
+
+</tr>
+
+</table>
+
+<p th:if="${transactions.size()==0}">
+No transactions yet.
+</p>
+
+</div>
+
+<div class="footer">
+
+© 2026 RevPay • Digital Payment Platform
+
+</div>
+
+</div>
+
+</body>
+</html>

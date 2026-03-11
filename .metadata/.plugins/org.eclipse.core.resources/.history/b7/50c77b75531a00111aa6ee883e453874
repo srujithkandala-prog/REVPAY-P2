@@ -1,0 +1,76 @@
+package com.revpay.entity;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+
+@Entity
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank(message="Full name is required")
+    @Pattern(regexp="^[A-Za-z ]{3,50}$",message="Enter valid name")
+    private String fullName;
+
+    @NotBlank(message="Email required")
+    @Email(message="Enter valid email")
+    @Column(unique = true)
+    private String email;
+
+    @NotBlank(message="Phone number required")
+    @Pattern(regexp="^[0-9]{10}$",message="Phone must be 10 digits")
+    private String phone;
+
+    @NotBlank(message="Password required")
+    @Pattern(
+      regexp="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&]).{8,}$",
+      message="Password must contain uppercase, lowercase, number and special character"
+    )
+    private String password;
+
+    @Transient
+    private String confirmPassword;
+
+    private double walletBalance = 0;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    public User(){}
+
+    public Long getId(){ return id; }
+
+    public String getFullName(){ return fullName; }
+
+    public void setFullName(String fullName){ this.fullName = fullName; }
+
+    public String getEmail(){ return email; }
+
+    public void setEmail(String email){ this.email = email; }
+
+    public String getPhone(){ return phone; }
+
+    public void setPhone(String phone){ this.phone = phone; }
+
+    public String getPassword(){ return password; }
+
+    public void setPassword(String password){ this.password = password; }
+
+    public String getConfirmPassword(){ return confirmPassword; }
+
+    public void setConfirmPassword(String confirmPassword){
+        this.confirmPassword = confirmPassword;
+    }
+
+    public double getWalletBalance(){ return walletBalance; }
+
+    public void setWalletBalance(double walletBalance){
+        this.walletBalance = walletBalance;
+    }
+
+    public Role getRole(){ return role; }
+
+    public void setRole(Role role){ this.role = role; }
+}

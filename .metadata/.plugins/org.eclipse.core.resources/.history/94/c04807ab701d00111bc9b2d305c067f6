@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RevPay | Secure Online Banking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --primary: #0f172a; /* Deep Navy - Professional */
+            --accent: #2563eb;  /* Trust Blue */
+            --gold: #eab308;    /* Gold for premium feel */
+            --text-main: #1e293b;
+            --glass-bg: rgba(255, 255, 255, 0.92);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Professional Banking Background */
+            background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), 
+                        url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+        }
+
+        /* ─── CONTAINER ─── */
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            background: var(--glass-bg);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ─── LOGO & HEADER ─── */
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .logo-wrap {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 22px;
+            border-radius: 12px;
+            border: 2px solid var(--gold);
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .header h2 {
+            font-size: 20px;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        /* ─── FORM ELEMENTS ─── */
+        .form-group { margin-bottom: 20px; }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+
+        .password-container { position: relative; }
+
+        .toggle-btn {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #94a3b8;
+        }
+
+        /* ─── BUTTONS ─── */
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login:hover {
+            background: #1e293b;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2);
+        }
+
+        /* Shimmer effect animation */
+        .btn-login::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: 0.5s;
+        }
+
+        .btn-login:hover::after {
+            left: 100%;
+        }
+
+        /* ─── FOOTER ─── */
+        .footer-links {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .footer-links a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer-links a:hover { text-decoration: underline; }
+
+        .security-badge {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            color: #94a3b8;
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .login-container { margin: 20px; padding: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="header">
+            <div class="logo-wrap">
+                <div class="logo-icon">R</div>
+                <span class="logo-text">RevPay <span style="font-weight: 300; color: #64748b;">Bank</span></span>
+            </div>
+            <h2>Secure Sign In</h2>
+            <p>Access your personal banking dashboard</p>
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label>Customer ID / Email</label>
+                <input type="text" name="username" placeholder="Enter identification" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <div class="password-container">
+                    <input type="password" id="pw" name="password" placeholder="••••••••" required>
+                    <button type="button" class="toggle-btn" onclick="togglePw()">Show</button>
+                </div>
+            </div>
+
+            <div style="text-align: right; margin-bottom: 20px;">
+                <a th:href="@{/forgot-password}" style="font-size: 12px; color: #64748b; text-decoration: none;">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="btn-login">Authorize Access</button>
+        </form>
+
+        <div class="footer-links">
+            <p>Don't have an account? <a th:href="@{/register}">Open an Account</a></p>
+            <div style="margin-top: 15px;">
+                <a th:href="@{/}" style="color: #94a3b8; font-size: 12px;">← Return to Public Website</a>
+            </div>
+        </div>
+
+        <div class="security-badge">
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+            </svg>
+            SSL Encrypted Secure Server
+        </div>
+    </div>
+
+    <script>
+        function togglePw() {
+            const el = document.getElementById('pw');
+            const btn = document.querySelector('.toggle-btn');
+            if (el.type === 'password') {
+                el.type = 'text';
+                btn.textContent = 'Hide';
+            } else {
+                el.type = 'password';
+                btn.textContent = 'Show';
+            }
+        }
+    </script>
+</body>
+</html>

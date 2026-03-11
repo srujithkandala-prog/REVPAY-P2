@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>Notifications</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:#f1f5f9;
+color:#334155;
+}
+
+.wrapper{
+display:flex;
+height:100vh;
+}
+
+.sidebar{
+width:240px;
+background:linear-gradient(180deg,#0f172a,#020617);
+color:white;
+}
+
+.sidebar h2{
+text-align:center;
+padding:20px;
+border-bottom:1px solid #1e293b;
+}
+
+.sidebar a{
+display:block;
+padding:12px 20px;
+color:#cbd5f5;
+text-decoration:none;
+}
+
+.sidebar a:hover{
+background:#1e293b;
+}
+
+.main{
+flex:1;
+padding:40px;
+}
+
+.notification{
+background:white;
+padding:15px;
+margin-bottom:10px;
+border-radius:10px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+box-shadow:0 5px 10px rgba(0,0,0,0.05);
+}
+
+.unread{
+border-left:5px solid red;
+background:#fff5f5;
+}
+
+.message{
+font-size:15px;
+}
+
+.time{
+font-size:12px;
+color:#64748b;
+}
+
+.mark{
+background:#2563eb;
+color:white;
+border:none;
+padding:6px 10px;
+border-radius:5px;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="wrapper">
+
+<div class="sidebar">
+
+<h2>RevPay</h2>
+
+<a href="/dashboard">Dashboard</a>
+<a href="/transactions-history">Transactions</a>
+<a href="/notifications">Notifications</a>
+<a href="/logout">Logout</a>
+
+</div>
+
+<div class="main">
+
+<h2>Notifications 🔔</h2>
+
+<div th:if="${notifications == null || notifications.isEmpty()}">
+
+<p>No notifications yet.</p>
+
+</div>
+
+<div th:each="n : ${notifications}"
+     th:class="${n.isRead} ? 'notification' : 'notification unread'}">
+
+<div>
+
+<!-- ICON -->
+
+<span th:if="${n.type=='SEND_MONEY'}">
+<i class="fa-solid fa-paper-plane"></i>
+</span>
+
+<span th:if="${n.type=='REQUEST'}">
+<i class="fa-solid fa-hand-holding-dollar"></i>
+</span>
+
+<span th:if="${n.type=='LOAN'}">
+<i class="fa-solid fa-landmark"></i>
+</span>
+
+<span th:if="${n.type=='PAYMENT'}">
+<i class="fa-solid fa-money-bill"></i>
+</span>
+
+<p class="message" th:text="${n.message}"></p>
+
+<p class="time"
+th:text="${#temporals.format(n.createdDate,'dd MMM yyyy HH:mm')}"></p>
+
+</div>
+
+<div>
+
+<a th:if="${!n.isRead}"
+   th:href="@{/notifications/read/{id}(id=${n.id})}">
+
+<button class="mark">Mark as Read</button>
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,223 @@
+package com.revpay.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import com.revpay.entity.Loan;
+import com.revpay.entity.Transaction;
+import com.revpay.entity.User;
+import com.revpay.repository.LoanRepository;
+import com.revpay.repository.TransactionRepository;
+import com.revpay.repository.UserRepository;
+
+@Controller
+public class AdminController {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
+
+    @Autowired
+    private LoanRepository loanRepository;
+
+    // =========================
+    // ADMIN DASHBOARD
+    // =========================
+    @GetMapping("/admin-dashboard")
+    public String adminDashboard(Model model) {
+
+        List<User> users = userRepository.findAll();
+        List<Transaction> transactions = transactionRepository.findAll();
+        List<Loan> loans = loanRepository.findAll();
+
+        long approvedLoans =
+                loans.stream()
+                        .filter(l -> "APPROVED".equals(l.getStatus()))
+                        .count();
+
+        long pendingLoans =
+                loans.stream()
+                        .filter(l -> "PENDING".equals(l.getStatus()))
+                        .count();
+
+        model.addAttribute("users", users);
+        model.addAttribute("transactions", transactions);
+        model.addAttribute("loans", loans);
+
+        model.addAttribute("totalUsers", users.size());
+        model.addAttribute("totalTransactions", transactions.size());
+        model.addAttribute("totalLoans", loans.size());
+
+        model.addAttribute("approvedLoans", approvedLoans);
+        model.addAttribute("pendingLoans", pendingLoans);
+
+        return "admin-dashboard";
+    }
+
+    // =========================
+    // VIEW USERS
+    // =========================
+    @GetMapping("/admin/users")
+    public String viewUsers(Model model){
+
+        List<User> users = userRepository.findAll();
+
+        model.addAttribute("users", users);
+
+        return "admin-users";
+    }
+
+    // =========================
+    // DELETE USER
+    // =========================
+    @GetMapping("/admin/delete-user/{id}")
+    public String deleteUser(@PathVariable Long id){
+
+        userRepository.deleteById(id);
+
+        return "redirect:/admin/users";
+    }
+
+    // =========================
+    // VIEW ALL TRANSACTIONS
+    // =========================
+    @GetMapping("/admin/transactions")
+    public String viewTransactions(Model model){
+
+        List<Transaction> transactions = transactionRepository.findAll();
+
+        model.addAttribute("transactions", transactions);
+
+        return "admin-transactions";
+    }
+
+    // =========================
+    // VIEW LOANS
+    // =========================
+    @GetMapping("/admin/loans")
+    public String viewLoans(Model model){
+
+        List<Loan> loans = loanRepository.findAll();
+
+        model.addAttribute("loans", loans);
+
+        return "admin-loans";
+    }
+
+    // =========================
+    // APPROVE LOAN
+    // =========================
+    @GetMapping("/admin/approve-loan/{id}")
+    public String approveLoan(@PathVariable Long id){
+
+        Loan loan = loanRepository.findById(id).orElse(null);
+
+        if(loan != null){
+
+            loan.setStatus("APPROVED");
+
+            loanRepository.save(loan);
+        }
+
+        return "redirect:/admin/loans";
+    }
+
+    // =========================
+    // REJECT LOAN
+    // =========================
+    @GetMapping("/admin/reject-loan/{id}")
+    public String rejectLoan(@PathVariable Long id){
+
+        Loan loan = loanRepository.findById(id).orElse(null);
+
+        if(loan != null){
+
+            loan.setStatus("REJECTED");
+
+            loanRepository.save(loan);
+        }
+
+        return "redirect:/admin/loans";
+    }
+ // =========================
+ // LOAN REPAYMENT MANAGEMENT
+ // =========================
+ @GetMapping("/admin/loan-repayments")
+ public String loanRepayments(Model model){
+
+     List<Loan> loans = loanRepository.findAll();
+
+     model.addAttribute("loans", loans);
+
+     return "admin-loan-repayments";
+ }
+ @GetMapping("/admin/pay-loan/{id}")
+ public String payLoan(@PathVariable Long id){
+
+     Loan loan = loanRepository.findById(id).orElse(null);
+
+     if(loan != null){
+
+         double remaining = loan.getAmount();
+
+         if(remaining > 0){
+
+             remaining = remaining - loan.getAmount();
+
+             loan.setAmount(remaining);
+
+             loanRepository.save(loan);
+         }
+
+     }
+
+     return "redirect:/admin/loan-repayments";
+ }
+ @GetMapping("/admin/fraud-alerts")
+ public String fraudAlerts(Model model){
+
+     List<Transaction> transactions = transactionRepository.findAll();
+
+     List<Transaction> suspicious = transactions.stream()
+             .filter(t -> t.getAmount() > 50000)
+             .toList();
+
+     model.addAttribute("alerts", suspicious);
+
+     return "admin-fraud";
+ }
+ @GetMapping("/admin/block-user/{id}")
+ public String blockUser(@PathVariable Long id){
+
+     User user = userRepository.findById(id).orElse(null);
+
+     if(user != null){
+
+         user.setStatus("BLOCKED");
+
+         userRepository.save(user);
+     }
+
+     return "redirect:/admin/users";
+ }
+ @GetMapping("/admin/revenue")
+ public String revenue(Model model){
+
+     List<Transaction> transactions = transactionRepository.findAll();
+
+     double revenue = transactions.stream()
+             .mapToDouble(Transaction::getFee)
+             .sum();
+
+     model.addAttribute("revenue", revenue);
+
+     return "admin-revenue";
+ }
+
+}

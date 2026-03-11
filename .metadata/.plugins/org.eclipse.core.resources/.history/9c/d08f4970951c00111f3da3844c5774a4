@@ -1,0 +1,32 @@
+package com.revpay.serviceimpl;
+
+import java.util.logging.LogManager;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.revpay.entity.User;
+import com.revpay.repository.UserRepository;
+import com.revpay.service.UserService;
+
+import ch.qos.logback.classic.Logger;
+
+@Service
+public class UserServiceImpl implements UserService {
+	private static final Logger logger = LogManager.getLogger(UserServiceImpl.class);
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder encoder;
+
+    @Override
+    public User registerUser(User user) {
+
+        user.setPassword(encoder.encode(user.getPassword()));
+
+        return userRepository.save(user);
+    }
+}

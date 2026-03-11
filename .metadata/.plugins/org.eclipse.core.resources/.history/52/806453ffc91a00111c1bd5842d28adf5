@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RevPay - Register</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:      #0d1b2e;
+    --navy-mid:  #132238;
+    --blue:      #2563eb;
+    --blue-lt:   #3b82f6;
+    --blue-glow: rgba(37,99,235,0.18);
+    --text:      #0f172a;
+    --muted:     #64748b;
+    --border:    #e8edf5;
+    --bg:        #f5f7fb;
+    --white:     #ffffff;
+  }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ══════════════════════════════
+     LEFT PANEL
+  ══════════════════════════════ */
+  .left {
+    width: 420px;
+    flex-shrink: 0;
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+    padding: 48px 52px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* subtle grid lines texture */
+  .left::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  /* bottom glow blob */
+  .left::after {
+    content: '';
+    position: absolute;
+    width: 420px; height: 420px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(37,99,235,0.22) 0%, transparent 68%);
+    bottom: -160px; right: -120px;
+    pointer-events: none;
+  }
+
+  /* LOGO */
+  .l-logo {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    text-decoration: none;
+    position: relative;
+    z-index: 1;
+    margin-bottom: auto;
+  }
+
+  .l-logo-box {
+    width: 38px; height: 38px;
+    background: var(--blue);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 17px; color: white;
+    box-shadow: 0 4px 14px rgba(37,99,235,0.4);
+  }
+
+  .l-logo span {
+    color: white;
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+  }
+
+  /* MAIN COPY */
+  .l-body {
+    position: relative;
+    z-index: 1;
+    padding: 52px 0 48px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .l-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(37,99,235,0.15);
+    border: 1px solid rgba(59,130,246,0.25);
+    border-radius: 20px;
+    padding: 5px 13px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #93c5fd;
+    margin-bottom: 20px;
+    width: fit-content;
+  }
+
+  .l-tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #60a5fa;
+    box-shadow: 0 0 6px #3b82f6;
+  }
+
+  .l-body h1 {
+    font-size: 34px;
+    font-weight: 800;
+    color: white;
+    line-height: 1.18;
+    letter-spacing: -1px;
+    margin-bottom: 16px;
+  }
+
+  .l-body h1 span {
+    background: linear-gradient(90deg, #60a5fa 0%, #38bdf8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .l-body p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.75;
+    margin-bottom: 40px;
+    max-width: 300px;
+  }
+
+  /* FEATURE LIST */
+  .f-list { display: flex; flex-direction: column; gap: 15px; }
+
+  .f-item {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+  }
+
+  .f-check {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    background: rgba(37,99,235,0.2);
+    border: 1px solid rgba(59,130,246,0.25);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 11px;
+    color: #60a5fa;
+  }
+
+  .f-item span {
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 500;
+  }
+
+  /* BOTTOM LOGIN LINK */
+  .l-foot {
+    position: relative;
+    z-index: 1;
+    padding-top: 32px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    font-size: 13px;
+    color: rgba(255,255,255,0.3);
+  }
+
+  .l-foot a {
+    color: #60a5fa;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .l-foot a:hover { text-decoration: underline; }
+
+  /* ══════════════════════════════
+     RIGHT PANEL
+  ══════════════════════════════ */
+  .right {
+    flex: 1;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 40px;
+    overflow-y: auto;
+  }
+
+  .form-box {
+    width: 100%;
+    max-width: 400px;
+    animation: fadeUp 0.45s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { transform: translateY(18px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+
+  /* FORM HEADER */
+  .form-header { margin-bottom: 28px; }
+
+  .form-header h2 {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.4px;
+    margin-bottom: 5px;
+  }
+
+  .form-header p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ACCOUNT TYPE TOGGLE */
+  .acc-toggle {
+    display: flex;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 24px;
+    gap: 4px;
+  }
+
+  .acc-toggle button {
+    flex: 1;
+    padding: 9px 12px;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.18s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .acc-toggle button.active {
+    background: var(--blue);
+    color: white;
+    box-shadow: 0 3px 10px rgba(37,99,235,0.28);
+  }
+
+  /* FORM */
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .field { margin-bottom: 13px; }
+
+  .field label {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #475569;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+
+  .field input,
+  .field select {
+    width: 100%;
+    padding: 10px 13px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    background: var(--white);
+    outline: none;
+    transition: border-color 0.18s, box-shadow 0.18s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .field input:focus,
+  .field select:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.09);
+  }
+
+  .field input::placeholder { color: #c1cad8; font-weight: 400; }
+
+  /* Password wrapper */
+  .pw-wrap { position: relative; }
+
+  .pw-wrap input { padding-right: 40px; }
+
+  .pw-eye {
+    position: absolute;
+    right: 11px; top: 50%;
+    transform: translateY(-50%);
+    background: none; border: none;
+    cursor: pointer; font-size: 14px;
+    color: var(--muted); opacity: 0.5;
+    padding: 0; transition: opacity 0.18s;
+    line-height: 1;
+  }
+
+  .pw-eye:hover { opacity: 1; }
+
+  /* Divider */
+  .divider {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 11px; font-weight: 700; color: #94a3b8;
+    letter-spacing: 1px; text-transform: uppercase;
+    margin: 4px 0 14px;
+  }
+
+  .divider::before,
+  .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* Business fields */
+  .biz-fields { display: none; }
+  .biz-fields.show { display: block; }
+
+  /* Terms */
+  .terms {
+    display: flex; align-items: flex-start; gap: 9px;
+    font-size: 12px; color: var(--muted);
+    margin: 15px 0 18px;
+    line-height: 1.55;
+  }
+
+  .terms input[type="checkbox"] {
+    margin-top: 1px;
+    accent-color: var(--blue);
+    flex-shrink: 0;
+    width: 14px; height: 14px;
+  }
+
+  .terms a { color: var(--blue); font-weight: 600; text-decoration: none; }
+  .terms a:hover { text-decoration: underline; }
+
+  /* Submit */
+  .btn-submit {
+    width: 100%;
+    padding: 12px;
+    background: var(--blue);
+    color: white;
+    border: none;
+    border-radius: 9px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
+    box-shadow: 0 4px 14px rgba(37,99,235,0.25);
+    letter-spacing: 0.1px;
+  }
+
+  .btn-submit:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 22px rgba(37,99,235,0.32);
+  }
+
+  .btn-submit:active { transform: translateY(0); }
+
+  /* Login note */
+  .login-note {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 13px;
+    color: #94a3b8;
+  }
+
+  .login-note a {
+    color: var(--blue);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .login-note a:hover { text-decoration: underline; }
+
+  /* ══════════════════════════════
+     RESPONSIVE
+  ══════════════════════════════ */
+  @media (max-width: 900px) {
+    .left { display: none; }
+    .right { padding: 40px 20px; }
+  }
+
+  @media (max-width: 480px) {
+    .row-2 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LEFT PANEL -->
+<div class="left">
+  <a th:href="@{/}" class="l-logo">
+    <div class="l-logo-box">R</div>
+    <span>RevPay</span>
+  </a>
+
+  <div class="l-body">
+    <div class="l-tag">Digital Payment Platform</div>
+    <h1>The smarter way<br>to <span>pay &amp; get paid</span></h1>
+    <p>A unified platform for individuals and businesses to manage secure digital payments, invoicing, and finances.</p>
+
+    <div class="f-list">
+      <div class="f-item"><div class="f-check">✓</div><span>Send &amp; receive money instantly</span></div>
+      <div class="f-item"><div class="f-check">✓</div><span>Create and track invoices</span></div>
+      <div class="f-item"><div class="f-check">✓</div><span>Business loans &amp; analytics</span></div>
+      <div class="f-item"><div class="f-check">✓</div><span>Real-time alerts &amp; notifications</span></div>
+      <div class="f-item"><div class="f-check">✓</div><span>256-bit encrypted transactions</span></div>
+    </div>
+  </div>
+
+  <div class="l-foot">
+    Already have an account? <a th:href="@{/login}">Sign in →</a>
+  </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right">
+  <div class="form-box">
+
+    <div class="form-header">
+      <h2>Create your account</h2>
+      <p>Fill in your details to get started with RevPay.</p>
+    </div>
+
+    <!-- ACCOUNT TYPE TOGGLE -->
+    <div class="acc-toggle">
+      <button type="button" class="active" id="btn-personal" onclick="setType('personal')">👤 Personal</button>
+      <button type="button" id="btn-business" onclick="setType('business')">🏢 Business</button>
+    </div>
+
+    <form th:action="@{/register}" method="post">
+      <input type="hidden" id="accType" name="accountType" value="personal">
+
+      <!-- BASIC INFO -->
+      <div class="row-2">
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" name="fullName" placeholder="John Doe" required>
+        </div>
+        <div class="field">
+          <label>Phone</label>
+          <input type="tel" name="phone" placeholder="+91 98765 43210">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Email Address</label>
+        <input type="email" name="email" placeholder="you@example.com" required>
+      </div>
+
+      <div class="row-2">
+        <div class="field">
+          <label>Password</label>
+          <div class="pw-wrap">
+            <input type="password" id="pw1" name="password" placeholder="Min. 8 chars" required>
+            <button type="button" class="pw-eye" onclick="togglePw('pw1',this)">👁</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Confirm Password</label>
+          <div class="pw-wrap">
+            <input type="password" id="pw2" name="confirmPassword" placeholder="Repeat" required>
+            <button type="button" class="pw-eye" onclick="togglePw('pw2',this)">👁</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BUSINESS FIELDS -->
+      <div class="biz-fields" id="bizFields">
+        <div class="divider">Business Details</div>
+        <div class="row-2">
+          <div class="field">
+            <label>Business Name</label>
+            <input type="text" name="businessName" placeholder="Acme Pvt Ltd">
+          </div>
+          <div class="field">
+            <label>Tax ID / GST</label>
+            <input type="text" name="taxId" placeholder="GSTIN">
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label>Business Type</label>
+            <select name="businessType">
+              <option value="">Select type</option>
+              <option>Sole Proprietorship</option>
+              <option>Partnership</option>
+              <option>Private Limited</option>
+              <option>LLP</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Business Address</label>
+            <input type="text" name="businessAddress" placeholder="City, State">
+          </div>
+        </div>
+      </div>
+
+      <!-- TERMS -->
+      <div class="terms">
+        <input type="checkbox" id="terms" required>
+        <label for="terms">I agree to RevPay's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</label>
+      </div>
+
+      <button type="submit" class="btn-submit">Create Account →</button>
+    </form>
+
+    <div class="login-note">Already registered? <a th:href="@{/login}">Login here</a></div>
+  </div>
+</div>
+
+<script>
+  function setType(type) {
+    document.getElementById('accType').value = type;
+    document.getElementById('bizFields').classList.toggle('show', type === 'business');
+    document.getElementById('btn-personal').classList.toggle('active', type === 'personal');
+    document.getElementById('btn-business').classList.toggle('active', type === 'business');
+  }
+
+  function togglePw(id, btn) {
+    const el = document.getElementById(id);
+    el.type = el.type === 'password' ? 'text' : 'password';
+    btn.textContent = el.type === 'password' ? '👁' : '🙈';
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Forgot Password</title>
+<style>
+body{
+font-family: Arial;
+background:#f4f6f9;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.container{
+background:white;
+padding:30px;
+border-radius:10px;
+width:350px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+h2{
+text-align:center;
+margin-bottom:20px;
+}
+
+input{
+width:100%;
+padding:10px;
+margin:10px 0;
+border-radius:5px;
+border:1px solid #ccc;
+}
+
+button{
+width:100%;
+padding:10px;
+background:#007bff;
+border:none;
+color:white;
+border-radius:5px;
+cursor:pointer;
+}
+
+.error{
+color:red;
+text-align:center;
+}
+
+a{
+display:block;
+text-align:center;
+margin-top:15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Forgot Password</h2>
+
+<p class="error" th:text="${error}"></p>
+
+<form action="/verify-email" method="post">
+
+<input type="email" name="email" placeholder="Enter your email" required>
+
+<button type="submit">Next</button>
+
+</form>
+
+<a href="/login">Back to Login</a>
+
+</div>
+
+</body>
+</html>

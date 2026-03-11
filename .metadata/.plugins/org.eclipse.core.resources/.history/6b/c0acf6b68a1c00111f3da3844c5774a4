@@ -1,0 +1,12 @@
+package com.revpay.service;
+
+public class BusinessProfileService {
+	public interface BusinessProfileService {
+
+	    void createProfile(BusinessProfileDTO dto);
+
+	    BusinessProfileDTO getProfileByUser(Long userId);
+	}
+	
+
+}

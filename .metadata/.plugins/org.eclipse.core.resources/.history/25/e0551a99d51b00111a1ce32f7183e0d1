@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>User Report</title>
+
+<style>
+body{font-family:Arial;background:#f4f6f9;padding:30px;}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+th,td{
+padding:10px;
+border:1px solid #ddd;
+}
+
+th{
+background:#0f172a;
+color:white;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>User Activity Report</h1>
+
+<table>
+
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Role</th>
+<th>Status</th>
+</tr>
+
+<tr th:each="u : ${users}">
+
+<td th:text="${u.fullName}"></td>
+<td th:text="${u.email}"></td>
+<td th:text="${u.role}"></td>
+<td th:text="${u.status}"></td>
+
+</tr>
+
+</table>
+
+</body>
+
+</html>

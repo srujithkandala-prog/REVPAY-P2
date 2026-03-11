@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RevPay - Email Verification</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+        background: linear-gradient(135deg, #6366f1 0%, #a78bfa 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #1e293b;
+    }
+    
+    .container {
+        width: 100%;
+        max-width: 420px;
+        padding: 20px;
+    }
+    
+    .card {
+        background: white;
+        padding: 40px 30px;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .logo-box {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #6366f1 0%, #a78bfa 100%);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 32px;
+        font-weight: 800;
+        margin: 0 auto 20px;
+    }
+    
+    .header h2 {
+        margin: 0 0 10px 0;
+        color: #0f172a;
+        font-size: 28px;
+        font-weight: 700;
+    }
+    
+    .header p {
+        margin: 0;
+        color: #64748b;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+    
+    .email-display {
+        background: #f8fafc;
+        padding: 12px;
+        border-radius: 8px;
+        text-align: center;
+        margin: 20px 0;
+        color: #6366f1;
+        font-weight: 600;
+        font-size: 14px;
+        border: 1px solid #e2e8f0;
+    }
+    
+    .form-section {
+        margin-bottom: 20px;
+    }
+    
+    .otp-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #64748b;
+        display: block;
+        margin-bottom: 10px;
+    }
+    
+    .otp-input-group {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .otp-input {
+        width: 100%;
+        padding: 14px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-family: 'Courier New', monospace;
+        font-size: 18px;
+        font-weight: 600;
+        text-align: center;
+        letter-spacing: 4px;
+        transition: 0.3s ease;
+        background: #f8fafc;
+    }
+    
+    .otp-input:focus {
+        outline: none;
+        border-color: #6366f1;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+    }
+    
+    input[type="hidden"] {
+        display: none;
+    }
+    
+    .verify-btn {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #6366f1 0%, #a78bfa 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s ease;
+        margin-top: 10px;
+    }
+    
+    .verify-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(99,102,241,0.3);
+    }
+    
+    .verify-btn:active {
+        transform: translateY(0);
+    }
+    
+    .resend-section {
+        text-align: center;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #e2e8f0;
+    }
+    
+    .resend-text {
+        font-size: 13px;
+        color: #64748b;
+        margin: 0;
+    }
+    
+    .resend-link {
+        color: #6366f1;
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.2s ease;
+    }
+    
+    .resend-link:hover {
+        color: #4f46e5;
+        text-decoration: underline;
+    }
+    
+    .info-box {
+        background: #f0f4ff;
+        padding: 14px;
+        border-radius: 10px;
+        margin-top: 20px;
+        border-left: 3px solid #6366f1;
+        font-size: 13px;
+        color: #334155;
+        line-height: 1.6;
+    }
+    
+    .info-box i {
+        color: #6366f1;
+        margin-right: 8px;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <div class="header">
+            <div class="logo-box"><i class="bi bi-lightning-charge-fill"></i></div>
+            <h2>Verify Email</h2>
+            <p>Enter the OTP sent to your email address to verify your account</p>
+        </div>
+        
+        <div class="email-display" th:text="${email}">
+            your.email@example.com
+        </div>
+        
+        <form th:action="@{/verify-otp}" method="post">
+            <input type="hidden" name="email" th:value="${email}">
+            
+            <div class="form-section">
+                <label class="otp-label">One-Time Password (OTP)</label>
+                <div class="otp-input-group">
+                    <input 
+                        type="text" 
+                        name="otp" 
+                        class="otp-input"
+                        placeholder="000000"
+                        maxlength="6"
+                        inputmode="numeric"
+                        pattern="[0-9]*"
+                        required
+                        autocomplete="off">
+                </div>
+            </div>
+            
+            <button type="submit" class="verify-btn">
+                <i class="fa-solid fa-check"></i> Verify OTP
+            </button>
+        </form>
+        
+        <div class="resend-section">
+            <p class="resend-text">
+                Didn't receive OTP? 
+                <a href="/resend-otp" class="resend-link">Resend</a>
+            </p>
+        </div>
+        
+        <div class="info-box">
+            <i class="fa-solid fa-info-circle"></i>
+            Please check your email for the 6-digit OTP. It may take a few moments to arrive.
+        </div>
+    </div>
+</div>
+
+<script>
+    // Auto-focus and format OTP input
+    const otpInput = document.querySelector('.otp-input');
+    
+    if (otpInput) {
+        otpInput.addEventListener('input', function(e) {
+            // Only allow numbers
+            this.value = this.value.replace(/[^0-9]/g, '');
+            
+            // Auto-submit when 6 digits are entered
+            if (this.value.length === 6) {
+                // You can uncomment to auto-submit
+                // this.closest('form').submit();
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

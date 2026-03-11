@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>My Invoices</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:linear-gradient(120deg,#f1f5f9,#e2e8f0,#f8fafc);
+background-size:300% 300%;
+animation:bgMove 12s infinite alternate;
+}
+
+@keyframes bgMove{
+0%{background-position:left;}
+100%{background-position:right;}
+}
+
+
+
+.sidebar{
+width:250px;
+height:100vh;
+position:fixed;
+background:linear-gradient(180deg,#0f172a,#020617);
+color:white;
+padding-top:20px;
+}
+
+.sidebar h2{
+text-align:center;
+margin-bottom:25px;
+}
+
+.sidebar a{
+display:block;
+color:#cbd5f5;
+padding:13px 22px;
+text-decoration:none;
+transition:0.25s;
+border-left:3px solid transparent;
+}
+
+.sidebar a:hover{
+background:#1e293b;
+border-left:3px solid #38bdf8;
+padding-left:28px;
+}
+
+.sidebar a i{
+margin-right:10px;
+}
+
+
+.main{
+margin-left:250px;
+padding:35px;
+}
+
+.card{
+background:white;
+padding:25px;
+border-radius:12px;
+box-shadow:0 6px 18px rgba(0,0,0,0.08);
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+}
+
+th{
+background:#0f172a;
+color:white;
+padding:12px;
+}
+
+td{
+padding:12px;
+border-bottom:1px solid #e2e8f0;
+}
+
+tr:hover{
+background:#f1f5f9;
+}
+
+
+.pending{
+color:#f59e0b;
+font-weight:bold;
+}
+
+.paid{
+color:#22c55e;
+font-weight:bold;
+}
+
+button{
+padding:7px 14px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+transition:0.2s;
+}
+
+button:hover{
+background:#1d4ed8;
+transform:scale(1.05);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>RevPay</h2>
+
+<a href="/dashboard"><i class="fa-solid fa-chart-line"></i>Dashboard</a>
+<a href="/profile"><i class="fa-solid fa-user"></i>Profile</a>
+<a href="/send-money"><i class="fa-solid fa-paper-plane"></i>Send Money</a>
+<a href="/add-money"><i class="fa-solid fa-wallet"></i>Add Money</a>
+<a href="/request-money"><i class="fa-solid fa-hand-holding-dollar"></i>Request Money</a>
+<a href="/incoming-requests"><i class="fa-solid fa-arrow-down"></i>Incoming Requests</a>
+<a href="/outgoing-requests"><i class="fa-solid fa-arrow-up"></i>Outgoing Requests</a>
+<a href="/withdraw-money"><i class="fa-solid fa-money-bill-wave"></i>Withdraw</a>
+<a href="/transactions"><i class="fa-solid fa-clock"></i>Transactions</a>
+<a href="/transactions-history"><i class="fa-solid fa-list"></i>Transaction History</a>
+<a href="/my-invoices"><i class="fa-solid fa-receipt"></i>My Invoices</a>
+<a href="/payment-methods"><i class="fa-solid fa-credit-card"></i>Payment Methods</a>
+<a href="/notifications"><i class="fa-solid fa-bell"></i>Notifications</a>
+<a href="/logout"><i class="fa-solid fa-right-from-bracket"></i>Logout</a>
+
+</div>
+
+
+<div class="main">
+
+<h2>My Pending Invoices 💳</h2>
+
+<div class="card">
+
+<table th:if="${invoices.size() > 0}">
+
+<tr>
+<th>Business</th>
+<th>Description</th>
+<th>Amount</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+<tr th:each="i : ${invoices}">
+
+<td th:text="${i.businessEmail}"></td>
+
+<td th:text="${i.description}"></td>
+
+<td>
+₹ <span th:text="${i.amount}"></span>
+</td>
+
+<td>
+
+<span th:if="${i.status=='PENDING'}" class="pending">
+PENDING
+</span>
+
+<span th:if="${i.status=='PAID'}" class="paid">
+PAID
+</span>
+
+</td>
+
+<td>
+
+<a th:if="${i.status=='PENDING'}"
+th:href="@{/pay-invoice/{id}(id=${i.id})}">
+
+<button>Pay</button>
+
+</a>
+
+</td>
+
+</tr>
+
+</table>
+
+<p th:if="${invoices.size()==0}">
+No invoices available.
+</p>
+
+</div>
+
+</div>
+
+</body>
+</html>

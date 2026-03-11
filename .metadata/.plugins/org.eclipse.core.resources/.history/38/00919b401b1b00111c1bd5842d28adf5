@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Transaction History</title>
+
+<style>
+body{font-family:Arial;background:#f4f6f9;padding:20px;}
+.card{
+background:white;padding:20px;border-radius:10px;
+box-shadow:0 0 10px #ddd;
+}
+table{
+width:100%;border-collapse:collapse;margin-top:10px;
+}
+table,th,td{
+border:1px solid #ddd;padding:10px;text-align:left;
+}
+a{
+display:inline-block;margin-bottom:15px;
+text-decoration:none;color:#2c7be5;
+}
+</style>
+</head>
+
+<body>
+
+<a href="/dashboard">← Back to Dashboard</a>
+
+<div class="card">
+
+<h2>Transaction History</h2>
+
+<table>
+<tr>
+<th>Sender</th>
+<th>Receiver</th>
+<th>Amount</th>
+<th>Date</th>
+</tr>
+
+<tr th:each="t : ${transactions}">
+<td th:text="${t.senderEmail}"></td>
+<td th:text="${t.receiverEmail}"></td>
+<td>₹ <span th:text="${t.amount}"></span></td>
+<td th:text="${t.transactionDate}"></td>
+</tr>
+
+</table>
+
+</div>
+
+</body>
+</html>

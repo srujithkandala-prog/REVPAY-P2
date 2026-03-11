@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>Loan Report</title>
+
+<style>
+body{font-family:Arial;background:#f4f6f9;padding:30px;}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+th,td{
+padding:10px;
+border:1px solid #ddd;
+}
+
+th{
+background:#0f172a;
+color:white;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>Loan Report</h1>
+
+<table>
+
+<tr>
+<th>Business</th>
+<th>Amount</th>
+<th>Status</th>
+<th>Tenure</th>
+</tr>
+
+<tr th:each="l : ${loans}">
+
+<td th:text="${l.businessEmail}"></td>
+<td th:text="${l.amount}"></td>
+<td th:text="${l.status}"></td>
+<td th:text="${l.tenureMonths}"></td>
+
+</tr>
+
+</table>
+
+</body>
+
+</html>

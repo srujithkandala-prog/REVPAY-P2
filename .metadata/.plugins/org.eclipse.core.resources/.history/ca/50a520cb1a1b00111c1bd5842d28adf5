@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Outgoing Requests</title>
+
+<style>
+body{
+font-family:Arial;
+background:#f4f6f9;
+padding:20px;
+}
+.container{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px #ddd;
+}
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+}
+table,th,td{
+border:1px solid #ddd;
+padding:10px;
+}
+.pending{color:orange;font-weight:bold;}
+.accepted{color:green;font-weight:bold;}
+.declined{color:red;font-weight:bold;}
+.cancelled{color:gray;font-weight:bold;}
+button{
+padding:5px 10px;
+background:#ef4444;
+color:white;
+border:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Outgoing Money Requests 📤</h2>
+
+<table>
+
+<tr>
+<th>Receiver</th>
+<th>Amount</th>
+<th>Purpose</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+<tr th:each="r : ${requests}">
+
+<td th:text="${r.receiverEmail}"></td>
+<td th:text="${r.amount}"></td>
+<td th:text="${r.purpose}"></td>
+
+<td>
+<span th:if="${r.status=='PENDING'}" class="pending">PENDING</span>
+<span th:if="${r.status=='ACCEPTED'}" class="accepted">ACCEPTED</span>
+<span th:if="${r.status=='DECLINED'}" class="declined">DECLINED</span>
+<span th:if="${r.status=='CANCELLED'}" class="cancelled">CANCELLED</span>
+</td>
+
+<td>
+<form th:if="${r.status=='PENDING'}"
+      th:action="@{/cancel-request/{id}(id=${r.id})}"
+      method="get">
+<button type="submit">Cancel</button>
+</form>
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+</body>
+</html>

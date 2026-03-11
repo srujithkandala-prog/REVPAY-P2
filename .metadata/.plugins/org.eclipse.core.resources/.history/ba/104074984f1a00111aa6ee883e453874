@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>RevPay Login</title>
+
+<style>
+body{
+font-family:Arial;
+background:#f4f6f9;
+}
+.container{
+width:400px;
+margin:80px auto;
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 0 10px #ccc;
+}
+input{
+width:100%;
+padding:10px;
+margin-top:10px;
+}
+button{
+width:100%;
+padding:10px;
+margin-top:15px;
+background:#2c7be5;
+color:white;
+border:none;
+}
+.links{
+margin-top:15px;
+text-align:center;
+}
+.links a{
+display:block;
+margin-top:8px;
+text-decoration:none;
+color:#2c7be5;
+}
+h2{text-align:center;}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>RevPay Login</h2>
+
+<form th:action="@{/login}" method="post">
+
+<input type="text" name="username" placeholder="Email" required>
+<input type="password" name="password" placeholder="Password" required>
+
+<button type="submit">Login</button>
+
+</form>
+
+<div class="links">
+<div style="text-align:center;margin-top:15px;">
+    <a href="/forgot-password">Forgot Password?</a>
+</div>
+
+<div style="text-align:center;margin-top:10px;">
+    <a href="/register">No account? Register</a>
+</div>
+
+<div style="text-align:center;margin-top:10px;">
+    <a href="/">← Back to Home</a>
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>RevPay Admin Dashboard</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#f4f6f9;
+}
+
+.sidebar{
+width:230px;
+height:100vh;
+background:#0f172a;
+position:fixed;
+color:white;
+padding-top:20px;
+overflow-y:auto;
+}
+
+.sidebar h2{
+text-align:center;
+margin-bottom:30px;
+}
+
+.sidebar a{
+display:block;
+color:white;
+padding:12px 20px;
+text-decoration:none;
+}
+
+.sidebar a:hover{
+background:#1e293b;
+}
+
+.main{
+margin-left:230px;
+padding:30px;
+}
+
+.cards{
+display:flex;
+gap:20px;
+margin-bottom:30px;
+}
+
+.card{
+flex:1;
+background:white;
+padding:25px;
+border-radius:10px;
+box-shadow:0 0 10px #ddd;
+}
+
+.big{
+font-size:30px;
+font-weight:bold;
+color:#2563eb;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+th,td{
+padding:10px;
+border:1px solid #ddd;
+text-align:center;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>RevPay Admin</h2>
+
+<a href="/admin-dashboard">Dashboard</a>
+<a href="/admin/users">Users</a>
+<a href="/admin/transactions">Transactions</a>
+<a href="/admin/loans">Loans</a>
+
+
+<hr>
+
+<a href="/admin/fraud-alerts">Fraud Alerts</a>
+<a href="/admin/revenue">Revenue Analytics</a>
+<a href="/admin/reports">Reports</a>
+
+<hr>
+
+<a href="/logout">Logout</a>
+
+</div>
+
+<div class="main">
+
+<h1>Admin Dashboard</h1>
+
+<div class="cards">
+
+<div class="card">
+Total Users
+<div class="big" th:text="${totalUsers}"></div>
+</div>
+
+<div class="card">
+Transactions
+<div class="big" th:text="${totalTransactions}"></div>
+</div>
+
+<div class="card">
+Loans
+<div class="big" th:text="${totalLoans}"></div>
+</div>
+
+<div class="card">
+Pending Loans
+<div class="big" th:text="${pendingLoans}"></div>
+</div>
+
+</div>
+
+<h3>Recent Transactions</h3>
+
+<table>
+
+<tr>
+<th>Sender</th>
+<th>Receiver</th>
+<th>Amount</th>
+</tr>
+
+<tr th:each="t,iter : ${transactions}" th:if="${iter.index<5}">
+<td th:text="${t.senderEmail}"></td>
+<td th:text="${t.receiverEmail}"></td>
+<td th:text="${t.amount}"></td>
+</tr>
+
+</table>
+
+</div>
+
+</body>
+</html>

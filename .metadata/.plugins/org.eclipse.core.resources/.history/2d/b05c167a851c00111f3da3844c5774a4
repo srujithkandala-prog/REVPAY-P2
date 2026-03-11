@@ -1,0 +1,38 @@
+package com.revpay.serviceimpl;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.revpay.dto.NotificationDTO;
+import com.revpay.entity.Notification;
+import com.revpay.repository.NotificationRepository;
+import com.revpay.service.NotificationService;
+
+@Service
+public class NotificationServiceImpl implements NotificationService {
+
+    @Autowired
+    private NotificationRepository notificationRepository;
+
+    @Override
+    public List<NotificationDTO> getUserNotifications(String email) {
+
+        List<Notification> notifications =
+                notificationRepository.findByUserEmailOrderByCreatedDateDesc(email);
+
+        return notifications.stream().map(n -> {
+
+            NotificationDTO dto = new NotificationDTO();
+
+            dto.setId(n.getId());
+            dto.setMessage(n.getMessage());
+            dto.setCreatedDate(n.getCreatedDate());
+
+            return dto;
+
+        }).collect(Collectors.toList());
+    }
+}

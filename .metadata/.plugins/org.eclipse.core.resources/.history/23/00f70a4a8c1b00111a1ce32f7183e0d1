@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<meta charset="UTF-8">
+<title>Loan Repayments</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6f9;
+padding:40px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+th,td{
+padding:12px;
+border:1px solid #ddd;
+text-align:center;
+}
+
+th{
+background:#0f172a;
+color:white;
+}
+
+h2{
+margin-bottom:20px;
+}
+
+.amount{
+color:#16a34a;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>Loan Repayment History</h2>
+
+<table>
+
+<tr>
+<th>Business</th>
+<th>Amount Paid</th>
+<th>Date</th>
+<th>Remaining Balance</th>
+</tr>
+
+<tr th:each="t : ${repayments}">
+
+<td th:text="${t.businessEmail}"></td>
+
+<td class="amount">
+₹ <span th:text="${t.amountPaid}"></span>
+</td>
+
+<td th:text="${#temporals.format(t.paymentDate,'dd MMM yyyy')}"></td>
+
+<td>
+₹ <span th:text="${t.remainingBalance}"></span>
+</td>
+
+</tr>
+
+</table>
+
+</body>
+
+</html>

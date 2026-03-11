@@ -1,0 +1,26 @@
+package com.revpay.repository;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.revpay.entity.Transaction;
+
+public interface TransactionRepository
+        extends JpaRepository<Transaction, Long> {
+
+    List<Transaction>
+    findBySenderEmailOrReceiverEmailOrderByTransactionDateDesc(
+            String sender,
+            String receiver);
+
+    // SEARCH + FILTER
+    List<Transaction>
+    findBySenderEmailOrReceiverEmailAndTypeOrderByTransactionDateDesc(
+            String sender,
+            String receiver,
+            String type);
+    List<Transaction> findBySenderEmail(String senderEmail);
+    @Query("SELECT t FROM Transaction t WHERE t.receiverEmail = :email AND t.type = 'LOAN_REPAYMENT'")
+    List<Transaction> findLoanRepayments(@Param("email") String email);
+}

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>RevPay Dashboard</title>
+
+<style>
+body{margin:0;font-family:Arial;background:#f4f6f9;}
+.sidebar{
+width:220px;height:100vh;background:#1e293b;
+position:fixed;color:white;padding-top:20px;
+}
+.sidebar h2{text-align:center;}
+.sidebar a{
+display:block;color:white;padding:12px 20px;
+text-decoration:none;
+}
+.sidebar a:hover{background:#334155;}
+
+.main{margin-left:220px;padding:20px;}
+
+.card{
+background:white;padding:20px;border-radius:10px;
+box-shadow:0 0 10px #ddd;margin-bottom:20px;
+}
+
+.analytics{
+display:flex;gap:15px;
+}
+.box{
+flex:1;background:white;padding:15px;
+border-radius:10px;box-shadow:0 0 8px #ddd;
+}
+
+.wallet{
+font-size:32px;color:#2c7be5;font-weight:bold;
+}
+
+.sent{color:red;font-weight:bold;}
+.received{color:green;font-weight:bold;}
+
+table{
+width:100%;border-collapse:collapse;
+}
+table,th,td{
+border:1px solid #ddd;padding:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+<h2>RevPay</h2>
+<a href="/dashboard">Dashboard</a>
+<a href="/profile">Profile</a>
+<a href="/send-money">Send Money</a>
+<a href="/add-money">Add Money</a>
+<a href="/request-money">Request Money</a>
+<a href="/incoming-requests">Incoming Requests</a>
+<a href="/outgoing-requests">Outgoing Requests</a>
+<a href="/withdraw-money">Withdraw Money</a>
+<a href="/transactions">Transactions</a>
+<a href="/transactions-history">Transaction History</a>
+<a href="/my-invoices">My Invoices</a>
+<a href="/payment-methods">Payment Methods</a>
+<a href="/notifications">Notifications 🔔</a>
+<a href="/logout">Logout</a>
+
+</div>
+
+<div class="main">
+
+<h2>Welcome, <span th:text="${user.fullName}"></span> 👋</h2>
+<p>Account Type: <b th:text="${user.role}"></b></p>
+
+<div class="card">
+<h3>Wallet Balance</h3>
+<div class="wallet">
+₹ <span th:text="${user.walletBalance}"></span>
+</div>
+</div>
+
+<div class="analytics">
+
+<div class="box">
+<h4>Total Sent</h4>
+<p class="sent">
+₹ <span th:text="${totalSent}"></span>
+</p>
+</div>
+
+<div class="box">
+<h4>Total Received</h4>
+<p class="received">
+₹ <span th:text="${totalReceived}"></span>
+</p>
+</div>
+
+<div class="box">
+<h4>Total Transactions</h4>
+<p><b th:text="${transactions.size()}"></b></p>
+</div>
+
+</div>
+
+<br>
+
+<div class="card">
+<h3>Recent Transactions</h3>
+
+<table th:if="${transactions.size() > 0}">
+<tr>
+<th>Type</th>
+<th>Sender</th>
+<th>Receiver</th>
+<th>Amount</th>
+<th>Date</th>
+</tr>
+
+<tr th:each="t,iter : ${transactions}" th:if="${iter.index < 3}">
+
+<td>
+<span th:if="${t.senderEmail == user.email}" class="sent">SENT</span>
+<span th:if="${t.receiverEmail == user.email}" class="received">RECEIVED</span>
+</td>
+
+<td th:text="${t.senderEmail}"></td>
+<td th:text="${t.receiverEmail}"></td>
+<td>₹ <span th:text="${t.amount}"></span></td>
+
+<td th:text="${#temporals.format(t.transactionDate,'dd-MM-yyyy HH:mm')}"></td>
+
+</tr>
+</table>
+
+<p th:if="${transactions.size()==0}">
+No transactions yet.
+</p>
+
+</div>
+
+</div>
+
+</body>
+</html>

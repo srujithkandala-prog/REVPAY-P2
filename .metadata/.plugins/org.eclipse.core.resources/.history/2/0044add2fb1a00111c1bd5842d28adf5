@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RevPay — Dashboard</title>
+
+<style>
+
+/* YOUR ENTIRE CSS REMAINS EXACTLY THE SAME */
+/* I DID NOT MODIFY ANY CSS */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --navy-dark:#0f172a;
+    --navy-subtle:#1e293b;
+    --accent-blue:#2563eb;
+    --gold:#eab308;
+    --white:#ffffff;
+    --glass:rgba(255,255,255,0.03);
+    --border:rgba(255,255,255,0.08);
+    --muted:rgba(255,255,255,0.5);
+    --sidebar-w:230px;
+}
+
+body{
+    font-family:'Inter',sans-serif;
+    background:var(--navy-dark);
+    color:var(--white);
+    display:flex;
+    min-height:100vh;
+}
+
+/* ---- SIDEBAR ---- */
+
+.sidebar{
+    width:var(--sidebar-w);
+    background:var(--navy-subtle);
+    border-right:1px solid var(--border);
+    position:fixed;
+    top:0;
+    left:0;
+    bottom:0;
+}
+
+.sidebar-logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:20px;
+    text-decoration:none;
+}
+
+.logo-box{
+    width:36px;
+    height:36px;
+    background:white;
+    color:#0f172a;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+}
+
+.logo-text .s-name{
+    font-weight:800;
+}
+
+.nav-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 20px;
+    color:rgba(255,255,255,0.6);
+    text-decoration:none;
+}
+
+.nav-item:hover{
+    background:rgba(255,255,255,0.05);
+}
+
+/* ---- MAIN ---- */
+
+.main{
+    margin-left:var(--sidebar-w);
+    flex:1;
+}
+
+.topbar{
+    padding:15px 30px;
+    display:flex;
+    justify-content:space-between;
+    border-bottom:1px solid var(--border);
+}
+
+.tb-avatar{
+    width:34px;
+    height:34px;
+    border-radius:7px;
+    background:#2563eb;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+}
+
+/* CONTENT */
+
+.content{
+    padding:30px;
+}
+
+.grad-wallet{
+    background:linear-gradient(135deg,#1d4ed8,#5b21b6);
+    border-radius:14px;
+    padding:25px;
+}
+
+.stat-card{
+    background:#1e293b;
+    border-radius:12px;
+    padding:20px;
+}
+
+.card{
+    background:#1e293b;
+    border-radius:12px;
+    padding:20px;
+}
+
+.txn-row{
+    display:flex;
+    justify-content:space-between;
+    padding:10px 0;
+    border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+<a th:href="@{/dashboard}" class="sidebar-logo">
+<div class="logo-box">R</div>
+<div class="logo-text">
+<span class="s-name">RevPay</span>
+<span class="s-tag">Personal</span>
+</div>
+</a>
+
+<a th:href="@{/dashboard}" class="nav-item">Dashboard</a>
+<a th:href="@{/profile}" class="nav-item">Profile</a>
+<a th:href="@{/send-money}" class="nav-item">Send Money</a>
+<a th:href="@{/add-money}" class="nav-item">Add Money</a>
+<a th:href="@{/request-money}" class="nav-item">Request Money</a>
+<a th:href="@{/withdraw-money}" class="nav-item">Withdraw</a>
+<a th:href="@{/transactions}" class="nav-item">Transactions</a>
+<a th:href="@{/logout}" class="nav-item">Logout</a>
+
+</aside>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<!-- TOPBAR -->
+
+<div class="topbar">
+
+<div>
+<h3>Dashboard</h3>
+</div>
+
+<div class="topbar-right">
+
+<span>PERSONAL</span>
+
+<!-- FIXED AVATAR LINE -->
+
+<div class="tb-avatar"
+th:text="${username != null ? #strings.substring(username,0,1).toUpperCase() : 'U'}">
+U
+</div>
+
+</div>
+
+</div>
+
+<!-- CONTENT -->
+
+<div class="content">
+
+<!-- WELCOME -->
+
+<h2>Welcome back,
+<span th:text="${username}">User</span> 👋
+</h2>
+
+<br>
+
+<!-- WALLET -->
+
+<div class="grad-wallet">
+
+<h4>Wallet Balance</h4>
+
+<h1>
+₹ <span th:text="${walletBalance}">0.00</span>
+</h1>
+
+</div>
+
+<br>
+
+<!-- STATS -->
+
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:15px">
+
+<div class="stat-card">
+
+<h4>Total Sent</h4>
+
+<h2>₹ <span th:text="${totalSent}">0</span></h2>
+
+</div>
+
+<div class="stat-card">
+
+<h4>Total Received</h4>
+
+<h2>₹ <span th:text="${totalReceived}">0</span></h2>
+
+</div>
+
+<div class="stat-card">
+
+<h4>Total Transactions</h4>
+
+<h2 th:text="${totalTransactions}">0</h2>
+
+</div>
+
+</div>
+
+<br>
+
+<!-- RECENT TRANSACTIONS -->
+
+<div class="card">
+
+<h3>Recent Transactions</h3>
+
+<div th:if="${#lists.isEmpty(recentTransactions)}">
+
+<p>No transactions yet</p>
+
+</div>
+
+<div th:each="txn : ${recentTransactions}" class="txn-row">
+
+<div>
+
+<span th:text="${txn.type}">TRANSFER</span>
+
+</div>
+
+<div>
+
+<span th:text="${txn.amount}">500</span>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>

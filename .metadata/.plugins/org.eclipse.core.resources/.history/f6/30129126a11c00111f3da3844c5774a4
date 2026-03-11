@@ -1,0 +1,27 @@
+package com.revpay;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+
+// webEnvironment = NONE      → no HTTP server, so HttpSecurity bean does not exist
+// @ActiveProfiles("test")    → loads application-test.properties (H2 + dummy mail)
+// @ImportAutoConfiguration   → excludes the two Security auto-configs so Spring
+//                              never tries to build SecurityFilterChain
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@ActiveProfiles("test")
+@ImportAutoConfiguration(exclude = {
+        SecurityAutoConfiguration.class,
+        SecurityFilterAutoConfiguration.class
+})
+class RevpayApplicationTests {
+
+    @Test
+    void contextLoads() {
+        // passes if the Spring context starts without throwing an exception
+    }
+
+}

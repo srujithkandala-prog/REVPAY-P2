@@ -1,0 +1,11 @@
+package com.revpay.repository;
+
+import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+import com.revpay.entity.BusinessVerification;
+
+public interface BusinessVerificationRepository extends JpaRepository<BusinessVerification, Long> {
+
+    List<BusinessVerification> findByStatus(String status);
+
+}

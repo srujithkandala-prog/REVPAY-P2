@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>Notifications</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:#f1f5f9;
+color:#334155;
+}
+
+.wrapper{
+display:flex;
+height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:240px;
+background:linear-gradient(180deg,#0f172a,#020617);
+color:white;
+display:flex;
+flex-direction:column;
+}
+
+.sidebar h2{
+text-align:center;
+padding:20px;
+margin:0;
+border-bottom:1px solid #1e293b;
+}
+
+.sidebar a{
+display:block;
+padding:12px 20px;
+color:#cbd5f5;
+text-decoration:none;
+border-left:3px solid transparent;
+}
+
+.sidebar a:hover{
+background:#1e293b;
+border-left:3px solid #38bdf8;
+color:white;
+}
+
+/* MAIN */
+
+.main{
+flex:1;
+padding:40px;
+}
+
+/* HEADER */
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.dashboard-btn{
+background:#16a34a;
+color:white;
+padding:8px 15px;
+border-radius:6px;
+text-decoration:none;
+}
+
+.notification{
+background:white;
+padding:15px;
+margin-bottom:10px;
+border-radius:10px;
+box-shadow:0 6px 15px rgba(0,0,0,0.06);
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+/* UNREAD */
+
+.unread{
+border-left:5px solid red;
+background:#fff5f5;
+}
+
+.message{
+font-size:15px;
+}
+
+.time{
+font-size:12px;
+color:#64748b;
+}
+
+.mark-btn{
+background:#2563eb;
+color:white;
+border:none;
+padding:6px 12px;
+border-radius:6px;
+cursor:pointer;
+}
+
+/* EMPTY */
+
+.empty{
+background:white;
+padding:30px;
+border-radius:10px;
+text-align:center;
+box-shadow:0 6px 15px rgba(0,0,0,0.06);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="wrapper">
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<h2>RevPay</h2>
+
+<a href="/dashboard">
+<i class="fa-solid fa-chart-line"></i> Dashboard
+</a>
+
+<a href="/transactions-history">
+<i class="fa-solid fa-clock"></i> Transactions
+</a>
+
+<a href="/notifications">
+<i class="fa-solid fa-bell"></i> Notifications
+</a>
+
+<a href="/logout">
+<i class="fa-solid fa-right-from-bracket"></i> Logout
+</a>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<div class="header">
+
+<h2>Notifications 🔔</h2>
+
+<a href="/dashboard" class="dashboard-btn">
+← Dashboard
+</a>
+
+</div>
+
+<!-- EMPTY STATE -->
+
+<div th:if="${notifications == null || notifications.isEmpty()}" class="empty">
+
+<i class="fa-solid fa-bell-slash fa-2x"></i>
+
+<p>No notifications yet.</p>
+
+</div>
+
+<!-- NOTIFICATIONS -->
+
+<div th:each="n : ${notifications}"
+     th:class="${n.isRead == true} ? 'notification' : 'notification unread'">
+
+<div>
+
+<!-- ICON -->
+
+<span th:if="${n.type=='SEND_MONEY'}">
+<i class="fa-solid fa-paper-plane"></i>
+</span>
+
+<span th:if="${n.type=='REQUEST'}">
+<i class="fa-solid fa-hand-holding-dollar"></i>
+</span>
+
+<span th:if="${n.type=='LOAN'}">
+<i class="fa-solid fa-landmark"></i>
+</span>
+
+<span th:if="${n.type=='PAYMENT'}">
+<i class="fa-solid fa-money-bill"></i>
+</span>
+
+<p class="message"
+   th:text="${n.message}">
+</p>
+
+<p class="time"
+th:text="${#temporals.format(n.createdDate,'dd MMM yyyy HH:mm')}">
+</p>
+
+</div>
+
+<div>
+
+<a th:if="${n.isRead == false}"
+   th:href="@{/notifications/read/{id}(id=${n.id})}">
+
+<button class="mark-btn">
+Mark as Read
+</button>
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>

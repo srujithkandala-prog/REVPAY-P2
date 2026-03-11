@@ -1,0 +1,13 @@
+package com.revpay.repository;
+
+import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+import com.revpay.entity.Loan;
+
+public interface LoanRepository extends JpaRepository<Loan, Long> {
+
+    List<Loan> findByBusinessEmailOrderByCreatedDateDesc(String email);
+
+	long countByStatus(String string);
+    
+}

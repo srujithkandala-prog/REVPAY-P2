@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>Notifications</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:#f1f5f9;
+color:#334155;
+}
+
+/* LAYOUT */
+
+.wrapper{
+display:flex;
+height:100vh;
+overflow:hidden;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:240px;
+background:linear-gradient(180deg,#0f172a,#020617);
+color:white;
+display:flex;
+flex-direction:column;
+}
+
+.sidebar h2{
+text-align:center;
+padding:20px;
+margin:0;
+border-bottom:1px solid #1e293b;
+}
+
+.sidebar a{
+display:block;
+padding:12px 20px;
+color:#cbd5f5;
+text-decoration:none;
+border-left:3px solid transparent;
+transition:0.2s;
+}
+
+.sidebar a:hover{
+background:#1e293b;
+border-left:3px solid #38bdf8;
+color:white;
+}
+
+/* MAIN */
+
+.main{
+flex:1;
+padding:40px;
+display:flex;
+flex-direction:column;
+overflow:hidden;
+}
+
+/* HEADER */
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+/* DASHBOARD BUTTON */
+
+.dashboard-btn{
+background:#16a34a;
+color:white;
+padding:8px 15px;
+border-radius:6px;
+text-decoration:none;
+}
+
+.dashboard-btn:hover{
+background:#15803d;
+}
+
+/* SCROLLABLE CONTAINER */
+
+.notifications-container{
+flex:1;
+overflow-y:auto;
+padding-right:10px;
+}
+
+/* NOTIFICATION CARD */
+
+.notification{
+background:white;
+padding:15px;
+margin-bottom:10px;
+border-radius:10px;
+box-shadow:0 6px 15px rgba(0,0,0,0.06);
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+/* UNREAD */
+
+.unread{
+border-left:5px solid red;
+background:#fff5f5;
+}
+
+/* MESSAGE */
+
+.message{
+font-size:15px;
+margin:0;
+}
+
+/* TIME */
+
+.time{
+font-size:12px;
+color:#64748b;
+margin-top:5px;
+}
+
+/* MARK BUTTON */
+
+.mark-btn{
+background:#2563eb;
+color:white;
+border:none;
+padding:6px 12px;
+border-radius:6px;
+cursor:pointer;
+}
+
+/* EMPTY STATE */
+
+.empty{
+background:white;
+padding:30px;
+border-radius:10px;
+text-align:center;
+box-shadow:0 6px 15px rgba(0,0,0,0.06);
+color:#64748b;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="wrapper">
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<h2>RevPay</h2>
+
+<a href="/dashboard">
+<i class="fa-solid fa-chart-line"></i> Dashboard
+</a>
+
+<a href="/transactions-history">
+<i class="fa-solid fa-clock"></i> Transactions
+</a>
+
+<a href="/payment-methods">
+<i class="fa-solid fa-credit-card"></i> Payment Methods
+</a>
+
+<a href="/notifications">
+<i class="fa-solid fa-bell"></i> Notifications
+</a>
+
+<a href="/logout">
+<i class="fa-solid fa-right-from-bracket"></i> Logout
+</a>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<div class="header">
+
+<h2>Notifications 🔔</h2>
+
+<a href="/dashboard" class="dashboard-btn">
+← Dashboard
+</a>
+
+</div>
+
+<!-- EMPTY STATE -->
+
+<div th:if="${notifications == null || notifications.isEmpty()}" class="empty">
+
+<i class="fa-solid fa-bell-slash fa-2x"></i>
+
+<p>No notifications yet.</p>
+
+</div>
+
+<!-- SCROLLABLE NOTIFICATION LIST -->
+
+<div class="notifications-container">
+
+<div th:each="n : ${notifications}"
+     th:class="${n.isRead == true} ? 'notification' : 'notification unread'">
+
+<div>
+
+<p class="message"
+   th:text="${n.message}">
+Notification message
+</p>
+
+<p class="time"
+th:text="${#temporals.format(n.createdDate,'dd MMM yyyy HH:mm')}">
+time
+</p>
+
+</div>
+
+<div>
+
+<a th:if="${n.isRead == false}"
+   th:href="@{/notifications/read/{id}(id=${n.id})}">
+
+<button class="mark-btn">
+Mark as Read
+</button>
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>

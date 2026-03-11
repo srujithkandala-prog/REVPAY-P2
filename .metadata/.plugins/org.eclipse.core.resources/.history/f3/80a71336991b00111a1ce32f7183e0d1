@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+<title>Notifications</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f1f5f9;
+padding:40px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:10px;
+}
+
+.notification{
+padding:10px;
+border-bottom:1px solid #ddd;
+}
+
+.time{
+font-size:12px;
+color:#64748b;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Notifications</h2>
+
+<div th:each="n : ${notifications}" class="notification">
+
+<p th:text="${n.message}"></p>
+
+<div class="time"
+th:text="${#temporals.format(n.createdDate,'dd MMM yyyy HH:mm')}"></div>
+
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Loans</title>
+
+<style>
+
+body{
+font-family: Arial;
+margin:0;
+background:#f5f6fa;
+}
+
+.sidebar{
+width:220px;
+height:100vh;
+background:#0f172a;
+color:white;
+position:fixed;
+padding:20px;
+}
+
+.sidebar h2{
+margin-bottom:30px;
+}
+
+.sidebar a{
+display:block;
+color:white;
+text-decoration:none;
+margin:15px 0;
+}
+
+.sidebar a:hover{
+color:#38bdf8;
+}
+
+.content{
+margin-left:240px;
+padding:30px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+th,td{
+padding:12px;
+border:1px solid #ddd;
+text-align:center;
+}
+
+th{
+background:#e2e8f0;
+}
+
+.btn{
+padding:6px 12px;
+text-decoration:none;
+color:white;
+border-radius:5px;
+}
+
+.approve{
+background:green;
+}
+
+.reject{
+background:red;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>RevPay Admin</h2>
+
+<a href="/admin-dashboard">Dashboard</a>
+<a href="/admin/users">Users</a>
+<a href="/admin/transactions">Transactions</a>
+<a href="/admin/loans">Loans</a>
+<!-- <a href="/admin/loan-repayments">Loan Repayments</a> -->
+<a href="/admin/fraud-alerts">Fraud Alerts</a>
+<a href="/admin/revenue">Revenue</a>
+<a href="/logout">Logout</a>
+
+</div>
+
+
+<div class="content">
+
+<h1>Loan Applications</h1>
+
+<table>
+
+<tr>
+<th>ID</th>
+<th>Business Email</th>
+<th>Amount</th>
+<th>Interest</th>
+<th>Tenure</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+<tr th:each="loan : ${loans}">
+
+<td th:text="${loan.id}"></td>
+<td th:text="${loan.businessEmail}"></td>
+<td th:text="${loan.amount}"></td>
+<td th:text="${loan.interestRate}"></td>
+<td th:text="${loan.tenureMonths}"></td>
+<td th:text="${loan.status}"></td>
+
+<td>
+
+<a class="btn approve"
+th:href="@{/admin/approve-loan/{id}(id=${loan.id})}">
+Approve
+</a>
+
+<a class="btn reject"
+th:href="@{/admin/reject-loan/{id}(id=${loan.id})}">
+Reject
+</a>
+
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+</body>
+</html>

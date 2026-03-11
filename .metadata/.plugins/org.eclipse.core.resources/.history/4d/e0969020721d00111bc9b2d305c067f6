@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<div th:fragment="sidebar">
+
+<style>
+
+.sidebar{
+width:250px;
+height:100vh;
+position:fixed;
+background:linear-gradient(180deg,#0f172a,#020617);
+color:white;
+padding-top:20px;
+}
+
+.sidebar h2{
+text-align:center;
+margin-bottom:25px;
+}
+
+.sidebar a{
+display:block;
+color:#cbd5f5;
+padding:13px 22px;
+text-decoration:none;
+transition:0.25s;
+border-left:3px solid transparent;
+}
+
+.sidebar a:hover{
+background:#1e293b;
+border-left:3px solid #38bdf8;
+padding-left:28px;
+}
+
+.sidebar a i{
+margin-right:10px;
+}
+
+</style>
+
+<div class="sidebar">
+
+<!-- TITLE CHANGES BASED ON ROLE -->
+
+<h2 th:if="${user.role.name() == 'BUSINESS'}">RevPay Business</h2>
+<h2 th:if="${user.role.name() != 'BUSINESS'}">RevPay</h2>
+
+
+<!-- PERSONAL USER MENU -->
+
+<div th:if="${user.role.name() == 'USER'}">
+
+<a href="/dashboard">Dashboard</a>
+<a href="/profile">Profile</a>
+<a href="/send-money">Send Money</a>
+<a href="/add-money">Add Money</a>
+<a href="/request-money">Request Money</a>
+<a href="/incoming-requests">Incoming Requests</a>
+<a href="/outgoing-requests">Outgoing Requests</a>
+<a href="/withdraw-money">Withdraw Money</a>
+<a href="/transactions">Transactions</a>
+<a href="/transactions-history">Transaction History</a>
+<a href="/my-invoices">My Invoices</a>
+<a href="/payment-methods">Payment Methods</a>
+<a href="/notifications">Notifications</a>
+<a href="/logout">Logout</a>
+
+</div>
+
+
+<!-- BUSINESS USER MENU -->
+
+<div th:if="${user.role.name() == 'BUSINESS'}">
+
+<a href="/business-dashboard">Dashboard</a>
+<a href="/profile">Profile</a>
+<a href="/send-money">Send Money</a>
+<a href="/add-money">Add Money</a>
+<a href="/request-money">Request Money</a>
+<a href="/incoming-requests">Incoming Requests</a>
+<a href="/outgoing-requests">Outgoing Requests</a>
+<a href="/withdraw-money">Withdraw Money</a>
+<a href="/transactions">Transactions</a>
+<a href="/transactions-history">Transaction History</a>
+<a href="/create-invoice">Create Invoice</a>
+<a href="/invoices">Invoices</a>
+<a href="/apply-loan">Apply Loan</a>
+<a href="/my-loans">My Loans</a>
+<a href="/business/loan-repayments">Loan Repayments</a>
+<a href="/payment-methods">Payment Methods</a>
+<a href="/notifications">Notifications</a>
+
+<a href="/logout">Logout</a>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>

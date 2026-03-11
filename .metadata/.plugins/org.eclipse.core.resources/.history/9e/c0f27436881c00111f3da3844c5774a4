@@ -1,0 +1,44 @@
+package com.revpay.serviceimpl;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.revpay.dto.LoanPaymentDTO;
+import com.revpay.entity.LoanPayment;
+import com.revpay.repository.LoanPaymentRepository;
+import com.revpay.service.LoanPaymentService;
+
+@Service
+public class LoanPaymentServiceImpl implements LoanPaymentService {
+
+    @Autowired
+    private LoanPaymentRepository repository;
+
+    @Override
+    public void makePayment(LoanPaymentDTO dto) {
+
+        LoanPayment payment = new LoanPayment();
+
+        payment.setAmount(dto.getAmount());
+        payment.setStatus("PAID");
+
+        repository.save(payment);
+    }
+
+    @Override
+    public List<LoanPaymentDTO> getPaymentsByLoan(Long loanId) {
+
+        return repository.findByLoanId(loanId)
+                .stream()
+                .map(p -> {
+                    LoanPaymentDTO dto = new LoanPaymentDTO();
+                    dto.setLoanId(p.getLoan().getId());
+                    dto.setAmount(p.getAmount());
+                    dto.setStatus(p.getStatus());
+                    return dto;
+                }).collect(Collectors.toList());
+    }
+}

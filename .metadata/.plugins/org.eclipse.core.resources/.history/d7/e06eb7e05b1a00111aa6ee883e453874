@@ -1,0 +1,116 @@
+package com.revpay.controller;
+
+import java.security.Principal;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import com.revpay.entity.User;
+import com.revpay.repository.UserRepository;
+
+@Controller
+public class ProfileController {
+
+@Autowired
+UserRepository userRepository;
+
+@Autowired
+PasswordEncoder passwordEncoder;
+
+@GetMapping("/profile")
+public String profilePage(Model model, Principal principal){
+
+User user = userRepository
+.findByEmail(principal.getName())
+.get();
+
+model.addAttribute("user",user);
+
+return "profile";
+}
+
+    // =========================
+    // UPDATE PROFILE
+    // =========================
+    @PostMapping("/update-profile")
+    public String updateProfile(@RequestParam String fullName,
+                                @RequestParam String phone,
+                                Principal principal) {
+
+        User user = userRepository
+                .findByEmail(principal.getName())
+                .orElse(null);
+
+        if (user != null) {
+            user.setFullName(fullName);
+            user.setPhone(phone);
+            userRepository.save(user);
+        }
+
+        return "redirect:/profile";
+    }
+
+    // =========================
+    // CHANGE PASSWORD
+    // =========================
+    @PostMapping("/change-password")
+    public String changePassword(@RequestParam String currentPassword,
+                                 @RequestParam String newPassword,
+                                 Model model,
+                                 Principal principal) {
+
+        User user = userRepository
+                .findByEmail(principal.getName())
+                .orElse(null);
+
+        if (user == null)
+            return "redirect:/profile";
+
+        if (!passwordEncoder.matches(
+                currentPassword,
+                user.getPassword())) {
+
+            model.addAttribute("user", user);
+            model.addAttribute("error",
+                    "Current password incorrect");
+
+            return "profile";
+        }
+
+        user.setPassword(
+                passwordEncoder.encode(newPassword));
+
+        userRepository.save(user);
+
+        model.addAttribute("user", user);
+        model.addAttribute("success",
+                "Password changed successfully");
+
+        return "profile";
+    }
+
+    // =========================
+    // SET TRANSACTION PIN
+    // =========================
+    @PostMapping("/set-pin")
+    public String setPin(@RequestParam String pin,
+                         Principal principal) {
+
+        User user = userRepository
+                .findByEmail(principal.getName())
+                .orElse(null);
+
+        if (user != null) {
+
+            // SAVE PIN TO DATABASE
+            user.setTransactionPin(pin);
+
+            userRepository.save(user);
+        }
+
+        return "redirect:/profile";
+    }
+}

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RevPay — Add Money</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+    --navy-dark:   #0f172a;
+    --navy-subtle: #1e293b;
+    --accent-blue: #2563eb;
+    --gold:        #eab308;
+    --white:       #ffffff;
+    --border:      rgba(255,255,255,0.08);
+    --muted:       rgba(255,255,255,0.5);
+    --sidebar-w:   230px;
+}
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--navy-dark);
+    color: var(--white);
+    display: flex; min-height: 100vh;
+}
+
+/* ── SIDEBAR (Exact Match to Dashboard) ── */
+.sidebar {
+    width: var(--sidebar-w);
+    background: var(--navy-subtle);
+    border-right: 1px solid var(--border);
+    position: fixed; top: 0; left: 0; bottom: 0;
+    z-index: 50; overflow-y: auto;
+    display: flex; flex-direction: column;
+}
+.sidebar-logo {
+    display: flex; align-items: center; gap: 11px;
+    padding: 22px 20px 18px;
+    text-decoration: none; border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+}
+.logo-box {
+    width: 36px; height: 36px;
+    background: var(--white); color: var(--navy-dark);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; border: 2px solid var(--gold);
+}
+.logo-text .s-name { color: white; font-size: 15px; font-weight: 800; display: block; }
+.logo-text .s-tag  { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); }
+
+.nav-section { padding: 12px 20px 4px; font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.2); letter-spacing: 2px; text-transform: uppercase; }
+.nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; margin: 1px 8px;
+    text-decoration: none; font-size: 13px; color: rgba(255,255,255,0.5);
+    border-radius: 6px; transition: 0.2s;
+}
+.nav-icon { width: 28px; height: 28px; border-radius: 6px; background: rgba(255,255,255,0.04); display: flex; align-items: center; justify-content: center; }
+.nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
+.nav-item.active { background: rgba(37,99,235,0.15); color: white; border: 1px solid rgba(37,99,235,0.25); }
+.nav-item.active .nav-icon { background: var(--accent-blue); }
+.nav-badge { margin-left: auto; background: #dc2626; color: white; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; }
+.nav-item.logout { color: rgba(239,68,68,0.5); margin-top: auto; }
+.sidebar-bottom { margin-top: auto; padding: 10px 0 14px; border-top: 1px solid var(--border); }
+
+/* ── MAIN CONTENT ── */
+.main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+.topbar {
+    background: rgba(15,23,42,0.95); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 32px; display: flex; align-items: center; justify-content: space-between;
+}
+.content { padding: 60px 40px; display: flex; justify-content: center; }
+
+/* ── ADD MONEY CARD ── */
+.add-card {
+    background: var(--navy-subtle); border: 1px solid var(--border);
+    border-radius: 20px; padding: 32px; width: 100%; max-width: 450px;
+}
+.sec-header { text-align: center; margin-bottom: 28px; }
+.sec-icon {
+    width: 60px; height: 60px; background: rgba(37,99,235,0.1);
+    border: 1px solid rgba(37,99,235,0.2); border-radius: 15px;
+    display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px;
+}
+.sec-title { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+.sec-sub { font-size: 13px; color: var(--muted); }
+
+/* ── ALERTS (Match image_908ce0.png) ── */
+.alert { padding: 14px 16px; border-radius: 10px; font-size: 14px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+.alert-error { background: rgba(220, 38, 38, 0.1); color: #ef4444; border: 1px solid rgba(220, 38, 38, 0.2); }
+.alert-success { background: rgba(5, 150, 105, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+
+.field { margin-bottom: 24px; }
+.field label { display: block; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.4); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+.input-wrapper { position: relative; }
+.field input {
+    width: 100%; padding: 16px; background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border); border-radius: 10px; color: white;
+    font-family: inherit; font-size: 15px; outline: none; transition: 0.2s;
+}
+.amount-input { font-size: 24px !important; font-weight: 700; color: var(--gold) !important; text-align: center; padding-left: 45px !important; }
+.currency-symbol { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--gold); font-weight: 700; font-size: 20px; }
+.btn-add {
+    width: 100%; padding: 16px; background: var(--accent-blue); color: white;
+    border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: 0.2s;
+}
+.btn-add:hover { background: #1d4ed8; transform: translateY(-1px); }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <a th:href="@{/dashboard}" class="sidebar-logo">
+    <div class="logo-box">R</div>
+    <div class="logo-text">
+      <span class="s-name">RevPay</span>
+      <span class="s-tag">Personal</span>
+    </div>
+  </a>
+  <div class="nav-section">Main</div>
+  <a th:href="@{/dashboard}" class="nav-item"><div class="nav-icon">&#127968;</div>Dashboard</a>
+  <a th:href="@{/profile}"   class="nav-item"><div class="nav-icon">&#128100;</div>Profile</a>
+  <div class="nav-section">Payments</div>
+  <a th:href="@{/send-money}"    class="nav-item"><div class="nav-icon">&#128184;</div>Send Money</a>
+  <a th:href="@{/add-money}"     class="nav-item active"><div class="nav-icon">&#10133;</div>Add Money</a>
+  <a th:href="@{/request-money}" class="nav-item"><div class="nav-icon">&#128232;</div>Request Money</a>
+  <a th:href="@{/withdraw-money}"      class="nav-item"><div class="nav-icon">&#127970;</div>Withdraw Money</a>
+  <div class="nav-section">Requests</div>
+  <a th:href="@{/incoming-requests}" class="nav-item">
+    <div class="nav-icon">&#128229;</div>Incoming Requests
+    <span class="nav-badge" th:if="${incomingCount != null and incomingCount > 0}" th:text="${incomingCount}"></span>
+  </a>
+  <a th:href="@{/outgoing-requests}" class="nav-item">
+    <div class="nav-icon">&#128228;</div>Outgoing Requests
+    <span class="nav-badge" th:if="${outgoingCount != null and outgoingCount > 0}" th:text="${outgoingCount}"></span>
+  </a>
+  <div class="nav-section">History</div>
+  <a th:href="@{/transactions}"        class="nav-item"><div class="nav-icon">&#128260;</div>Transactions</a>
+  <a th:href="@{/transactions-history}" class="nav-item"><div class="nav-icon">&#128203;</div>Transaction History</a>
+  <a th:href="@{/invoices}"            class="nav-item"><div class="nav-icon">&#129534;</div>My Invoices</a>
+  <div class="nav-section">Account</div>
+  <a th:href="@{/payment-methods}" class="nav-item"><div class="nav-icon">&#128179;</div>Payment Methods</a>
+  <a th:href="@{/notifications}"   class="nav-item"><div class="nav-icon">&#128276;</div>Notifications</a>
+  <div class="sidebar-bottom">
+    <a th:href="@{/logout}" class="nav-item logout"><div class="nav-icon">&#128682;</div>Logout</a>
+  </div>
+</aside>
+
+<div class="main">
+    <div class="topbar">
+        <div>
+            <div class="topbar-title">Add Money</div>
+            <div class="topbar-sub">Top up your wallet balance</div>
+        </div>
+        <div class="topbar-right">
+            <div class="tb-avatar" th:text="${username != null ? #strings.substring(username,0,1).toUpperCase() : 'R'}">R</div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="add-card">
+            <div class="sec-header">
+                <div class="sec-icon">💰</div>
+                <div class="sec-title">Wallet Top-up</div>
+                <div class="sec-sub">Enter the amount to add to your balance</div>
+            </div>
+            
+            <div class="alert alert-error" th:if="${error}">
+                <span>✕</span> <span th:text="${error}">Something went wrong.</span>
+            </div>
+            <div class="alert alert-success" th:if="${success}">
+                <span>✓</span> <span th:text="${success}">Balance updated.</span>
+            </div>
+            
+            <form th:action="@{/add-money}" method="post">
+                <div class="field">
+                    <label>Amount (INR)</label>
+                    <div class="input-wrapper">
+                        <span class="currency-symbol">₹</span>
+                        <input type="number" step="0.01" name="amount" class="amount-input" placeholder="0.00" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-add">Add Funds Now →</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

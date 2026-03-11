@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>RevPay Business Loans</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6f9;
+margin:0;
+}
+
+.sidebar{
+width:220px;
+height:100vh;
+background:#1e293b;
+position:fixed;
+color:white;
+padding-top:20px;
+}
+
+.sidebar h2{
+text-align:center;
+margin-bottom:30px;
+}
+
+.sidebar a{
+display:block;
+padding:12px;
+color:white;
+text-decoration:none;
+}
+
+.sidebar a:hover{
+background:#334155;
+}
+
+.main{
+margin-left:220px;
+padding:30px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+th,td{
+padding:12px;
+border-bottom:1px solid #ddd;
+text-align:center;
+}
+
+th{
+background:#2c7be5;
+color:white;
+}
+
+button{
+padding:8px 15px;
+border:none;
+background:#16a34a;
+color:white;
+border-radius:5px;
+cursor:pointer;
+}
+
+button:hover{
+background:#15803d;
+}
+
+.status{
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>RevPay</h2>
+
+<a href="/business-dashboard">Dashboard</a>
+<a href="/business-wallet">Wallet</a>
+<a href="/business-loans">Loans</a>
+<a href="/business-transactions">Transactions</a>
+<a href="/profile">Profile</a>
+<a href="/logout">Logout</a>
+
+</div>
+
+<div class="main">
+
+<h2>Your Loans</h2>
+
+<table>
+
+<tr>
+<th>Loan Amount</th>
+<th>Remaining Amount</th>
+<th>Monthly EMI</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+<tr th:each="loan : ${loans}">
+
+<td th:text="${loan.amount}"></td>
+
+<td th:text="${loan.remainingAmount}"></td>
+
+<td th:text="${loan.emi}"></td>
+
+<td class="status" th:text="${loan.status}"></td>
+
+<td>
+
+<a th:if="${loan.remainingAmount > 0}"
+   th:href="@{/pay-emi/{id}(id=${loan.id})}">
+
+<button>Pay EMI</button>
+
+</a>
+
+<span th:if="${loan.remainingAmount == 0}">
+Loan Paid
+</span>
+
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+</body>
+</html>

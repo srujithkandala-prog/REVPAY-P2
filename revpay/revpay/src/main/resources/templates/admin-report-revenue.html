@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>Revenue Report</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6f9;
+padding:30px;
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+button{
+background:#2563eb;
+color:white;
+border:none;
+padding:8px 14px;
+border-radius:6px;
+cursor:pointer;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:8px;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+<h2>Revenue Report</h2>
+
+<a href="/admin/reports">
+<button>← Back</button>
+</a>
+
+</div>
+
+<div class="card">
+
+<h3>Total Platform Revenue</h3>
+
+<h1>₹ <span th:text="${revenue}"></span></h1>
+
+</div>
+
+</body>
+
+</html>

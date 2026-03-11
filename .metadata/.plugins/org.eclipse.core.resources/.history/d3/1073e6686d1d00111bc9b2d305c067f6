@@ -1,0 +1,29 @@
+# ================================================================
+# application-test.properties
+# Loaded automatically when @ActiveProfiles("test") is used.
+# Overrides application.properties so tests do NOT need:
+#   - a real MySQL connection
+#   - a real Gmail SMTP server
+# ================================================================
+
+# \u2500\u2500 DATABASE: H2 in-memory (replaces MySQL during tests) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=MySQL
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+
+# \u2500\u2500 JPA: use H2 dialect, recreate schema fresh each test run \u2500\u2500\u2500\u2500
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.jpa.hibernate.ddl-auto=create-drop
+spring.jpa.show-sql=true
+
+# \u2500\u2500 MAIL: dummy local values so JavaMailSender bean is created \u2500\u2500
+# Spring Boot creates the JavaMailSender bean as long as these
+# properties exist \u2014 it does NOT actually try to connect during
+# startup, only when an email is actually sent.
+spring.mail.host=localhost
+spring.mail.port=3025
+spring.mail.username=test@test.com
+spring.mail.password=test
+spring.mail.properties.mail.smtp.auth=false
+spring.mail.properties.mail.smtp.starttls.enable=false

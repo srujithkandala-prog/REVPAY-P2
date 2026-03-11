@@ -1,0 +1,8 @@
+package com.revpay.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import com.revpay.entity.LoanPayment;
+
+public interface LoanPaymentRepository extends JpaRepository<LoanPayment, Long> {
+
+}

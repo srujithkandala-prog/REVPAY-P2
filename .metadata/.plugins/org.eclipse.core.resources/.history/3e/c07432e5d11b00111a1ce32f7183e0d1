@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Reports</title>
+</head>
+
+<body>
+
+<h2>Admin Reports</h2>
+
+<ul>
+
+<li>Daily Transactions Report</li>
+<li>Loan Reports</li>
+<li>User Activity Report</li>
+<li>Revenue Report</li>
+
+</ul>
+
+</body>
+
+</html>

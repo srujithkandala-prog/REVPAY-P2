@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>My Invoices</title>
+
+<style>
+
+/* ===== GLOBAL ===== */
+
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:linear-gradient(120deg,#f1f5f9,#e2e8f0,#f8fafc);
+background-size:300% 300%;
+animation:bgMove 12s infinite alternate;
+padding:30px;
+}
+
+@keyframes bgMove{
+0%{background-position:left;}
+100%{background-position:right;}
+}
+
+/* ===== PAGE HEADER ===== */
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+
+.header h2{
+margin:0;
+}
+
+/* BACK BUTTON */
+
+.back-btn{
+text-decoration:none;
+background:#2563eb;
+color:white;
+padding:8px 14px;
+border-radius:6px;
+transition:0.2s;
+}
+
+.back-btn:hover{
+background:#1d4ed8;
+}
+
+/* ===== CARD ===== */
+
+.card{
+background:white;
+padding:25px;
+border-radius:12px;
+box-shadow:0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* ===== TABLE ===== */
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px;
+}
+
+th{
+background:#0f172a;
+color:white;
+padding:12px;
+text-align:left;
+}
+
+td{
+padding:12px;
+border-bottom:1px solid #e2e8f0;
+}
+
+tr{
+transition:0.2s;
+}
+
+tr:hover{
+background:#f8fafc;
+transform:scale(1.01);
+}
+
+/* ===== STATUS ===== */
+
+.pending{
+color:#f59e0b;
+font-weight:bold;
+}
+
+.paid{
+color:#22c55e;
+font-weight:bold;
+}
+
+/* ===== BUTTON ===== */
+
+.pay-btn{
+padding:7px 14px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+transition:0.2s;
+}
+
+.pay-btn:hover{
+background:#1d4ed8;
+transform:scale(1.05);
+}
+
+/* EMPTY MESSAGE */
+
+.empty{
+text-align:center;
+padding:25px;
+color:#64748b;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+<h2>My Pending Invoices 💳</h2>
+
+<a href="/dashboard" class="back-btn">← Back to Dashboard</a>
+
+</div>
+
+<div class="card">
+
+<table th:if="${invoices.size() > 0}">
+
+<tr>
+<th>Business</th>
+<th>Description</th>
+<th>Amount</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+<tr th:each="i : ${invoices}">
+
+<td th:text="${i.businessEmail}"></td>
+
+<td th:text="${i.description}"></td>
+
+<td>
+₹ <span th:text="${i.amount}"></span>
+</td>
+
+<td>
+
+<span th:if="${i.status=='PENDING'}" class="pending">
+PENDING
+</span>
+
+<span th:if="${i.status=='PAID'}" class="paid">
+PAID
+</span>
+
+</td>
+
+<td>
+
+<a th:if="${i.status=='PENDING'}"
+th:href="@{/pay-invoice/{id}(id=${i.id})}">
+
+<button class="pay-btn">
+Pay
+</button>
+
+</a>
+
+</td>
+
+</tr>
+
+</table>
+
+<p th:if="${invoices.size()==0}" class="empty">
+No invoices available.
+</p>
+
+</div>
+
+</body>
+</html>

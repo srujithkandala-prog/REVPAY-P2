@@ -1,0 +1,115 @@
+package com.revpay.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import com.revpay.entity.BusinessProfile;
+import com.revpay.entity.Role;
+import com.revpay.entity.User;
+import com.revpay.repository.BusinessProfileRepository;
+import com.revpay.repository.UserRepository;
+
+@Controller
+public class AuthController {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private BusinessProfileRepository businessRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
+    // ================================
+    // SHOW REGISTER PAGE
+    // ================================
+    @GetMapping("/register")
+    public String showRegisterPage(Model model) {
+
+        model.addAttribute("user", new User());
+
+        return "register";
+    }
+
+
+    // ================================
+    // REGISTER USER
+    // ================================
+    @PostMapping("/register")
+    public String registerUser(
+
+            @ModelAttribute User user,
+
+            @RequestParam String confirmPassword,
+
+            @RequestParam(required = false) String businessName,
+            @RequestParam(required = false) String gstNumber,
+            @RequestParam(required = false) String businessType,
+            @RequestParam(required = false) String businessAddress
+
+    ) {
+
+        // =============================
+        // PASSWORD MATCH CHECK
+        // =============================
+        if (!user.getPassword().equals(confirmPassword)) {
+
+            return "redirect:/register?error=password";
+        }
+
+
+        // =============================
+        // EMAIL DUPLICATE CHECK
+        // =============================
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+
+            return "redirect:/register?error=email";
+        }
+
+
+        // =============================
+        // ROLE DEFAULT SAFETY
+        // =============================
+        if (user.getRole() == null) {
+
+            user.setRole(Role.PERSONAL);
+        }
+
+
+        // =============================
+        // ENCODE PASSWORD
+        // =============================
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+
+        // =============================
+        // SAVE USER
+        // =============================
+        userRepository.save(user);
+
+
+        // =============================
+        // BUSINESS PROFILE SAVE
+        // =============================
+        if (user.getRole() == Role.BUSINESS) {
+
+            BusinessProfile business = new BusinessProfile();
+
+            business.setBusinessName(businessName);
+            business.setGstNumber(gstNumber);
+            business.setBusinessType(businessType);
+            business.setBusinessAddress(businessAddress);
+
+            business.setUser(user);
+
+            businessRepository.save(business);
+        }
+
+        return "redirect:/login?success";
+    }
+}

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RevPay Premier | My Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy-dark: #0f172a;
+            --gold: #c5a059;
+            --white: #ffffff;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--navy-dark); color: white; display: flex; }
+        
+        /* Sidebar Navigation */
+        .sidebar { width: 240px; height: 100vh; background: #080d1a; padding: 40px 20px; position: fixed; border-right: 1px solid var(--glass); }
+        .sidebar a { display: block; color: #94a3b8; padding: 15px; text-decoration: none; border-radius: 8px; margin-bottom: 10px; transition: 0.3s; }
+        .sidebar a:hover, .sidebar a.active { background: var(--glass); color: var(--gold); }
+
+        .content { margin-left: 240px; padding: 50px; width: 100%; }
+        
+        /* Premium Wallet Card */
+        .wallet-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            margin-bottom: 40px;
+        }
+        .wallet-card h3 { color: var(--gold); font-size: 14px; text-transform: uppercase; letter-spacing: 2px; margin: 0; }
+        .balance { font-size: 48px; font-weight: 800; margin: 20px 0; }
+        .card-footer { display: flex; justify-content: space-between; align-items: flex-end; }
+        .chip { width: 50px; height: 35px; background: var(--gold); border-radius: 6px; opacity: 0.8; }
+
+        /* Quick Actions */
+        .actions { display: flex; gap: 20px; margin-bottom: 50px; }
+        .btn-action { 
+            flex: 1; padding: 20px; background: var(--glass); border: 1px solid var(--glass); 
+            border-radius: 12px; color: white; text-decoration: none; text-align: center; transition: 0.3s;
+        }
+        .btn-action:hover { border-color: var(--gold); background: rgba(197, 160, 89, 0.05); }
+
+        /* Transaction Table */
+        .recent-activity { background: var(--glass); border-radius: 20px; padding: 30px; border: 1px solid var(--glass); }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; color: #94a3b8; font-size: 12px; padding-bottom: 20px; border-bottom: 1px solid var(--glass); }
+        td { padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.02); }
+        .amt-pos { color: #10b981; font-weight: 700; }
+        .amt-neg { color: #ef4444; font-weight: 700; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2 style="color:var(--gold); margin-bottom: 40px;">REVPAY</h2>
+        <a href="#" class="active">Overview</a>
+        <a href="#">Transactions</a>
+        <a href="#">Security Settings</a>
+        <a href="#">Support</a>
+    </div>
+
+    <div class="content">
+        <h1>Welcome Back, <span style="color:var(--gold);">Client</span></h1>
+        
+        
+
+        <div class="wallet-card">
+            <h3>Premier Portfolio Balance</h3>
+            <div class="balance">₹ 1,24,500.00</div>
+            <div class="card-footer">
+                <div>**** **** **** 8829</div>
+                <div class="chip"></div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a href="#" class="btn-action">Transfer Capital</a>
+            <a href="#" class="btn-action">Request Funding</a>
+            <a href="#" class="btn-action">Download Ledger</a>
+        </div>
+
+        <div class="recent-activity">
+            <h2 style="margin-top:0">Audit Trail</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>DESCRIPTION</th>
+                        <th>DATE</th>
+                        <th>STATUS</th>
+                        <th>AMOUNT</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Corporate Wire - HDFC Bank</td>
+                        <td>Oct 24, 2026</td>
+                        <td style="color:var(--gold)">Processed</td>
+                        <td class="amt-pos">+ ₹ 50,000.00</td>
+                    </tr>
+                    <tr>
+                        <td>Merchant Payment - Cloud Services</td>
+                        <td>Oct 22, 2026</td>
+                        <td style="color:var(--gold)">Processed</td>
+                        <td class="amt-neg">- ₹ 12,400.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,34 @@
+# Uses H2 in-memory DB during tests \u2014 no MySQL connection needed
+spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=MySQL
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.jpa.hibernate.ddl-auto=create-drop
+spring.jpa.show-sql=true
+
+# Disable mail during tests
+spring.mail.host=localhost
+spring.mail.port=3025
+```
+
+---
+
+## STEP 4 \u2014 Create the 7 Test Files
+
+All test files go inside `revpay/src/test/java/com/revpay/`. You need to create two sub-folders: `service/` and `repository/`.
+
+**Final folder layout:**
+```
+src/test/java/com/revpay/
+\u251C\u2500\u2500 RevpayApplicationTests.java     \u2190 already exists, leave it alone
+\u251C\u2500\u2500 service/                        \u2190 CREATE this folder
+\u2502   \u251C\u2500\u2500 UserServiceTest.java
+\u2502   \u251C\u2500\u2500 WalletServiceTest.java
+\u2502   \u251C\u2500\u2500 MoneyRequestServiceTest.java
+\u2502   \u251C\u2500\u2500 LoanServiceTest.java
+\u2502   \u251C\u2500\u2500 TransactionServiceTest.java
+\u2502   \u2514\u2500\u2500 NotificationServiceTest.java
+\u2514\u2500\u2500 repository/                     \u2190 CREATE this folder
+    \u2514\u2500\u2500 UserRepositoryTest.java

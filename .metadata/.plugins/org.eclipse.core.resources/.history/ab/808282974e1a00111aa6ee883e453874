@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Forgot Password</title>
+</head>
+<body style="font-family:Arial;text-align:center;margin-top:100px;">
+
+<h2>Security Verification</h2>
+
+<form action="/verify-answer" method="post">
+
+    <input type="hidden" name="email" th:value="${email}">
+
+    <p th:text="${question}"></p>
+
+    <input type="text"
+           name="answer"
+           placeholder="Enter your answer"
+           required>
+
+    <button type="submit">Verify</button>
+
+</form>
+</body>
+</html>

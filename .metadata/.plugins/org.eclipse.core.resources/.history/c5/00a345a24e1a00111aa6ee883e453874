@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Forgot Password</title>
+</head>
+<body style="font-family:Arial;text-align:center;margin-top:100px;">
+
+<h2>Create New Password</h2>
+
+<form action="/reset-password" method="post">
+
+    <input type="hidden" name="email" th:value="${email}">
+
+    <input type="password"
+           name="newPassword"
+           placeholder="New Password"
+           required>
+
+    <button type="submit">Update Password</button>
+
+</form>
+</form>
+</body>
+</html>

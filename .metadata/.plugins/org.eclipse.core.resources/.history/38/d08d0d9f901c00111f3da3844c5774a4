@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>Loan Repayments</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:#f1f5f9;
+color:#334155;
+}
+
+/* LAYOUT */
+
+.wrapper{
+display:flex;
+height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:240px;
+background:linear-gradient(180deg,#0f172a,#020617);
+color:white;
+display:flex;
+flex-direction:column;
+}
+
+.sidebar h2{
+text-align:center;
+padding:20px;
+margin:0;
+border-bottom:1px solid #1e293b;
+}
+
+.sidebar a{
+display:block;
+padding:12px 20px;
+color:#cbd5f5;
+text-decoration:none;
+border-left:3px solid transparent;
+transition:0.2s;
+}
+
+.sidebar a:hover{
+background:#1e293b;
+border-left:3px solid #38bdf8;
+color:white;
+}
+
+/* MAIN */
+
+.main{
+flex:1;
+padding:40px;
+}
+
+/* HEADER */
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.dashboard-btn{
+background:#16a34a;
+color:white;
+padding:8px 15px;
+border-radius:6px;
+text-decoration:none;
+}
+
+.dashboard-btn:hover{
+background:#15803d;
+}
+
+/* CARD */
+
+.card{
+background:white;
+padding:25px;
+border-radius:12px;
+box-shadow:0 10px 25px rgba(0,0,0,0.08);
+}
+
+/* TABLE */
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px;
+}
+
+th{
+background:#0f172a;
+color:white;
+padding:12px;
+}
+
+td{
+padding:12px;
+border-bottom:1px solid #e2e8f0;
+}
+
+tr:hover{
+background:#f8fafc;
+}
+
+.amount{
+color:#16a34a;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="wrapper">
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<h2>RevPay Business</h2>
+
+<a href="/business-dashboard"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+<a href="/send-money"><i class="fa-solid fa-paper-plane"></i> Send Money</a>
+<a href="/transactions-history"><i class="fa-solid fa-clock"></i> Transactions</a>
+<a href="/create-invoice"><i class="fa-solid fa-file-invoice"></i> Create Invoice</a>
+<a href="/apply-loan"><i class="fa-solid fa-landmark"></i> Apply Loan</a>
+<a href="/my-loans"><i class="fa-solid fa-coins"></i> My Loans</a>
+<a href="/loan-payment-history"><i class="fa-solid fa-money-bill-wave"></i> Repayments</a>
+<a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<div class="header">
+
+<h2>Loan Repayment History</h2>
+
+<a href="/business-dashboard" class="dashboard-btn">
+← Dashboard
+</a>
+
+</div>
+
+<div class="card">
+
+<table>
+
+<tr>
+<th>Business</th>
+<th>Amount Paid</th>
+<th>Date</th>
+<th>Remaining Balance</th>
+</tr>
+
+<tr th:each="t : ${repayments}">
+
+<td th:text="${t.businessEmail}"></td>
+
+<td class="amount">
+₹ <span th:text="${t.amountPaid}"></span>
+</td>
+
+<td th:text="${#temporals.format(t.paymentDate,'dd MMM yyyy')}"></td>
+
+<td>
+₹ <span th:text="${t.remainingBalance}"></span>
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,78 @@
+package com.revpay.serviceimpl;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.revpay.dto.MoneyRequestDTO;
+import com.revpay.entity.MoneyRequest;
+import com.revpay.repository.MoneyRequestRepository;
+import com.revpay.service.MoneyRequestService;
+
+@Service
+public class MoneyRequestServiceImpl implements MoneyRequestService {
+
+    @Autowired
+    private MoneyRequestRepository repository;
+
+    @Override
+    public void requestMoney(MoneyRequestDTO dto) {
+
+        MoneyRequest request = new MoneyRequest();
+
+        request.setRequesterEmail(dto.getRequesterEmail());
+        request.setReceiverEmail(dto.getReceiverEmail());
+        request.setAmount(dto.getAmount());
+        request.setPurpose(dto.getPurpose());
+
+        repository.save(request);
+    }
+
+    @Override
+    public List<MoneyRequestDTO> getRequestsForUser(String receiverEmail) {
+
+        List<MoneyRequest> requests =
+                repository.findByReceiverEmailOrderByCreatedDateDesc(receiverEmail);
+
+        return requests.stream().map(r -> {
+
+            MoneyRequestDTO dto = new MoneyRequestDTO();
+
+            dto.setId(r.getId());
+            dto.setRequesterEmail(r.getRequesterEmail());
+            dto.setReceiverEmail(r.getReceiverEmail());
+            dto.setAmount(r.getAmount());
+            dto.setStatus(r.getStatus());
+            dto.setCreatedDate(r.getCreatedDate());
+
+            return dto;
+
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public void approveRequest(Long requestId) {
+
+        MoneyRequest request = repository.findById(requestId).orElse(null);
+
+        if(request != null) {
+
+            request.setStatus("APPROVED");
+            repository.save(request);
+        }
+    }
+
+    @Override
+    public void rejectRequest(Long requestId) {
+
+        MoneyRequest request = repository.findById(requestId).orElse(null);
+
+        if(request != null) {
+
+            request.setStatus("REJECTED");
+            repository.save(request);
+        }
+    }
+}

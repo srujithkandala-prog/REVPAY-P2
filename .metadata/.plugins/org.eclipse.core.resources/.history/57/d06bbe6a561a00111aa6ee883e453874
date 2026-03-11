@@ -1,0 +1,102 @@
+package com.revpay.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import com.revpay.repository.UserRepository;
+import com.revpay.entity.BusinessProfile;
+import com.revpay.entity.Role;
+import com.revpay.entity.User;
+import com.revpay.service.UserService;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
+import com.revpay.dto.RegisterRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
+@Controller
+public class AuthController {
+
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private BusinessProfileRepository businessRepository;
+
+    @GetMapping("/register")
+    public String showRegisterPage(Model model) {
+        model.addAttribute("user", new User());
+        return "register";
+    }
+
+    @PostMapping("/register")
+    public String registerUser(
+            @Valid @ModelAttribute("user") RegisterRequest request,
+            BindingResult result,
+            Model model) {
+
+        if(!request.getPassword().equals(request.getConfirmPassword())){
+            result.rejectValue("confirmPassword",
+                    "error.user",
+                    "Passwords do not match");
+        }
+
+        if(userRepository.findByEmail(request.getEmail()).isPresent()){
+            result.rejectValue("email",
+                    "error.user",
+                    "Email already registered");
+        }
+
+        if(result.hasErrors()){
+            return "register";
+        }
+
+        User user = new User();
+
+        user.setFullName(request.getFullName());
+        user.setEmail(request.getEmail());
+        user.setPhone(request.getPhone());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(Role.PERSONAL);
+
+        user.setSecurityQuestion(request.getSecurityQuestion());
+        user.setSecurityAnswer(request.getSecurityAnswer());
+
+        userRepository.save(user);
+
+        return "redirect:/login";
+    }
+    @PostMapping("/register")
+    public String registerUser(
+            @ModelAttribute User user,
+            @RequestParam(required=false) String businessName,
+            @RequestParam(required=false) String gstNumber,
+            @RequestParam(required=false) String businessType,
+            @RequestParam(required=false) String businessAddress){
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        userRepository.save(user);
+
+        if(user.getRole().name().equals("BUSINESS")){
+
+            BusinessProfile bp = new BusinessProfile();
+
+            bp.setBusinessName(businessName);
+            bp.setGstNumber(gstNumber);
+            bp.setBusinessType(businessType);
+            bp.setBusinessAddress(businessAddress);
+
+            bp.setUser(user);
+
+            businessRepository.save(bp);
+        }
+
+        return "redirect:/login?success";
+    }
+}

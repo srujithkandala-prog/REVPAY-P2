@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>RevPay Login</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6f9;
+}
+
+.container{
+width:400px;
+margin:80px auto;
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 0 10px #ccc;
+}
+
+h2{
+text-align:center;
+}
+
+input{
+width:100%;
+padding:10px;
+margin-top:10px;
+border:1px solid #ccc;
+border-radius:5px;
+}
+
+button{
+width:100%;
+padding:10px;
+margin-top:15px;
+background:#2c7be5;
+color:white;
+border:none;
+border-radius:5px;
+cursor:pointer;
+}
+
+button:hover{
+background:#1a68d1;
+}
+
+.links{
+margin-top:15px;
+text-align:center;
+}
+
+.links a{
+display:block;
+margin-top:8px;
+text-decoration:none;
+color:#2c7be5;
+}
+
+.error{
+color:red;
+text-align:center;
+margin-top:10px;
+}
+
+.success{
+color:green;
+text-align:center;
+margin-top:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>RevPay Login</h2>
+
+<!-- LOGIN FORM -->
+
+<form th:action="@{/login}" method="post">
+
+<input type="text" name="username" placeholder="Email" required>
+
+<input type="password" name="password" placeholder="Password" required>
+
+<button type="submit">Login</button>
+
+</form>
+
+<!-- ERROR MESSAGE -->
+
+<div th:if="${param.error}" class="error">
+Invalid email or password
+</div>
+
+<!-- LOGOUT MESSAGE -->
+
+<div th:if="${param.logout}" class="success">
+You have been logged out successfully
+</div>
+
+<!-- LINKS -->
+
+<div class="links">
+
+<a th:href="@{/forgot-password}">Forgot Password?</a>
+
+<a th:href="@{/register}">No account? Register</a>
+
+<a th:href="@{/}">← Back to Home</a>
+
+</div>
+
+</div>
+
+</body>
+</html>

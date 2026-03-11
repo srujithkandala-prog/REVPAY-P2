@@ -1,0 +1,122 @@
+package com.revpay.controller;
+
+import java.security.Principal;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import com.revpay.entity.Transaction;
+import com.revpay.entity.User;
+import com.revpay.repository.TransactionRepository;
+import com.revpay.repository.UserRepository;
+
+@Controller
+public class LoginController {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
+
+    @GetMapping("/login")
+    public String loginPage() {
+        return "login";
+    }
+
+    @GetMapping("/dashboard")
+    public String dashboard(Model model, Principal principal) {
+
+        String email = principal.getName();
+
+        User user = userRepository.findByEmail(email).orElse(null);
+        
+
+        if (user == null) {
+            return "redirect:/login";
+        }
+        if ("ADMIN".equals(user.getRole().name())) {
+            return "redirect:/admin-dashboard";
+        }
+
+        // 🔥 ROLE BASED REDIRECT
+        if ("BUSINESS".equals(user.getRole().name())) {
+            return "redirect:/business-dashboard";
+        }
+
+        List<Transaction> transactions =
+                transactionRepository
+                        .findBySenderEmailOrReceiverEmailOrderByTransactionDateDesc(
+                                email, email);
+
+        double totalSent = 0;
+        double totalReceived = 0;
+
+        for (Transaction t : transactions) {
+
+            if (email.equals(t.getSenderEmail()))
+                totalSent += t.getAmount();
+
+            if (email.equals(t.getReceiverEmail()))
+                totalReceived += t.getAmount();
+        }
+
+        model.addAttribute("user", user);
+        model.addAttribute("transactions", transactions);
+        model.addAttribute("totalSent", totalSent);
+        model.addAttribute("totalReceived", totalReceived);
+
+        return "dashboard";
+    }
+
+    // ⭐ BUSINESS DASHBOARD
+    @GetMapping("/business-dashboard")
+    public String businessDashboard(Model model, Principal principal) {
+
+        String email = principal.getName();
+
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        List<Transaction> transactions =
+                transactionRepository
+                        .findBySenderEmailOrReceiverEmailOrderByTransactionDateDesc(
+                                email, email);
+
+        double revenue = 0;
+
+        for (Transaction t : transactions) {
+            if (email.equals(t.getReceiverEmail())) {
+                revenue += t.getAmount();
+            }
+        }
+
+        model.addAttribute("user", user);
+        model.addAttribute("wallet", user.getWalletBalance());
+        model.addAttribute("transactions", transactions);
+        model.addAttribute("revenue", revenue);
+
+        return "business-dashboard";
+    }
+    @GetMapping("/forgot-password")
+    public String forgotPasswordPage() {
+        return "forgot-password";
+    }
+
+    @GetMapping("/transactions")
+    public String transactions(Model model, Principal principal) {
+
+        String email = principal.getName();
+
+        List<Transaction> transactions =
+                transactionRepository
+                        .findBySenderEmailOrReceiverEmailOrderByTransactionDateDesc(
+                                email, email);
+
+        model.addAttribute("transactions", transactions);
+
+        return "transactions";
+    }
+}

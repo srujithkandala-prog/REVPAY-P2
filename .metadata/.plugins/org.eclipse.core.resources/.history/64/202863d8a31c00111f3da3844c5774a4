@@ -1,0 +1,30 @@
+package com.revpay.serviceimpl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.revpay.entity.Transaction;
+import com.revpay.repository.TransactionRepository;
+import com.revpay.service.TransactionService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+@Service
+public class TransactionServiceImpl implements TransactionService {
+	private static final Logger logger = LogManager.getLogger(TransactionServiceImpl.class);
+
+    @Autowired
+    private TransactionRepository transactionRepository;
+
+    @Override
+    public List<Transaction> getAllTransactions() {
+        return transactionRepository.findAll();
+    }
+
+    @Override
+    public void saveTransaction(Transaction transaction) {
+        transactionRepository.save(transaction);
+    }
+}

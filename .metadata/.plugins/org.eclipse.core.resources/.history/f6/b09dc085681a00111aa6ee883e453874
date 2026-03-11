@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <style>
+        :root {
+            --bank-navy: #0a192f;
+            --bank-blue: #112240;
+            --safe-green: #64ffda;
+            --text-slate: #8892b0;
+        }
+        body {
+            background-color: var(--bank-navy);
+            color: white;
+            font-family: 'Inter', sans-serif;
+        }
+        .security-hero {
+            height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle at center, #112240 0%, #0a192f 100%);
+            border-bottom: 4px solid var(--bank-blue);
+        }
+        .hero-box {
+            border: 1px solid rgba(100, 255, 218, 0.2);
+            padding: 60px;
+            background: rgba(17, 34, 64, 0.5);
+            backdrop-filter: blur(20px);
+            border-radius: 4px; /* Sharp corners feel more "Industrial/Secure" */
+        }
+        .status-bar {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--safe-green);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+        }
+        .pulse {
+            width: 8px; height: 8px;
+            background: var(--safe-green);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--safe-green);
+            animation: blink 2s infinite;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        
+        .btn-vault {
+            background: transparent;
+            border: 1px solid var(--safe-green);
+            color: var(--safe-green);
+            padding: 15px 40px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-vault:hover {
+            background: rgba(100, 255, 218, 0.1);
+            box-shadow: 0 0 20px rgba(100, 255, 218, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <section class="security-hero">
+        <div class="hero-box">
+            <div class="status-bar">
+                <div class="pulse"></div> System Online: 256-bit AES Encryption Active
+            </div>
+            <h1 style="font-size: 50px; margin-bottom: 20px;">Your Capital, <br>Protected by RevPay.</h1>
+            <p style="color: var(--text-slate); margin-bottom: 40px;">The next generation of institutional-grade payment processing.</p>
+            <button class="btn-vault">Enter Secure Portal</button>
+        </div>
+    </section>
+</body>
+</html>

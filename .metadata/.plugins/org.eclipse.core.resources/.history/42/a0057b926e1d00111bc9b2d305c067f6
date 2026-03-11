@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>System Health - RevPay Admin</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: linear-gradient(135deg, #f8f9fa 0%, #f0f1f5 100%);
+            color: #1f2937;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 280px; height: 100vh;
+            background: #0f1419;
+            color: white;
+            position: fixed;
+            left: 0; top: 0;
+            padding: 28px 20px;
+            overflow-y: auto;
+            border-right: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 36px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .logo {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, #6366f1 0%, #a78bfa 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .brand-text h3 { margin: 0; font-size: 16px; font-weight: 700; }
+        .brand-text p { margin: 0; font-size: 11px; color: rgba(255,255,255,0.5); text-transform: uppercase; }
+
+        .nav-section { margin-bottom: 28px; }
+        .nav-label { 
+            font-size: 11px; 
+            font-weight: 700; 
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: rgba(255,255,255,0.35);
+            margin-bottom: 14px;
+            display: block;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: rgba(255,255,255,0.65);
+            text-decoration: none;
+            font-size: 14px;
+            padding: 11px 14px;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            transition: 0.35s ease;
+            font-weight: 500;
+        }
+
+        .icon-box {
+            width: 36px; height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.06);
+            border-radius: 8px;
+            transition: 0.35s ease;
+            flex-shrink: 0;
+        }
+
+        .sidebar a:hover { background: rgba(99,102,241,0.15); color: rgba(255,255,255,0.95); }
+        .sidebar a:hover .icon-box { background: rgba(99,102,241,0.25); transform: translateX(4px); }
+
+        .sidebar a.active { 
+            background: rgba(99,102,241,0.2);
+            color: white;
+            border-left: 3px solid #6366f1;
+            padding-left: 11px;
+        }
+        .sidebar a.active .icon-box { background: #6366f1; color: white; box-shadow: 0 4px 12px rgba(99,102,241,0.4); }
+
+        .sidebar-nav { flex: 1; }
+        .sidebar-footer { margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08); }
+
+        .user-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 10px;
+            margin-bottom: 12px;
+            transition: 0.3s ease;
+        }
+        .user-card:hover { background: rgba(255,255,255,0.08); }
+
+        .avatar {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, #6366f1, #a78bfa);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .user-name { font-size: 13px; font-weight: 600; color: white; }
+        .user-role { font-size: 11px; color: rgba(255,255,255,0.5); }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: 10px;
+            background: rgba(239,68,68,0.08);
+            color: #fca5a5;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.3s ease;
+            border: 1px solid rgba(239,68,68,0.2);
+            font-weight: 500;
+        }
+        .logout-btn:hover { background: rgba(239,68,68,0.15); color: white; }
+
+        /* MAIN CONTENT */
+        .content {
+            margin-left: 280px;
+            padding: 36px 40px;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header h1 { font-size: 32px; font-weight: 800; margin: 0; letter-spacing: -1px; }
+
+        /* HEALTH METRICS GRID */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 36px;
+        }
+
+        .health-card {
+            background: white;
+            border-radius: 14px;
+            padding: 28px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.04);
+            transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
+        .health-card:hover {
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+            transform: translateY(-6px);
+        }
+
+        .health-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #6366f1, #a78bfa);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            border-radius: 14px 14px 0 0;
+        }
+
+        .health-card:hover::before { opacity: 1; }
+
+        .health-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .metric-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(99,102,241,0.1);
+            border-radius: 10px;
+            font-size: 20px;
+            color: #6366f1;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: #111827;
+            margin: 8px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .metric-sub {
+            font-size: 12px;
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        /* STATUS BADGE */
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(16,185,129,0.1);
+            color: #10b981;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .status-down {
+            background: rgba(239,68,68,0.1);
+            color: #ef4444;
+        }
+
+        .status-down .status-dot {
+            background: #ef4444;
+            animation: none;
+        }
+
+        /* MEMORY PROGRESS */
+        .progress-container {
+            margin-top: 16px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(0,0,0,0.08);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1, #a78bfa);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .sidebar { width: 260px; }
+            .content { margin-left: 260px; padding: 24px; }
+            .header h1 { font-size: 28px; }
+            .metrics-grid { grid-template-columns: 1fr; }
+            .metric-value { font-size: 28px; }
+        }
+
+        @media (max-width: 640px) {
+            .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); }
+            .content { margin-left: 0; padding: 16px; }
+            .header h1 { font-size: 24px; }
+            .metric-value { font-size: 24px; }
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 4px; }
+    </style>
+</head>
+
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo"><i class="bi bi-lightning-charge-fill"></i></div>
+            <div class="brand-text">
+                <h3>RevPay</h3>
+                <p>Admin Panel</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <span class="nav-label">Overview</span>
+                <a href="/admin-dashboard">
+                    <div class="icon-box"><i class="bi bi-speedometer2"></i></div>
+                    Dashboard
+                </a>
+                <a href="/admin/users">
+                    <div class="icon-box"><i class="bi bi-people-fill"></i></div>
+                    Users
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <span class="nav-label">Finance</span>
+                <a href="/admin/transactions">
+                    <div class="icon-box"><i class="bi bi-arrow-left-right"></i></div>
+                    Transactions
+                </a>
+                <a href="/admin/loans">
+                    <div class="icon-box"><i class="bi bi-bank2"></i></div>
+                    Loans
+                </a>
+                <a href="/admin/revenue">
+                    <div class="icon-box"><i class="bi bi-graph-up"></i></div>
+                    Revenue
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <span class="nav-label">Monitoring</span>
+                <a href="/admin/system-health" class="active">
+                    <div class="icon-box"><i class="bi bi-cpu"></i></div>
+                    System Health
+                </a>
+                <a href="/admin/live-transactions">
+                    <div class="icon-box"><i class="bi bi-broadcast"></i></div>
+                    Live Monitor
+                </a>
+                <a href="/admin/fraud-alerts">
+                    <div class="icon-box"><i class="bi bi-shield-exclamation"></i></div>
+                    Fraud Alerts
+                </a>
+                <a href="/admin/reports">
+                    <div class="icon-box"><i class="bi bi-file-earmark-text"></i></div>
+                    Reports
+                </a>
+                
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-card">
+                <div class="avatar">A</div>
+                <div>
+                    <div class="user-name">Admin User</div>
+                    <div class="user-role">Manager</div>
+                </div>
+            </div>
+            <a href="/logout" class="logout-btn">
+                <i class="bi bi-box-arrow-right"></i>
+                Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="content">
+        <div class="header">
+            <h1>System Health Monitor</h1>
+        </div>
+
+        <!-- HEALTH METRICS GRID -->
+        <div class="metrics-grid">
+            <!-- Total Users Card -->
+            <div class="health-card">
+                <div class="metric-header">
+                    <div>
+                        <div class="metric-label">Total Users</div>
+                    </div>
+                    <div class="metric-icon"><i class="bi bi-people-fill"></i></div>
+                </div>
+                <div class="metric-value" th:text="${totalUsers}">0</div>
+                <div class="metric-sub">Active system users</div>
+            </div>
+
+            <!-- Total Transactions Card -->
+            <div class="health-card">
+                <div class="metric-header">
+                    <div>
+                        <div class="metric-label">Total Transactions</div>
+                    </div>
+                    <div class="metric-icon"><i class="bi bi-arrow-left-right"></i></div>
+                </div>
+                <div class="metric-value" th:text="${totalTransactions}">0</div>
+                <div class="metric-sub">Processed transactions</div>
+            </div>
+
+            <!-- Total Loans Card -->
+            <div class="health-card">
+                <div class="metric-header">
+                    <div>
+                        <div class="metric-label">Total Loans</div>
+                    </div>
+                    <div class="metric-icon"><i class="bi bi-bank2"></i></div>
+                </div>
+                <div class="metric-value" th:text="${totalLoans}">0</div>
+                <div class="metric-sub">Active loan accounts</div>
+            </div>
+
+            <!-- Server Status Card -->
+            <div class="health-card">
+                <div class="metric-header">
+                    <div>
+                        <div class="metric-label">Server Status</div>
+                    </div>
+                    <div class="metric-icon"><i class="bi bi-server"></i></div>
+                </div>
+                <div th:if="${serverStatus == 'RUNNING'}" class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span th:text="${serverStatus}">Running</span>
+                </div>
+                <div th:if="${serverStatus != 'RUNNING'}" class="status-indicator status-down">
+                    <span class="status-dot"></span>
+                    <span th:text="${serverStatus}">Down</span>
+                </div>
+                <div class="metric-sub">System operational status</div>
+            </div>
+
+            <!-- Memory Usage Card -->
+            <div class="health-card">
+                <div class="metric-header">
+                    <div>
+                        <div class="metric-label">Memory Usage</div>
+                    </div>
+                    <div class="metric-icon"><i class="bi bi-memory"></i></div>
+                </div>
+                <div class="metric-value">
+                    <span th:text="${memoryUsed}">0</span> MB
+                </div>
+                <div class="metric-sub">
+                    <span th:text="${memoryUsed}">0</span> MB / 
+                    <span th:text="${memoryTotal}">0</span> MB
+                </div>
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>Usage</span>
+                        <span th:text="${#numbers.formatDecimal((memoryUsed / memoryTotal) * 100, 1, 1)}">0.0</span>%
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" th:style="'width: ' + ${#numbers.formatDecimal((memoryUsed / memoryTotal) * 100, 1, 1)} + '%'"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Uptime Card -->
+            <div class="health-card">
+                <div class="metric-header">
+                    <div>
+                        <div class="metric-label">System Uptime</div>
+                    </div>
+                    <div class="metric-icon"><i class="bi bi-clock-history"></i></div>
+                </div>
+                <div class="metric-value">99.9%</div>
+                <div class="metric-sub">Availability this month</div>
+                <div class="status-indicator" style="margin-top: 16px;">
+                    <span class="status-dot"></span>
+                    <span>All systems operational</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

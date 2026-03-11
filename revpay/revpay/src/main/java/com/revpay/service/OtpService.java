@@ -1,0 +1,42 @@
+package com.revpay.service;
+
+import java.util.Random;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Service;
+
+@Service
+public class OtpService {
+
+    @Autowired
+    private JavaMailSender mailSender;
+
+    public String generateOtp() {
+
+        Random random = new Random();
+
+        int otp = 100000 + random.nextInt(900000);
+
+        return String.valueOf(otp);
+    }
+
+    public void sendOtp(String email, String otp) {
+
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        message.setFrom("revpayapp@gmail.com");
+
+        message.setTo(email);
+
+        message.setSubject("RevPay OTP Verification");
+
+        message.setText(
+                "Your RevPay verification OTP is: " + otp +
+                "\n\nThis OTP will verify your RevPay account."
+        );
+
+        mailSender.send(message);
+    }
+}

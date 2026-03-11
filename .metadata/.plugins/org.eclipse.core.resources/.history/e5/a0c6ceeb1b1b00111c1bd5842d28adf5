@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Invoices</title>
+
+<style>
+body{font-family:Arial;background:#f4f6f9;padding:20px;}
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+table,th,td{
+border:1px solid #ddd;
+padding:10px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Invoice History 🧾</h2>
+
+<table>
+
+<tr>
+<th>Customer</th>
+<th>Email</th>
+<th>Description</th>
+<th>Item</th>
+<th>Qty</th>
+<th>Unit Price</th>
+<th>Tax</th>
+<th>Amount</th>
+<th>Status</th>
+<th>Date</th>
+<th>Due Date</th>
+</tr>
+
+<tr th:each="i : ${invoices}">
+<td th:text="${i.customerName}"></td>
+<td th:text="${i.customerEmail}"></td>
+<td th:text="${i.description}"></td>
+<td>₹ <span th:text="${i.amount}"></span></td>
+<td th:text="${i.status}"></td>
+<td th:text="${i.itemDescription}"></td>
+<td th:text="${i.quantity}"></td>
+<td th:text="${i.unitPrice}"></td>
+<td th:text="${i.tax} + '%'"></td>
+<td th:text="${i.dueDate}"></td>
+<td th:text="${#temporals.format(i.createdDate,'dd-MM-yyyy HH:mm')}"></td>
+</tr>
+
+</table>
+
+</body>
+</html>

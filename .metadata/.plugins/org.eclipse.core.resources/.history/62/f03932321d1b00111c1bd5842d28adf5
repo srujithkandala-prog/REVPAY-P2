@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Payment Methods</title>
+
+<style>
+body{
+font-family:Arial;
+background:#f4f6f9;
+padding:20px;
+}
+.container{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px #ddd;
+}
+input{
+padding:8px;
+margin:5px;
+}
+button{
+padding:8px 12px;
+background:#2c7be5;
+color:white;
+border:none;
+}
+table{
+width:100%;
+margin-top:20px;
+border-collapse:collapse;
+}
+table,th,td{
+border:1px solid #ddd;
+padding:10px;
+}
+.default{
+color:green;
+font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Payment Methods 💳</h2>
+
+<!-- ADD CARD -->
+<form th:action="@{/add-card}" method="post" th:object="${card}">
+
+<input type="text" th:field="*{cardNumber}" placeholder="Card Number" required>
+<input type="text" th:field="*{expiry}" placeholder="MM/YY" required>
+<input type="text" th:field="*{cvv}" placeholder="CVV" required>
+<input type="text" th:field="*{billingAddress}" placeholder="Billing Address" required>
+
+<button type="submit">Add Card</button>
+
+</form>
+
+<!-- CARD LIST -->
+<table>
+
+<tr>
+<th>Card</th>
+<th>Expiry</th>
+<th>Default</th>
+<th>Action</th>
+</tr>
+
+<tr th:each="m : ${methods}">
+
+<td th:text="${m.cardNumber}"></td>
+<td th:text="${m.expiry}"></td>
+
+<td>
+<span th:if="${m.default}" class="default">DEFAULT</span>
+</td>
+
+<td>
+<a th:href="@{/set-default/{id}(id=${m.id})}">Set Default</a> |
+<a th:href="@{/delete-card/{id}(id=${m.id})}">Delete</a>
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,205 @@
+package com.revpay.controller;
+
+import java.security.Principal;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import com.revpay.entity.*;
+import com.revpay.repository.*;
+
+@Controller
+public class MoneyRequestController {
+
+    @Autowired
+    private MoneyRequestRepository moneyRequestRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
+
+    // =============================
+    // CREATE REQUEST PAGE
+    // =============================
+    @GetMapping("/request-money")
+    public String requestPage(Model model, Principal principal) {
+
+        String email = principal.getName();
+
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if(user == null){
+            return "redirect:/login";
+        }
+
+        model.addAttribute("user", user);
+        model.addAttribute("wallet", user.getWalletBalance());
+        model.addAttribute("request", new MoneyRequest());
+
+        return "request-money";
+    }
+
+    // =============================
+    // SAVE REQUEST
+    // =============================
+    @PostMapping("/request-money")
+    public String saveRequest(@ModelAttribute MoneyRequest request,
+                              Principal principal) {
+
+        request.setRequesterEmail(principal.getName());
+
+        moneyRequestRepository.save(request);
+
+        Notification n = new Notification();
+        n.setUserEmail(request.getReceiverEmail());
+        n.setMessage("Money request received from "
+                + request.getRequesterEmail());
+
+        notificationRepository.save(n);
+
+        return "redirect:/dashboard";
+    }
+
+    // =============================
+    // INCOMING REQUESTS
+    // =============================
+    @GetMapping("/incoming-requests")
+    public String incomingRequests(Model model,
+                                   Principal principal) {
+
+        String email = principal.getName();
+
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        List<MoneyRequest> requests =
+                moneyRequestRepository
+                        .findByReceiverEmailOrderByCreatedDateDesc(email);
+
+        model.addAttribute("user", user);
+        model.addAttribute("wallet", user.getWalletBalance());
+        model.addAttribute("requests", requests);
+
+        return "incoming-requests";
+    }
+
+    // =============================
+    // ACCEPT REQUEST
+    // =============================
+    @GetMapping("/accept-request/{id}")
+    public String acceptRequest(@PathVariable Long id) {
+
+        MoneyRequest req =
+                moneyRequestRepository.findById(id).orElse(null);
+
+        if (req == null || !"PENDING".equals(req.getStatus()))
+            return "redirect:/incoming-requests";
+
+        User sender = userRepository
+                .findByEmail(req.getReceiverEmail()).orElse(null);
+
+        User receiver = userRepository
+                .findByEmail(req.getRequesterEmail()).orElse(null);
+
+        if (sender == null || receiver == null)
+            return "redirect:/incoming-requests";
+
+        if (sender.getWalletBalance() < req.getAmount())
+            return "redirect:/incoming-requests";
+
+        sender.setWalletBalance(
+                sender.getWalletBalance() - req.getAmount());
+
+        receiver.setWalletBalance(
+                receiver.getWalletBalance() + req.getAmount());
+
+        userRepository.save(sender);
+        userRepository.save(receiver);
+
+        Transaction t = new Transaction();
+        t.setSenderEmail(sender.getEmail());
+        t.setReceiverEmail(receiver.getEmail());
+        t.setAmount(req.getAmount());
+        t.setType("REQUEST_PAYMENT");
+
+        transactionRepository.save(t);
+
+        Notification n = new Notification();
+        n.setUserEmail(receiver.getEmail());
+        n.setMessage("Your money request was accepted.");
+
+        notificationRepository.save(n);
+
+        req.setStatus("ACCEPTED");
+        moneyRequestRepository.save(req);
+
+        return "redirect:/incoming-requests";
+    }
+
+    // =============================
+    // DECLINE REQUEST
+    // =============================
+    @GetMapping("/decline-request/{id}")
+    public String declineRequest(@PathVariable Long id) {
+
+        MoneyRequest req =
+                moneyRequestRepository.findById(id).orElse(null);
+
+        if (req != null) {
+
+            req.setStatus("DECLINED");
+            moneyRequestRepository.save(req);
+        }
+
+        return "redirect:/incoming-requests";
+    }
+
+    // =============================
+    // OUTGOING REQUESTS
+    // =============================
+    @GetMapping("/outgoing-requests")
+    public String outgoingRequests(Model model,
+                                   Principal principal) {
+
+        String email = principal.getName();
+
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        List<MoneyRequest> requests =
+        		moneyRequestRepository.findByReceiverEmailOrderByCreatedDateDesc(email);
+
+        model.addAttribute("user", user);
+        model.addAttribute("wallet", user.getWalletBalance());
+        model.addAttribute("requests", requests);
+
+        return "outgoing-requests";
+    }
+
+    // =============================
+    // CANCEL REQUEST
+    // =============================
+    @GetMapping("/cancel-request/{id}")
+    public String cancelRequest(@PathVariable Long id,
+                                Principal principal) {
+
+        MoneyRequest req =
+                moneyRequestRepository.findById(id).orElse(null);
+
+        if (req != null &&
+                req.getRequesterEmail().equals(principal.getName()) &&
+                "PENDING".equals(req.getStatus())) {
+
+            req.setStatus("CANCELLED");
+            moneyRequestRepository.save(req);
+        }
+
+        return "redirect:/outgoing-requests";
+    }
+}

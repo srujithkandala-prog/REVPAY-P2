@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RevPay | Premier Banking & Digital Payments</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --navy: #0f172a; --gold: #eab308; --accent: #2563eb; --text: #ffffff; }
+        body { font-family: 'Inter', sans-serif; background: var(--navy); color: var(--text); margin: 0; }
+        
+        header { padding: 30px 80px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .logo { font-size: 24px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .logo-icon { width: 35px; height: 35px; background: var(--gold); color: var(--navy); display: flex; align-items: center; justify-content: center; border-radius: 5px; }
+        
+        .hero { padding: 100px 80px; text-align: center; }
+        .hero h1 { font-size: 64px; margin-bottom: 20px; line-height: 1.1; }
+        .hero p { font-size: 18px; color: #94a3b8; max-width: 600px; margin: 0 auto 40px; }
+        
+        .btn { padding: 15px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; }
+        .btn-primary { background: var(--accent); color: white; }
+        
+        .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; padding: 80px; }
+        .card { background: rgba(255,255,255,0.03); padding: 40px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo"><div class="logo-icon">R</div> RevPay</div>
+        <nav>
+            <a href="/login" style="color:white; text-decoration:none; margin-right:20px;">Client Login</a>
+            <a href="/register" class="btn btn-primary">Join RevPay</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1 style="color: var(--gold);">Global Banking, Evolved.</h1>
+        <p>The secure, high-efficiency platform for personal and business wealth management. Experience institutional-grade security.</p>
+        <a href="/register" class="btn btn-primary">Open an Account</a>
+    </section>
+
+    <section class="features">
+        <div class="card"><h3>01. Security</h3><p>Military-grade AES encryption ensures your funds stay protected.</p></div>
+        <div class="card"><h3>02. Global</h3><p>Seamless international transfers with optimized exchange rates.</p></div>
+        <div class="card"><h3>03. Business</h3><p>Enterprise tools for automated invoicing and payroll management.</p></div>
+    </section>
+</body>
+</html>

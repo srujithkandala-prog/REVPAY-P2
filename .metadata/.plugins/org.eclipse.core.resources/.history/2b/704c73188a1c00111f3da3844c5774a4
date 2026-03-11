@@ -1,0 +1,13 @@
+package com.revpay.repository;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.revpay.entity.AdminLog;
+
+public interface AdminLogRepository extends JpaRepository<AdminLog, Long> {
+
+    List<AdminLog> findByAdminEmail(String adminEmail);
+
+}

@@ -1,0 +1,33 @@
+package com.revpay.controller;
+
+import java.security.Principal;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import com.revpay.entity.Notification;
+import com.revpay.repository.NotificationRepository;
+
+@Controller
+public class NotificationController {
+
+    @Autowired
+    private NotificationRepository notificationRepository;
+
+    @GetMapping("/notifications")
+    public String notifications(Model model, Principal principal){
+
+        String email = principal.getName();
+
+        List<Notification> notifications =
+                notificationRepository
+                .findByUserEmailOrderByCreatedDateDesc(email);
+
+        model.addAttribute("notifications", notifications);
+
+        return "notifications";
+    }
+}

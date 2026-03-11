@@ -1,0 +1,13 @@
+package com.revpay.dto;
+
+import java.time.LocalDateTime;
+
+public class AdminLogDTO {
+
+    private Long id;
+    private String action;
+    private String adminEmail;
+    private LocalDateTime createdDate;
+
+    // getters setters
+}

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>Business Dashboard</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#f4f6f9;
+}
+
+/* ===== MAIN LAYOUT ===== */
+
+.container{
+display:flex;
+height:100vh;
+overflow:hidden;
+}
+
+/* ===== SIDEBAR ===== */
+
+.sidebar{
+width:230px;
+background:#0f172a;
+color:white;
+display:flex;
+flex-direction:column;
+}
+
+.sidebar h2{
+text-align:center;
+padding:20px 0;
+margin:0;
+border-bottom:1px solid #1e293b;
+}
+
+/* MENU AREA */
+
+.menu{
+flex:1;
+overflow-y:auto;
+}
+
+/* MENU LINKS */
+
+.sidebar a{
+display:block;
+color:white;
+padding:12px 20px;
+text-decoration:none;
+font-size:15px;
+}
+
+.sidebar a:hover{
+background:#1e293b;
+}
+
+/* CUSTOM SCROLLBAR */
+
+.menu::-webkit-scrollbar{
+width:6px;
+}
+
+.menu::-webkit-scrollbar-thumb{
+background:#475569;
+border-radius:10px;
+}
+
+/* ===== MAIN CONTENT ===== */
+
+.main{
+flex:1;
+overflow-y:auto;
+padding:20px;
+}
+
+/* CARDS */
+
+.card{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px #ddd;
+margin-bottom:20px;
+}
+
+.big{
+font-size:30px;
+color:#16a34a;
+font-weight:bold;
+}
+
+/* TABLE */
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+table,th,td{
+border:1px solid #ddd;
+padding:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- ================= SIDEBAR ================= -->
+
+<div class="sidebar">
+
+<h2>RevPay Business</h2>
+
+<div class="menu">
+
+<a href="/business-dashboard">Dashboard</a>
+<a href="/profile">Profile</a>
+<a href="/send-money">Send Money</a>
+<a href="/add-money">Add Money</a>
+<a href="/request-money">Request Money</a>
+<a href="/incoming-requests">Incoming Requests</a>
+<a href="/outgoing-requests">Outgoing Requests</a>
+<a href="/withdraw-money">Withdraw Money</a>
+<a href="/transactions">Transactions</a>
+<a href="/transactions-history">Transaction History</a>
+<a href="/create-invoice">Create Invoice</a>
+<a href="/invoices">Invoices</a>
+<a href="/apply-loan">Apply Loan</a>
+<a href="/my-loans">My Loans</a>
+
+<a th:href="@{/business/loan-repayments}" class="nav-item">
+Loan Repayments
+</a>
+<a href="/payment-methods">Payment Methods</a>
+<a href="/notifications">Notifications 🔔</a>
+<a href="/logout">Logout</a>
+
+</div>
+
+</div>
+
+<!-- ================= MAIN ================= -->
+
+<div class="main">
+
+<h2>
+Welcome Business,
+<span th:text="${user.fullName}"></span> 🚀
+</h2>
+
+<div class="card">
+
+<div style="
+background:white;
+padding:20px;
+border-radius:10px;
+margin-bottom:20px;
+box-shadow:0 0 10px #ddd;">
+
+<h2>Wallet Balance 💰</h2>
+
+<h1 style="color:#2c7be5;">
+₹ <span th:text="${wallet}"></span>
+</h1>
+
+</div>
+
+<h3>Total Revenue</h3>
+
+<div class="big">
+₹ <span th:text="${revenue}"></span>
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>Recent Payments</h3>
+
+<table th:if="${transactions.size()>0}">
+
+<tr>
+<th>Sender</th>
+<th>Receiver</th>
+<th>Amount</th>
+<th>Date</th>
+</tr>
+
+<tr th:each="t,iter : ${transactions}" th:if="${iter.index<5}">
+
+<td th:text="${t.senderEmail}"></td>
+<td th:text="${t.receiverEmail}"></td>
+<td>₹ <span th:text="${t.amount}"></span></td>
+
+<td th:text="${#temporals.format(t.transactionDate,'dd-MM-yyyy HH:mm')}"></td>
+
+</tr>
+
+</table>
+
+<p th:if="${transactions.size()==0}">
+No transactions yet.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>

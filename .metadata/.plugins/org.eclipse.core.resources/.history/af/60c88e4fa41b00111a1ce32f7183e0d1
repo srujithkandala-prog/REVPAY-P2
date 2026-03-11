@@ -1,0 +1,5 @@
+package com.revpay.repository;
+
+public class AdminLogRepository {
+
+}

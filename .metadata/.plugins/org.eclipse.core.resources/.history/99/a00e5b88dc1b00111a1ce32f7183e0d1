@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>Fraud Alerts</title>
+</head>
+
+<body>
+
+<h2>Suspicious Transactions</h2>
+
+<table border="1">
+
+<tr>
+<th>ID</th>
+<th>Sender</th>
+<th>Receiver</th>
+<th>Amount</th>
+<th>Date</th>
+</tr>
+
+<tr th:each="t : ${alerts}">
+
+<td th:text="${t.id}"></td>
+<td th:text="${t.senderEmail}"></td>
+<td th:text="${t.receiverEmail}"></td>
+<td th:text="${t.amount}"></td>
+<td th:text="${t.transactionDate}"></td>
+
+</tr>
+
+</table>
+
+</body>
+</html>

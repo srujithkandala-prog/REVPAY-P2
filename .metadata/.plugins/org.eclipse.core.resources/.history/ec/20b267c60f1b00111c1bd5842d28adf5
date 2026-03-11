@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RevPay — Outgoing Requests</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── CORE THEME ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+    --navy-dark:   #0f172a;
+    --navy-subtle: #1e293b;
+    --navy-mid:    #111827;
+    --accent-blue: #2563eb;
+    --gold:        #eab308;
+    --white:       #ffffff;
+    --glass:       rgba(255,255,255,0.03);
+    --border:      rgba(255,255,255,0.08);
+    --muted:       rgba(255,255,255,0.5);
+    --sidebar-w:   230px;
+}
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--navy-dark);
+    color: var(--white);
+    line-height: 1.6;
+    display: flex; min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── SIDEBAR (EXACT FROM DASHBOARD) ── */
+.sidebar {
+    width: var(--sidebar-w); background: var(--navy-subtle);
+    border-right: 1px solid var(--border); position: fixed; top: 0; left: 0; bottom: 0;
+    z-index: 50; overflow-y: auto; display: flex; flex-direction: column;
+}
+.sidebar-logo {
+    display: flex; align-items: center; gap: 11px; padding: 22px 20px 18px;
+    text-decoration: none; border-bottom: 1px solid var(--border); margin-bottom: 8px;
+}
+.logo-box {
+    width: 36px; height: 36px; background: var(--white); color: var(--navy-dark);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 16px; border: 2px solid var(--gold);
+}
+.logo-text .s-name { color: white; font-size: 15px; font-weight: 800; display: block;}
+.logo-text .s-tag  { font-size: 9px; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 1px;}
+.nav-section { padding: 12px 20px 4px; font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 2px;}
+.nav-item {
+    display: flex; align-items: center; gap: 10px; padding: 9px 12px; margin: 1px 8px;
+    text-decoration: none; font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.5);
+    border-radius: 6px; transition: all 0.2s;
+}
+.nav-icon { width: 28px; height: 28px; border-radius: 6px; background: rgba(255,255,255,0.04); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0;}
+.nav-item:hover { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.05); }
+.nav-item.active { color: white; background: rgba(37,99,235,0.15); border: 1px solid rgba(37,99,235,0.25); }
+.nav-item.active .nav-icon { background: var(--accent-blue); box-shadow: 0 4px 10px rgba(37,99,235,0.35); }
+.nav-badge { margin-left: auto; background: #dc2626; color: white; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; }
+.nav-item.logout { color: rgba(239,68,68,0.5); }
+.nav-item.logout:hover { color: #ef4444; background: rgba(239,68,68,0.06); }
+.sidebar-bottom { margin-top: auto; padding: 10px 0 14px; border-top: 1px solid var(--border); }
+
+/* ── MAIN CONTENT ── */
+.main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+.topbar {
+    background: rgba(15,23,42,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border);
+    padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 30;
+}
+.content { padding: 32px; }
+
+/* ── CARD & TABLE ── */
+.card { background: var(--navy-subtle); border: 1px solid var(--border); border-radius: 14px; padding: 24px; }
+table { width: 100%; border-collapse: collapse; }
+thead th { text-align: left; font-size: 11px; text-transform: uppercase; color: var(--muted); padding: 12px 15px; border-bottom: 1px solid var(--border); }
+tbody td { padding: 15px; font-size: 13px; color: rgba(255,255,255,0.8); border-bottom: 1px solid rgba(255,255,255,0.04); }
+
+/* ── STATUS & BUTTONS ── */
+.status-pill { padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+.st-pending { background: rgba(234, 179, 8, 0.1); color: var(--gold); }
+.st-accepted { background: rgba(34, 197, 94, 0.1); color: #4ade80; }
+.st-declined { background: rgba(239, 68, 68, 0.1); color: #f87171; }
+.st-cancelled { background: rgba(255, 255, 255, 0.05); color: var(--muted); }
+
+.btn-cancel {
+    background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2);
+    padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; transition: 0.2s;
+}
+.btn-cancel:hover { background: #991b1b; color: white; }
+
+@media (max-width: 768px) { .sidebar { display: none; } .main { margin-left: 0; } }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <a th:href="@{/dashboard}" class="sidebar-logo">
+    <div class="logo-box">R</div>
+    <div class="logo-text"><span class="s-name">RevPay</span><span class="s-tag">Personal</span></div>
+  </a>
+  <div class="nav-section">Main</div>
+  <a th:href="@{/dashboard}" class="nav-item"><div class="nav-icon">&#127968;</div>Dashboard</a>
+  <a th:href="@{/profile}"   class="nav-item"><div class="nav-icon">&#128100;</div>Profile</a>
+  <div class="nav-section">Payments</div>
+  <a th:href="@{/send-money}"    class="nav-item"><div class="nav-icon">&#128184;</div>Send Money</a>
+  <a th:href="@{/add-money}"     class="nav-item"><div class="nav-icon">&#10133;</div>Add Money</a>
+  <a th:href="@{/request-money}" class="nav-item"><div class="nav-icon">&#128232;</div>Request Money</a>
+  <a th:href="@{/withdraw-money}"      class="nav-item"><div class="nav-icon">&#127970;</div>Withdraw Money</a>
+  <div class="nav-section">Requests</div>
+  <a th:href="@{/incoming-requests}" class="nav-item">
+    <div class="nav-icon">&#128229;</div>Incoming Requests
+    <span class="nav-badge" th:if="${incomingCount != null and incomingCount > 0}" th:text="${incomingCount}"></span>
+  </a>
+  <a th:href="@{/outgoing-requests}" class="nav-item active">
+    <div class="nav-icon">&#128228;</div>Outgoing Requests
+    <span class="nav-badge" th:if="${outgoingCount != null and outgoingCount > 0}" th:text="${outgoingCount}"></span>
+  </a>
+  <div class="nav-section">History</div>
+  <a th:href="@{/transactions}"        class="nav-item"><div class="nav-icon">&#128260;</div>Transactions</a>
+  <a th:href="@{/transactions-history}" class="nav-item"><div class="nav-icon">&#128203;</div>Transaction History</a>
+  <a th:href="@{/invoices}"            class="nav-item"><div class="nav-icon">&#129534;</div>My Invoices</a>
+  <div class="nav-section">Account</div>
+  <a th:href="@{/payment-methods}" class="nav-item"><div class="nav-icon">&#128179;</div>Payment Methods</a>
+  <a th:href="@{/notifications}"   class="nav-item"><div class="nav-icon">&#128276;</div>Notifications</a>
+  <div class="sidebar-bottom">
+    <a th:href="@{/logout}" class="nav-item logout"><div class="nav-icon">&#128682;</div>Logout</a>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div style="font-weight: 800; font-size: 16px;">Outgoing Requests</div>
+      <div style="font-size: 12px; color: var(--muted);" th:text="${#dates.format(#dates.createNow(),'EEEE, dd MMMM yyyy')}">Date</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <div style="width: 34px; height: 34px; border-radius: 7px; background: var(--accent-blue); color: white; font-weight: 800; display: flex; align-items: center; justify-content: center;"
+           th:text="${username != null and #strings.length(username) > 0 ? #strings.substring(username,0,1).toUpperCase() : 'U'}">U</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="card">
+      <h2 style="font-size: 18px; margin-bottom: 20px;">Sent Money Requests 📤</h2>
+      
+      <div th:if="${requests == null or #lists.isEmpty(requests)}" style="text-align: center; padding: 40px; color: var(--muted);">
+        <p>You haven't sent any requests yet.</p>
+      </div>
+
+      <table th:if="${requests != null and !#lists.isEmpty(requests)}">
+        <thead>
+          <tr>
+            <th>Receiver</th>
+            <th>Amount</th>
+            <th>Purpose</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="r : ${requests}">
+            <td th:text="${r.receiverEmail}"></td>
+            <td><strong style="color: white;">₹<span th:text="${r.amount}"></span></strong></td>
+            <td th:text="${r.purpose}"></td>
+            <td>
+              <span th:if="${r.status=='PENDING'}" class="status-pill st-pending">PENDING</span>
+              <span th:if="${r.status=='ACCEPTED'}" class="status-pill st-accepted">ACCEPTED</span>
+              <span th:if="${r.status=='DECLINED'}" class="status-pill st-declined">DECLINED</span>
+              <span th:if="${r.status=='CANCELLED'}" class="status-pill st-cancelled">CANCELLED</span>
+            </td>
+            <td>
+              <form th:if="${r.status=='PENDING'}" th:action="@{/cancel-request/{id}(id=${r.id})}" method="get">
+                <button type="submit" class="btn-cancel">Cancel</button>
+              </form>
+              <span th:unless="${r.status=='PENDING'}" style="font-size: 11px; color: var(--muted);">No actions</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

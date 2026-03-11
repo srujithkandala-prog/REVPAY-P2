@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body style="font-family:Arial;padding:20px;">
+
+<h2>Business Verification Requests</h2>
+
+<table border="1" cellpadding="10">
+
+<tr>
+<th>Business</th>
+<th>Document</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+<tr th:each="v : ${list}">
+
+<td th:text="${v.businessEmail}"></td>
+<td th:text="${v.documentName}"></td>
+<td th:text="${v.status}"></td>
+
+<td>
+<a th:if="${v.status=='PENDING'}"
+th:href="@{/approve-verification/{id}(id=${v.id})}">
+Approve
+</a>
+
+<a th:if="${v.status=='PENDING'}"
+th:href="@{/reject-verification/{id}(id=${v.id})}">
+Reject
+</a>
+</td>
+
+</tr>
+
+</table>
+
+</body>
+</html>

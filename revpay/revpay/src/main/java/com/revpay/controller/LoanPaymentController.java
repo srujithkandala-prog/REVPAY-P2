@@ -1,0 +1,75 @@
+package com.revpay.controller;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import com.revpay.entity.Loan;
+import com.revpay.entity.LoanPayment;
+import com.revpay.repository.LoanPaymentRepository;
+import com.revpay.repository.LoanRepository;
+
+@Controller
+public class LoanPaymentController {
+
+    @Autowired
+    private LoanRepository loanRepository;
+
+    @Autowired
+    private LoanPaymentRepository loanPaymentRepository;
+
+ 
+    @PostMapping("/pay-emi/{id}")
+    public String payEmi(@PathVariable Long id){
+
+        Loan loan = loanRepository.findById(id).orElse(null);
+
+        if(loan != null){
+
+            double remaining = loan.getRemainingAmount();
+            double emi = loan.getEmi();
+
+            if(remaining > 0){
+
+                remaining = remaining - emi;
+
+                if(remaining <= 0){
+                    loan.setRemainingAmount(0);
+                    loan.setStatus("COMPLETED");
+                }else{
+                    loan.setRemainingAmount(remaining);
+                }
+
+                loan.setMonthsPaid(loan.getMonthsPaid() + 1);
+
+                loanRepository.save(loan);
+
+                LoanPayment payment = new LoanPayment();
+
+                payment.setLoanId(loan.getId());
+                payment.setBusinessEmail(loan.getBusinessEmail());
+                payment.setAmountPaid(emi);
+                payment.setPaymentDate(LocalDate.now());
+                payment.setRemainingBalance(loan.getRemainingAmount());
+
+                loanPaymentRepository.save(payment);
+            }
+        }
+
+        return "redirect:/my-loans";
+    }
+
+    @GetMapping("/loan-payment-history")
+    public String viewRepayments(Model model){
+
+        List<LoanPayment> repayments = loanPaymentRepository.findAll();
+
+        model.addAttribute("repayments", repayments);
+
+        return "business-loan-repayments";
+    }
+}

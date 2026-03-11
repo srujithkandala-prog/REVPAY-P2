@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<title>System Health</title>
+
+<style>
+
+body{
+font-family:Arial;
+margin:0;
+background:#f4f6f9;
+}
+
+.sidebar{
+width:220px;
+height:100vh;
+background:#0f172a;
+color:white;
+position:fixed;
+padding:20px;
+overflow-y:auto;
+}
+
+.sidebar a{
+display:block;
+color:white;
+padding:10px 0;
+text-decoration:none;
+}
+
+.sidebar a:hover{
+color:#38bdf8;
+}
+
+.main{
+margin-left:240px;
+padding:30px;
+}
+
+.cards{
+display:flex;
+gap:20px;
+margin-top:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px #ddd;
+flex:1;
+text-align:center;
+}
+
+.status{
+font-size:20px;
+color:green;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>RevPay Admin</h2>
+
+<a href="/admin-dashboard">Dashboard</a>
+<a href="/admin/users">Users</a>
+<a href="/admin/transactions">Transactions</a>
+<a href="/admin/loans">Loans</a>
+<!-- <a href="/admin/loan-repayments">Loan Repayments</a> -->
+
+<hr>
+
+<a href="/admin/live-transactions">Live Monitor</a>
+<a href="/admin/system-health">System Health</a>
+<a href="/admin/fraud-alerts">Fraud Alerts</a>
+<a href="/admin/revenue">Revenue</a>
+<a href="/admin/reports">Reports</a>
+<a href="/admin/top-customers">Top Customers</a>
+
+<hr>
+
+<a href="/logout">Logout</a>
+
+</div>
+
+
+<div class="main">
+
+<h1>System Health Monitor</h1>
+
+<div class="cards">
+
+<div class="card">
+<h3>Total Users</h3>
+<h2 th:text="${totalUsers}"></h2>
+</div>
+
+<div class="card">
+<h3>Total Transactions</h3>
+<h2 th:text="${totalTransactions}"></h2>
+</div>
+
+<div class="card">
+<h3>Total Loans</h3>
+<h2 th:text="${totalLoans}"></h2>
+</div>
+
+</div>
+
+<div class="cards">
+
+<div class="card">
+<h3>Server Status</h3>
+<div class="status" th:text="${serverStatus}"></div>
+</div>
+
+<div class="card">
+<h3>Memory Usage</h3>
+<p>
+<span th:text="${memoryUsed}"></span> MB /
+<span th:text="${memoryTotal}"></span> MB
+</p>
+</div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

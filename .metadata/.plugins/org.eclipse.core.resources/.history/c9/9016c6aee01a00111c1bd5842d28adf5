@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>Loan Repayments</title>
+</head>
+
+<body>
+
+<h2>Loan EMI Monitoring</h2>
+
+<table border="1">
+
+<tr>
+<th>Loan ID</th>
+<th>Business</th>
+<th>Total Amount</th>
+<th>EMI</th>
+<th>Remaining</th>
+<th>Months Paid</th>
+<th>Total Months</th>
+</tr>
+
+<tr th:each="loan : ${loans}">
+
+<td th:text="${loan.id}"></td>
+<td th:text="${loan.businessEmail}"></td>
+<td th:text="${loan.amount}"></td>
+<td th:text="${loan.emi}"></td>
+<td th:text="${loan.remainingAmount}"></td>
+<td th:text="${loan.monthsPaid}"></td>
+<td th:text="${loan.totalMonths}"></td>
+
+</tr>
+
+</table>
+
+</body>
+</html>

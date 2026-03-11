@@ -1,0 +1,12 @@
+package com.revpay.dto;
+
+public class BusinessProfileDTO {
+
+    private Long id;
+    private String businessName;
+    private String gstNumber;
+    private String businessType;
+    private String businessAddress;
+    private Long userId;
+
+}

@@ -1,0 +1,62 @@
+package com.revpay.serviceimpl;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.revpay.dto.NotificationDTO;
+import com.revpay.entity.Notification;
+import com.revpay.repository.NotificationRepository;
+import com.revpay.service.NotificationService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+@Service
+public class NotificationServiceImpl implements NotificationService {
+	private static final Logger logger = LogManager.getLogger(NotificationServiceImpl.class);
+
+    @Autowired
+    private NotificationRepository notificationRepository;
+
+  
+    public List<NotificationDTO> getUserNotifications(String email) {
+
+        List<Notification> notifications =
+                notificationRepository.findByUserEmailOrderByCreatedDateDesc(email);
+
+        return notifications.stream().map(n -> {
+
+            NotificationDTO dto = new NotificationDTO();
+
+            dto.setId(n.getId());
+            dto.setMessage(n.getMessage());
+            dto.setCreatedAt(n.getCreatedDate());
+
+            return dto;
+
+        }).collect(Collectors.toList());
+    }
+
+
+	@Override
+	public List<NotificationDTO> getUserNotifications(Long userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public void markAsRead(Long notificationId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void createNotification(NotificationDTO dto) {
+		// TODO Auto-generated method stub
+		
+	}
+}

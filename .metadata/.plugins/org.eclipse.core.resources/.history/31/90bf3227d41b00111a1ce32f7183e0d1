@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<title>Loan Report</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6f9;
+padding:30px;
+}
+
+.top{
+display:flex;
+justify-content:space-between;
+}
+
+button{
+background:#2563eb;
+color:white;
+border:none;
+padding:8px 14px;
+border-radius:6px;
+cursor:pointer;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:10px;
+margin-bottom:20px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+th,td{
+padding:10px;
+border:1px solid #ddd;
+}
+
+th{
+background:#0f172a;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="top">
+
+<h1>Loan Report</h1>
+
+<a href="/admin-dashboard">
+<button>← Back to Dashboard</button>
+</a>
+
+</div>
+
+<div class="card">
+
+<canvas id="loanChart"></canvas>
+
+</div>
+
+<table>
+
+<tr>
+<th>Business</th>
+<th>Amount</th>
+<th>Status</th>
+<th>Tenure</th>
+</tr>
+
+<tr th:each="l : ${loans}">
+
+<td th:text="${l.businessEmail}"></td>
+<td th:text="${l.amount}"></td>
+<td th:text="${l.status}"></td>
+<td th:text="${l.tenureMonths}"></td>
+
+</tr>
+
+</table>
+
+<script>
+
+const ctx = document.getElementById('loanChart');
+
+new Chart(ctx,{
+type:'pie',
+
+data:{
+labels:['Loans'],
+datasets:[{
+data:[[${loans.size()}]],
+backgroundColor:['green']
+}]
+}
+
+});
+
+</script>
+
+</body>
+
+</html>

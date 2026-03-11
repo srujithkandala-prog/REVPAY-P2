@@ -1,0 +1,12 @@
+package com.revpay.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.revpay.entity.BusinessProfile;
+
+public interface BusinessProfileRepository 
+        extends JpaRepository<BusinessProfile, Long> {
+
+    BusinessProfile findByUserId(Long userId);
+
+}

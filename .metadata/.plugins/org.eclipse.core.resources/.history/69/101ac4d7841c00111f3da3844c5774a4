@@ -1,0 +1,66 @@
+package com.revpay.serviceimpl;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.revpay.dto.MoneyRequestDTO;
+import com.revpay.entity.MoneyRequest;
+import com.revpay.repository.MoneyRequestRepository;
+import com.revpay.service.MoneyRequestService;
+
+@Service
+public class MoneyRequestServiceImpl implements MoneyRequestService {
+
+    @Autowired
+    private MoneyRequestRepository repository;
+
+    @Override
+    public void requestMoney(MoneyRequestDTO dto) {
+
+        MoneyRequest r = new MoneyRequest();
+
+        r.setAmount(dto.getAmount());
+        r.setStatus("PENDING");
+
+        repository.save(r);
+    }
+
+    @Override
+    public List<MoneyRequestDTO> getRequestsForUser(Long userId) {
+
+        return repository.findByReceiverId(userId)
+                .stream()
+                .map(r -> {
+                    MoneyRequestDTO dto = new MoneyRequestDTO();
+                    dto.setId(r.getId());
+                    dto.setAmount(r.getAmount());
+                    dto.setStatus(r.getStatus());
+                    return dto;
+                }).collect(Collectors.toList());
+    }
+
+    @Override
+    public void approveRequest(Long requestId) {
+
+        MoneyRequest r = repository.findById(requestId).orElse(null);
+
+        if(r != null) {
+            r.setStatus("APPROVED");
+            repository.save(r);
+        }
+    }
+
+    @Override
+    public void rejectRequest(Long requestId) {
+
+        MoneyRequest r = repository.findById(requestId).orElse(null);
+
+        if(r != null) {
+            r.setStatus("REJECTED");
+            repository.save(r);
+        }
+    }
+}

@@ -1,0 +1,98 @@
+package com.revpay.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+
+import com.revpay.security.CustomUserDetailsService;
+
+@Configuration
+public class SecurityConfig {
+
+    // PASSWORD ENCODER
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    // AUTHENTICATION PROVIDER
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider(
+            CustomUserDetailsService service) {
+
+        DaoAuthenticationProvider auth = new DaoAuthenticationProvider();
+        auth.setUserDetailsService(service);
+        auth.setPasswordEncoder(passwordEncoder());
+
+        return auth;
+    }
+
+    // SECURITY FILTER
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        http
+
+        .csrf(csrf -> csrf.disable())
+
+        .authorizeHttpRequests(auth -> auth
+
+                // PUBLIC PAGES
+        		.requestMatchers(
+        		        "/",
+        		        "/login",
+        		        "/register",
+        		        "/verify-otp",
+        		        "/verify-otp/**",
+
+        		        "/forgot-password",
+        		        "/verify-email",
+        		        "/verify-answer",
+        		        "/reset-password",
+
+        		        "/css/**",
+        		        "/js/**",
+        		        "/images/**"
+        		).permitAll()
+
+                // ADMIN PAGES (ADMIN ONLY)
+                .requestMatchers(
+                        "/admin-dashboard",
+                        "/admin/**"
+                ).hasRole("ADMIN")
+
+                // PERSONAL / BUSINESS DASHBOARD
+                .requestMatchers(
+                        "/dashboard",
+                        "/send-money",
+                        "/add-money",
+                        "/withdraw-money",
+                        "/transactions-history",
+                        "/profile",
+                        "/payment-methods",
+                        "/notifications"
+                ).hasAnyRole("PERSONAL","BUSINESS","ADMIN")
+
+                // EVERYTHING ELSE REQUIRES LOGIN
+                .anyRequest().authenticated()
+        )
+
+        .formLogin(form -> form
+                .loginPage("/login")
+                .defaultSuccessUrl("/dashboard", true)
+                .permitAll()
+        )
+
+        .logout(logout -> logout
+                .logoutSuccessUrl("/login?logout")
+                .permitAll()
+        );
+
+        return http.build();
+    }
+}

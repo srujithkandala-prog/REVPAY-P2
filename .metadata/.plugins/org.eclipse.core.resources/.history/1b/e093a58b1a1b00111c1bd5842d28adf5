@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body style="font-family:Arial;padding:20px;">
+
+<h2>Incoming Money Requests</h2>
+
+<table border="1" cellpadding="10">
+
+<tr>
+<th>Requester</th>
+<th>Amount</th>
+<th>Purpose</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+<tr th:each="r : ${requests}">
+<td th:text="${r.requesterEmail}"></td>
+<td th:text="${r.amount}"></td>
+<td th:text="${r.purpose}"></td>
+<td th:text="${r.status}"></td>
+
+<td>
+<a th:if="${r.status=='PENDING'}"
+th:href="@{/accept-request/{id}(id=${r.id})}">
+Accept
+</a>
+
+<a th:if="${r.status=='PENDING'}"
+th:href="@{/decline-request/{id}(id=${r.id})}">
+Decline
+</a>
+</td>
+</tr>
+
+</table>
+
+</body>
+</html>

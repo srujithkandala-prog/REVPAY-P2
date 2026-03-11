@@ -1,0 +1,18 @@
+package com.revpay;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+
+// webEnvironment = NONE  → does not start a real HTTP server (faster, no port conflicts)
+// @ActiveProfiles("test") → loads application-test.properties which uses H2 + dummy mail
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@ActiveProfiles("test")
+class RevpayApplicationTests {
+
+	@Test
+	void contextLoads() {
+		// passes if the Spring context starts without throwing an exception
+	}
+
+}

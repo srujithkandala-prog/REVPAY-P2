@@ -1,0 +1,36 @@
+package com.revpay.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import com.revpay.entity.Role;
+import com.revpay.entity.User;
+import com.revpay.service.UserService;
+
+@Controller
+public class AuthController {
+
+    @Autowired
+    private UserService userService;
+
+    @GetMapping("/register")
+    public String showRegisterPage(Model model) {
+        model.addAttribute("user", new User());
+        return "register";
+    }
+
+    @PostMapping("/register")
+    public String registerUser(@ModelAttribute User user) {
+
+        if (user.getRole() == null) {
+            user.setRole(Role.PERSONAL);
+        }
+
+        userService.registerUser(user);
+
+        // 🔥 AFTER REGISTER → LOGIN PAGE
+        return "redirect:/login";
+    }
+}

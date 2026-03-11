@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Transaction History</title>
+
+<style>
+body{
+font-family:Arial;
+background:#f4f6f9;
+padding:20px;
+}
+
+.container{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px #ddd;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+}
+
+table,th,td{
+border:1px solid #ddd;
+padding:10px;
+}
+
+input,select{
+padding:8px;
+margin-right:10px;
+}
+
+button{
+padding:8px 15px;
+background:#2c7be5;
+color:white;
+border:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Transaction History 📊</h2>
+
+<!-- FILTER FORM -->
+<form action="/transactions-history" method="get">
+
+<input type="text"
+name="search"
+placeholder="Search email">
+
+<select name="type">
+<option value="">All Types</option>
+<option value="SENT">SENT</option>
+<option value="WITHDRAW">WITHDRAW</option>
+<option value="REQUEST_PAYMENT">REQUEST_PAYMENT</option>
+</select>
+
+<input type="number"
+step="0.01"
+name="minAmount"
+placeholder="Min Amount">
+
+<label>From:</label>
+<input type="date" name="startDate">
+
+<label>To:</label>
+<input type="date" name="endDate">
+
+<button type="submit">Apply Filters</button>
+
+<br><br>
+<button>Export CSV 📄</button>
+<br>
+
+</form>
+
+<!-- TABLE -->
+<table>
+
+<tr>
+<th>Sender</th>
+<th>Receiver</th>
+<th>Amount</th>
+<th>Type</th>
+<th>Date</th>
+</tr>
+
+<tr th:each="t : ${transactions}">
+<td th:text="${t.senderEmail}"></td>
+<td th:text="${t.receiverEmail}"></td>
+<td th:text="${t.amount}"></td>
+<td th:text="${t.type != null ? t.type : 'UNKNOWN'}"></td>
+<td th:text="${#temporals.format(t.transactionDate,'dd-MM-yyyy HH:mm')}"></td>
+
+</tr>
+
+</table>
+
+</div>
+
+</body>
+</html>

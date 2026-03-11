@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RevPay — Create Account</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --navy-dark:   #0f172a;
+    --navy-subtle: #1e293b;
+    --accent-blue: #2563eb;
+    --gold:        #eab308;
+    --white:       #ffffff;
+    --glass:       rgba(255,255,255,0.03);
+    --border:      rgba(255,255,255,0.1);
+    --muted:       rgba(255,255,255,0.5);
+}
+
+html, body { min-height: 100%; }
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--navy-dark);
+    color: var(--white);
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ── LEFT PANEL ── */
+.left {
+    width: 360px; flex-shrink: 0;
+    background: var(--navy-subtle);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    padding: 44px 40px;
+    position: sticky; top: 0; height: 100vh;
+    overflow: hidden;
+}
+
+.left::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+    background-size: 36px 36px; pointer-events: none;
+}
+
+.l-logo {
+    display: flex; align-items: center; gap: 12px;
+    text-decoration: none; position: relative; z-index: 1;
+    margin-bottom: 44px;
+}
+
+.logo-box {
+    width: 40px; height: 40px;
+    background: var(--white); color: var(--navy-dark);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 18px;
+    border: 2px solid var(--gold);
+}
+
+.l-logo span { color: white; font-size: 20px; font-weight: 700; }
+
+.l-body { flex: 1; position: relative; z-index: 1; }
+
+.hero-tag {
+    color: var(--gold); font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    font-size: 12px; margin-bottom: 18px; display: block;
+}
+
+.l-body h2 {
+    font-size: 26px; font-weight: 800;
+    letter-spacing: -1px; line-height: 1.2; margin-bottom: 14px;
+}
+
+.l-body p { font-size: 13.5px; color: var(--muted); line-height: 1.75; margin-bottom: 32px; }
+
+.feat-list { display: flex; flex-direction: column; gap: 16px; }
+
+.feat-row { display: flex; align-items: flex-start; gap: 12px; }
+
+.f-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: rgba(37,99,235,0.1);
+    border: 1px solid rgba(37,99,235,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+}
+
+.f-title { font-size: 13px; font-weight: 700; color: white; }
+.f-sub   { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+
+.l-foot {
+    border-top: 1px solid var(--border);
+    padding-top: 22px; font-size: 13px;
+    color: rgba(255,255,255,0.3); position: relative; z-index: 1;
+}
+
+.l-foot a { color: var(--gold); text-decoration: none; font-weight: 600; }
+.l-foot a:hover { text-decoration: underline; }
+
+/* ── RIGHT FORM ── */
+.right {
+    flex: 1; overflow-y: auto;
+    display: flex; flex-direction: column;
+    align-items: center;
+    padding: 48px 60px;
+}
+
+.form-box {
+    width: 100%; max-width: 520px;
+    animation: fadeInUp 0.4s ease both;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.form-header { margin-bottom: 28px; }
+.form-header h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 6px; }
+.form-header p  { font-size: 13px; color: var(--muted); }
+
+/* Alerts */
+.alert {
+    padding: 11px 14px; border-radius: 7px;
+    font-size: 13px; font-weight: 500; margin-bottom: 18px;
+}
+.alert-success { background: rgba(22,163,74,0.12); color: #4ade80; border: 1px solid rgba(22,163,74,0.2); }
+.alert-error   { background: rgba(220,38,38,0.1);  color: #f87171; border: 1px solid rgba(220,38,38,0.2); }
+
+/* Grid */
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+/* Fields */
+.field { margin-bottom: 14px; }
+
+.field label {
+    display: block; font-size: 11px; font-weight: 700;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px;
+}
+
+.field input,
+.field select {
+    width: 100%; padding: 11px 14px;
+    border: 1px solid var(--border); border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px; font-weight: 500; color: white;
+    background: rgba(255,255,255,0.04); outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none; -webkit-appearance: none;
+}
+
+.field input:focus,
+.field select:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
+
+.field input::placeholder { color: rgba(255,255,255,0.2); }
+.field select option { background: var(--navy-subtle); color: white; }
+
+/* password wrapper */
+.pw-wrap { position: relative; }
+.pw-wrap input { padding-right: 42px; }
+.pw-eye {
+    position: absolute; right: 12px; top: 50%;
+    transform: translateY(-50%);
+    background: none; border: none; cursor: pointer;
+    font-size: 14px; opacity: 0.3; padding: 0; line-height: 1;
+    transition: opacity 0.2s;
+}
+.pw-eye:hover { opacity: 0.9; }
+
+/* Business section */
+.business-box {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 14px;
+    display: none;
+}
+
+.business-box.show { display: block; }
+
+.biz-title {
+    font-size: 11px; font-weight: 700;
+    color: var(--gold); letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+}
+
+.biz-title::before {
+    content: ''; width: 20px; height: 1px;
+    background: rgba(234,179,8,0.35);
+}
+
+.biz-title::after {
+    content: ''; flex: 1; height: 1px;
+    background: rgba(234,179,8,0.35);
+}
+
+/* Submit */
+.btn-submit {
+    width: 100%; padding: 13px;
+    background: var(--accent-blue); color: white;
+    border: none; border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px; font-weight: 700; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(37,99,235,0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 6px;
+}
+.btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(37,99,235,0.4); }
+.btn-submit:active { transform: translateY(0); }
+
+.form-footer {
+    text-align: center; margin-top: 18px;
+    font-size: 13px; color: var(--muted);
+}
+.form-footer a { color: #93c5fd; text-decoration: none; font-weight: 600; }
+.form-footer a:hover { text-decoration: underline; }
+
+/* divider */
+.section-divider {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 11px; font-weight: 700;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 1px; text-transform: uppercase;
+    margin: 18px 0 14px;
+}
+.section-divider::before,
+.section-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+@media (max-width: 860px) {
+    .left { display: none; }
+    .right { padding: 36px 20px; }
+    .form-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- LEFT -->
+<div class="left">
+    <a th:href="@{/}" class="l-logo">
+        <div class="logo-box">R</div>
+        <span>RevPay</span>
+    </a>
+    <div class="l-body">
+        <span class="hero-tag">New Account</span>
+        <h2>Join RevPay Today</h2>
+        <p>Open your account in minutes and access institutional-grade banking tools.</p>
+        <div class="feat-list">
+            <div class="feat-row">
+                <div class="f-icon">🛡️</div>
+                <div><div class="f-title">Bank-level Security</div><div class="f-sub">256-bit encrypted transactions</div></div>
+            </div>
+            <div class="feat-row">
+                <div class="f-icon">💸</div>
+                <div><div class="f-title">Global Transfers</div><div class="f-sub">Send money to 150+ countries</div></div>
+            </div>
+            <div class="feat-row">
+                <div class="f-icon">📈</div>
+                <div><div class="f-title">Smart Analytics</div><div class="f-sub">Track every rupee, in real-time</div></div>
+            </div>
+            <div class="feat-row">
+                <div class="f-icon">🧾</div>
+                <div><div class="f-title">Business Invoicing</div><div class="f-sub">Create &amp; manage invoices instantly</div></div>
+            </div>
+        </div>
+    </div>
+    <div class="l-foot">Already have an account? <a th:href="@{/login}">Sign in →</a></div>
+</div>
+
+<!-- RIGHT -->
+<div class="right">
+    <div class="form-box">
+
+        <div class="form-header">
+            <h2>Create your account</h2>
+            <p>Fill in your details to get started with RevPay.</p>
+        </div>
+
+        <form th:action="@{/register}" method="post" th:object="${user}">
+
+            <!-- Name + Phone -->
+            <div class="form-row">
+                <div class="field">
+                    <label>Full Name</label>
+                    <input type="text"
+                           th:field="*{fullName}"
+                           placeholder="John Doe"
+                           pattern="^[A-Za-z ]{3,50}$"
+                           title="Only letters allowed"
+                           required>
+                </div>
+                <div class="field">
+                    <label>Phone Number</label>
+                    <input type="tel"
+                           th:field="*{phone}"
+                           placeholder="9999999999"
+                           pattern="[0-9]{10}"
+                           title="Enter 10 digit phone number"
+                           required>
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="field">
+                <label>Email Address</label>
+                <input type="email"
+                       th:field="*{email}"
+                       placeholder="you@example.com"
+                       required>
+            </div>
+
+            <!-- Password + Confirm -->
+            <div class="form-row">
+                <div class="field">
+                    <label>Password</label>
+                    <div class="pw-wrap">
+                        <input type="password"
+                               name="password"
+                               id="password"
+                               placeholder="Min 8 characters"
+                               minlength="8"
+                               required>
+                        <button type="button" class="pw-eye" onclick="togglePw('password',this)">👁</button>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Confirm Password</label>
+                    <div class="pw-wrap">
+                        <input type="password"
+                               name="confirmPassword"
+                               id="confirmPassword"
+                               placeholder="Repeat password"
+                               required>
+                        <button type="button" class="pw-eye" onclick="togglePw('confirmPassword',this)">👁</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-divider">Security</div>
+
+            <!-- Security Question + Answer -->
+            <div class="form-row">
+                <div class="field">
+                    <label>Security Question</label>
+                    <select th:field="*{securityQuestion}" required>
+                        <option value="">Select a question</option>
+                        <option value="What is your pet name?">What is your pet name?</option>
+                        <option value="What is your school name?">What is your school name?</option>
+                        <option value="What is your favorite food?">What is your favorite food?</option>
+                        <option value="What is your birthplace?">What is your birthplace?</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Security Answer</label>
+                    <input type="text"
+                           th:field="*{securityAnswer}"
+                           placeholder="Your answer"
+                           required>
+                </div>
+            </div>
+
+            <div class="section-divider">Account Type</div>
+
+            <!-- Role -->
+            <div class="field">
+                <label>Account Type</label>
+                <select th:field="*{role}" id="roleSelect" required>
+                    <option value="">Select account type</option>
+                    <option value="PERSONAL">Personal</option>
+                    <option value="BUSINESS">Business</option>
+                </select>
+            </div>
+
+            <!-- Business Section -->
+            <div id="businessSection" class="business-box">
+                <div class="biz-title">Business Details</div>
+                <div class="form-row">
+                    <div class="field">
+                        <label>Business Name</label>
+                        <input type="text" name="businessName" placeholder="Acme Corp Ltd">
+                    </div>
+                    <div class="field">
+                        <label>GST / Tax ID</label>
+                        <input type="text" name="gstNumber" placeholder="GST12345678">
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Business Type</label>
+                    <select name="businessType">
+                        <option value="">Select type</option>
+                        <option>Retail</option>
+                        <option>Ecommerce</option>
+                        <option>Services</option>
+                        <option>Manufacturing</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Business Address</label>
+                    <input type="text" name="businessAddress" placeholder="123 Business Ave, City">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">Create Account →</button>
+
+        </form>
+
+        <div class="form-footer">
+            Already have an account? <a th:href="@{/login}">Login here</a>
+        </div>
+        <div style="text-align:center; margin-top:10px;">
+            <a th:href="@{/}" style="font-size:12px; color:rgba(255,255,255,0.25); text-decoration:none; transition:color 0.2s;"
+               onmouseover="this.style.color='rgba(255,255,255,0.6)'"
+               onmouseout="this.style.color='rgba(255,255,255,0.25)'">← Back to Home</a>
+        </div>
+
+    </div>
+</div>
+
+<script>
+// Password match validation
+const pw  = document.getElementById('password');
+const cpw = document.getElementById('confirmPassword');
+
+cpw.addEventListener('keyup', function () {
+    cpw.setCustomValidity(pw.value !== cpw.value ? 'Passwords do not match' : '');
+});
+
+// Business section toggle
+const roleSelect       = document.getElementById('roleSelect');
+const businessSection  = document.getElementById('businessSection');
+
+function toggleBusiness() {
+    businessSection.className = 'business-box' + (roleSelect.value === 'BUSINESS' ? ' show' : '');
+}
+
+roleSelect.addEventListener('change', toggleBusiness);
+toggleBusiness();
+
+// Password show/hide
+function togglePw(id, btn) {
+    const el = document.getElementById(id);
+    el.type  = el.type === 'password' ? 'text' : 'password';
+    btn.textContent = el.type === 'password' ? '👁' : '🙈';
+}
+</script>
+</body>
+</html>

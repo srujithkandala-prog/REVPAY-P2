@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RevPay — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+    --navy-dark:   #0f172a;
+    --navy-subtle: #1e293b;
+    --navy-mid:    #111827;
+    --accent-blue: #2563eb;
+    --gold:        #eab308;
+    --white:       #ffffff;
+    --glass:       rgba(255,255,255,0.03);
+    --border:      rgba(255,255,255,0.08);
+    --muted:       rgba(255,255,255,0.5);
+    --sidebar-w:   230px;
+}
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--navy-dark);
+    color: var(--white);
+    line-height: 1.6;
+    display: flex; 
+    min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+    width: var(--sidebar-w);
+    background: var(--navy-subtle);
+    border-right: 1px solid var(--border);
+    position: fixed; top: 0; left: 0; bottom: 0;
+    z-index: 50; overflow-y: auto;
+    display: flex; flex-direction: column;
+}
+.sidebar-logo {
+    display: flex; align-items: center; gap: 11px;
+    padding: 22px 20px 18px;
+    text-decoration: none; position: relative; z-index: 1;
+    border-bottom: 1px solid var(--border); margin-bottom: 8px;
+}
+.logo-box {
+    width: 36px; height: 36px;
+    background: var(--white); color: var(--navy-dark);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 16px;
+    border: 2px solid var(--gold);
+    flex-shrink: 0;
+}
+.logo-text { display: flex; flex-direction: column; }
+.logo-text .s-name { color: white; font-size: 15px; font-weight: 800; }
+.logo-text .s-tag  {
+    font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--gold);
+    display: block; margin-top: 1px;
+}
+.nav-section {
+    padding: 12px 20px 4px;
+    font-size: 10px; font-weight: 700;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 2px; text-transform: uppercase;
+}
+.nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; margin: 1px 8px;
+    text-decoration: none;
+    font-size: 13px; font-weight: 500;
+    color: rgba(255,255,255,0.5);
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+.nav-icon {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: rgba(255,255,255,0.04);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; flex-shrink: 0;
+}
+.nav-item:hover { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.05); }
+.nav-item.active {
+    color: white; font-weight: 600;
+    background: rgba(37,99,235,0.15);
+    border: 1px solid rgba(37,99,235,0.25);
+}
+.nav-item.active .nav-icon { background: var(--accent-blue); }
+
+/* ── MAIN ── */
+.main {
+    margin-left: var(--sidebar-w);
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    min-height: 100vh;
+    min-width: 0; /* Prevents layout overflow */
+}
+
+/* ── TOPBAR ── */
+.topbar {
+    background: rgba(15,23,42,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 30;
+}
+.topbar-title { font-size: 16px; font-weight: 800; }
+.topbar-sub   { font-size: 12px; color: var(--muted); margin-top: 1px; }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.tb-avatar {
+    width: 34px; height: 34px; border-radius: 7px;
+    background: var(--accent-blue);
+    color: white; font-weight: 800; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+}
+
+/* ── CONTENT ── */
+.content { padding: 28px 32px; flex: 1; }
+
+.welcome-banner {
+    background: linear-gradient(135deg, var(--navy-subtle) 0%, #0f1f38 100%);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 26px 30px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+}
+.welcome-text h2 { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+.welcome-text p   { font-size: 13px; color: var(--muted); }
+
+/* ── BUTTONS ── */
+.btn-blue {
+    padding: 10px 18px; background: var(--accent-blue); color: white;
+    border: none; border-radius: 7px; font-size: 13px; font-weight: 700;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 7px;
+}
+.btn-outline-white {
+    padding: 10px 18px; background: var(--glass); color: white;
+    border: 1px solid var(--border); border-radius: 7px;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 7px;
+}
+
+/* ── CARDS ── */
+.grad-card {
+    border-radius: 16px; padding: 24px 26px;
+    background: linear-gradient(135deg, #1d4ed8 0%, #5b21b6 100%);
+    margin-bottom: 20px;
+}
+.grad-label { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.6); text-transform: uppercase; margin-bottom: 10px; }
+.grad-amount { font-size: 34px; font-weight: 800; color: white; margin-bottom: 18px; }
+.stat-card { background: var(--navy-subtle); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+.card { background: var(--navy-subtle); border: 1px solid var(--border); border-radius: 14px; padding: 22px; margin-bottom: 20px; }
+
+/* ── QUICK ACTIONS ── */
+.quick-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.quick-item {
+    display: flex; flex-direction: column; align-items: center; gap: 7px;
+    padding: 14px 6px; border-radius: 10px; border: 1px solid var(--border);
+    text-decoration: none; color: white; background: var(--glass);
+}
+.quick-label { font-size: 11px; color: rgba(255,255,255,0.6); }
+
+/* ── TRANSACTIONS ── */
+.txn-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.amt-credit { color: #34d399; font-weight: 800; }
+.amt-debit  { color: #f87171; font-weight: 800; }
+
+@media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .grid-3 { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <a th:href="@{/dashboard}" class="sidebar-logo">
+    <div class="logo-box">R</div>
+    <div class="logo-text">
+      <span class="s-name">RevPay</span>
+      <span class="s-tag">Personal</span>
+    </div>
+  </a>
+  <div class="nav-section">Main</div>
+  <a th:href="@{/dashboard}" class="nav-item active"><div class="nav-icon">&#127968;</div>Dashboard</a>
+  <a th:href="@{/profile}"   class="nav-item"><div class="nav-icon">&#128100;</div>Profile</a>
+  <div class="nav-section">Payments</div>
+  <a th:href="@{/send-money}"    class="nav-item"><div class="nav-icon">&#128184;</div>Send Money</a>
+  <a th:href="@{/add-money}"     class="nav-item"><div class="nav-icon">&#10133;</div>Add Money</a>
+  <a th:href="@{/request-money}" class="nav-item"><div class="nav-icon">&#128232;</div>Request Money</a>
+  <div class="sidebar-bottom" style="margin-top: auto; padding-bottom: 20px;">
+    <a th:href="@{/logout}" class="nav-item" style="color: #ef4444;"><div class="nav-icon">&#128682;</div>Logout</a>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Dashboard</div>
+      <div class="topbar-sub" th:text="${#dates.format(#dates.createNow(),'EEEE, dd MMMM yyyy')}">Date</div>
+    </div>
+    <div class="topbar-right">
+      <span class="tb-badge" style="background:rgba(37,99,235,0.1); color:#93c5fd; padding:4px 8px; border-radius:4px; font-size:10px; font-weight:700;">PERSONAL</span>
+      <div class="tb-avatar" th:text="${username != null and !username.isEmpty() ? #strings.substring(username,0,1).toUpperCase() : 'R'}">R</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="welcome-banner">
+      <div class="welcome-text">
+        <h2>Welcome back, <span th:text="${username}">User</span> &#128075;</h2>
+        <p>Here's your financial overview for today.</p>
+      </div>
+      <div class="welcome-actions">
+        <a th:href="@{/send-money}" class="btn-blue">&#128184; Send Money</a>
+        <a th:href="@{/add-money}"  class="btn-outline-white">&#10133; Add Money</a>
+      </div>
+    </div>
+
+    <div class="grad-card">
+      <div class="grad-label">Wallet Balance</div>
+      <div class="grad-amount">₹<span th:text="${walletBalance}">0.00</span></div>
+      <div style="display:flex; gap:10px">
+        <a th:href="@{/add-money}" style="background:white; color:black; padding:8px 16px; border-radius:6px; text-decoration:none; font-size:12px; font-weight:bold">+ Add Money</a>
+        <a th:href="@{/withdraw}" style="background:rgba(255,255,255,0.1); color:white; padding:8px 16px; border-radius:6px; text-decoration:none; font-size:12px; font-weight:bold; border:1px solid rgba(255,255,255,0.2)">Withdraw</a>
+      </div>
+    </div>
+
+    <div class="grid-3">
+      <div class="stat-card">
+        <div style="color:#f87171; font-size:10px; font-weight:700; margin-bottom:8px">TOTAL SENT</div>
+        <div style="font-size:22px; font-weight:800">₹<span th:text="${totalSent}">0.0</span></div>
+      </div>
+      <div class="stat-card">
+        <div style="color:#34d399; font-size:10px; font-weight:700; margin-bottom:8px">TOTAL RECEIVED</div>
+        <div style="font-size:22px; font-weight:800">₹<span th:text="${totalReceived}">0.0</span></div>
+      </div>
+      <div class="stat-card">
+        <div style="color:#93c5fd; font-size:10px; font-weight:700; margin-bottom:8px">TRANSACTIONS</div>
+        <div style="font-size:22px; font-weight:800" th:text="${totalTransactions}">0</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="font-size:14px; margin-bottom:16px; font-weight:800">Quick Actions</h3>
+      <div class="quick-grid">
+        <a th:href="@{/send-money}" class="quick-item"><span>&#128184;</span><span class="quick-label">Send</span></a>
+        <a th:href="@{/request-money}" class="quick-item"><span>&#128232;</span><span class="quick-label">Request</span></a>
+        <a th:href="@{/add-money}" class="quick-item"><span>&#10133;</span><span class="quick-label">Add</span></a>
+        <a th:href="@{/payment-methods}" class="quick-item"><span>&#128179;</span><span class="quick-label">Cards</span></a>
+        <a th:href="@{/transaction-history}" class="quick-item"><span>&#128203;</span><span class="quick-label">History</span></a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
+        <h3 style="font-size:14px; font-weight:800">Recent Transactions</h3>
+        <a th:href="@{/transaction-history}" style="font-size:12px; color:#93c5fd; text-decoration:none">View All</a>
+      </div>
+      
+      <div th:if="${#lists.isEmpty(recentTransactions)}" style="text-align:center; padding:30px; color:var(--muted)">
+        <p>No transactions yet.</p>
+      </div>
+
+      <div th:each="txn : ${recentTransactions}" class="txn-row">
+        <div style="width:36px; height:36px; border-radius:8px; background:rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:center">
+           <span th:text="${txn.type == 'credit' ? '&#128229;' : '&#128228;'}"></span>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:13px; font-weight:700" th:text="${txn.type}">Type</div>
+          <div style="font-size:11px; color:var(--muted)" th:text="${txn.date}">Date</div>
+        </div>
+        <div th:class="${txn.type == 'credit' ? 'amt-credit' : 'amt-debit'}" 
+             th:text="${(txn.type == 'credit' ? '+' : '-') + ' ₹' + txn.amount}">
+          ₹0.00
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

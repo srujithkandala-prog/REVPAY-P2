@@ -1,0 +1,65 @@
+package com.revpay.serviceimpl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.revpay.entity.Loan;
+import com.revpay.entity.LoanPayment;
+import com.revpay.repository.LoanRepository;
+import com.revpay.repository.LoanPaymentRepository;
+import com.revpay.service.LoanService;
+
+@Service
+public class LoanServiceImpl implements LoanService {
+
+    @Autowired
+    private LoanRepository loanRepository;
+
+    @Autowired
+    private LoanPaymentRepository loanPaymentRepository;
+
+    @Override
+    public void payLoanEmi(Long loanId) {
+
+        Loan loan = loanRepository.findById(loanId).orElseThrow();
+
+        // check loan approval
+        if (!loan.getStatus().equals("APPROVED")) {
+            throw new RuntimeException("Loan not approved yet");
+        }
+
+        // check if loan already completed
+        if (loan.getRemainingAmount() <= 0) {
+            throw new RuntimeException("Loan already completed");
+        }
+
+        double emi = loan.getEmi();
+
+        double newRemaining = loan.getRemainingAmount() - emi;
+
+        if (newRemaining < 0) {
+            newRemaining = 0;
+        }
+
+        // update loan
+        loan.setRemainingAmount(newRemaining);
+        loan.setMonthsPaid(loan.getMonthsPaid() + 1);
+
+        if (newRemaining == 0) {
+            loan.setStatus("COMPLETED");
+        }
+
+        loanRepository.save(loan);
+
+        // save EMI history
+        LoanPayment payment = new LoanPayment();
+
+        payment.setLoanId(loan.getId());
+        payment.setBusinessEmail(loan.getBusinessEmail());
+        payment.setAmountPaid(emi);
+        payment.setPaymentDate(java.time.LocalDate.now());
+        payment.setRemainingBalance(newRemaining);
+
+        loanPaymentRepository.save(payment);
+    }
+}

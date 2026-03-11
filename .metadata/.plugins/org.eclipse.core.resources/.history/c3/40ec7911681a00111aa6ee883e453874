@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RevPay - Digital Payment Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:    #1a2540;
+    --blue:    #2563eb;
+    --blue-lt: #3b82f6;
+    --teal:    #0ea5e9;
+    --green:   #10b981;
+    --bg:      #f0f4fb;
+    --white:   #ffffff;
+    --text:    #1e293b;
+    --muted:   #64748b;
+    --border:  #e2e8f0;
+  }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--navy);
+    padding: 15px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+
+  .logo-box {
+    width: 36px; height: 36px;
+    background: var(--blue);
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 16px; color: white;
+  }
+
+  .logo span {
+    color: white;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+  }
+
+  nav { display: flex; align-items: center; gap: 6px; }
+
+  nav a {
+    color: rgba(255,255,255,0.75);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 7px 15px;
+    border-radius: 6px;
+    transition: all 0.18s;
+  }
+
+  nav a:hover { color: white; background: rgba(255,255,255,0.08); }
+
+  nav a.nav-btn {
+    background: var(--blue);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 7px;
+  }
+
+  nav a.nav-btn:hover { background: var(--blue-lt); }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--navy);
+    padding: 70px 48px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(37,99,235,0.25) 0%, transparent 65%);
+    top: -150px; left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    background: rgba(37,99,235,0.2);
+    color: #93c5fd;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(147,197,253,0.2);
+    margin-bottom: 22px;
+    position: relative;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .hero h1 {
+    font-size: clamp(32px, 5vw, 54px);
+    font-weight: 800;
+    color: white;
+    line-height: 1.15;
+    letter-spacing: -1px;
+    max-width: 700px;
+    margin: 0 auto 18px;
+    position: relative;
+    animation: fadeUp 0.5s 0.1s ease both;
+  }
+
+  .hero h1 .accent { color: #60a5fa; }
+
+  .hero p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.55);
+    max-width: 500px;
+    margin: 0 auto 36px;
+    font-weight: 400;
+    line-height: 1.7;
+    position: relative;
+    animation: fadeUp 0.5s 0.2s ease both;
+  }
+
+  .hero-btns {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+    animation: fadeUp 0.5s 0.3s ease both;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 12px 28px;
+    background: var(--blue);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 15px;
+    transition: background 0.18s, transform 0.18s;
+  }
+
+  .btn-primary:hover { background: var(--blue-lt); transform: translateY(-1px); }
+
+  .btn-outline {
+    display: inline-block;
+    padding: 12px 28px;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.85);
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.18s;
+  }
+
+  .btn-outline:hover { background: rgba(255,255,255,0.07); color: white; }
+
+  /* ── STATS ── */
+  .stats {
+    background: white;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .stat-item {
+    padding: 28px 48px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+
+  .stat-item:last-child { border-right: none; }
+
+  .stat-item strong {
+    display: block;
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--blue);
+    letter-spacing: -0.5px;
+  }
+
+  .stat-item span {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  /* ── SECTION SHARED ── */
+  .section { padding: 72px 48px; }
+  .section-center { text-align: center; margin-bottom: 48px; }
+
+  .label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 10px;
+  }
+
+  .section-center h2 {
+    font-size: clamp(24px, 3vw, 36px);
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+  }
+
+  .section-center p {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  /* ── FEATURES ── */
+  .features-bg { background: white; }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .feat-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 24px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .feat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.07);
+    border-color: #bfdbfe;
+  }
+
+  .feat-icon {
+    width: 46px; height: 46px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .feat-card:nth-child(1) .feat-icon { background: #dbeafe; }
+  .feat-card:nth-child(2) .feat-icon { background: #d1fae5; }
+  .feat-card:nth-child(3) .feat-icon { background: #fef3c7; }
+  .feat-card:nth-child(4) .feat-icon { background: #ede9fe; }
+  .feat-card:nth-child(5) .feat-icon { background: #fee2e2; }
+  .feat-card:nth-child(6) .feat-icon { background: #cffafe; }
+
+  .feat-card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .feat-card p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── ACCOUNT TYPES ── */
+  .accounts-section { background: var(--bg); }
+
+  .accounts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .account-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 36px 30px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .account-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.08);
+  }
+
+  .account-card.featured {
+    background: var(--navy);
+    border-color: transparent;
+  }
+
+  .account-card .ac-icon {
+    font-size: 34px;
+    margin-bottom: 16px;
+  }
+
+  .account-card h3 {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+  }
+
+  .account-card.featured h3 { color: white; }
+
+  .account-card > p {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    line-height: 1.65;
+  }
+
+  .account-card.featured > p { color: rgba(255,255,255,0.55); }
+
+  .ac-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin-bottom: 28px;
+  }
+
+  .ac-list li {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .account-card.featured .ac-list li { color: rgba(255,255,255,0.8); }
+
+  .ac-list li::before {
+    content: '✓';
+    width: 18px; height: 18px;
+    background: #dbeafe;
+    color: var(--blue);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .account-card.featured .ac-list li::before {
+    background: rgba(96,165,250,0.2);
+    color: #93c5fd;
+  }
+
+  .ac-btn {
+    display: block;
+    text-align: center;
+    padding: 11px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.18s;
+    background: var(--blue);
+    color: white;
+  }
+
+  .ac-btn:hover { background: var(--blue-lt); }
+
+  .account-card.featured .ac-btn {
+    background: white;
+    color: var(--navy);
+  }
+
+  .account-card.featured .ac-btn:hover { background: #f1f5f9; }
+
+  /* ── HOW IT WORKS ── */
+  .how-section { background: white; }
+
+  .steps {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: wrap;
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .step {
+    flex: 1;
+    min-width: 180px;
+    text-align: center;
+    padding: 20px 24px;
+    position: relative;
+  }
+
+  .step:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -8px;
+    top: 28px;
+    color: #cbd5e1;
+    font-size: 18px;
+  }
+
+  .step-num {
+    width: 44px; height: 44px;
+    background: var(--blue);
+    color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+    margin: 0 auto 14px;
+  }
+
+  .step h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .step p {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  /* ── CTA ── */
+  .cta-section {
+    background: var(--navy);
+    padding: 72px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(37,99,235,0.3) 0%, transparent 65%);
+    top: -100px; left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .cta-section h2 {
+    font-size: clamp(24px, 3vw, 38px);
+    font-weight: 800;
+    color: white;
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  .cta-section p {
+    color: rgba(255,255,255,0.5);
+    font-size: 15px;
+    margin-bottom: 32px;
+    position: relative;
+  }
+
+  .cta-btns {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #0f172a;
+    padding: 24px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .footer-logo { display: flex; align-items: center; gap: 9px; text-decoration: none; }
+  .footer-logo span { color: white; font-size: 16px; font-weight: 800; }
+
+  footer p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.3);
+  }
+
+  .footer-links { display: flex; gap: 20px; }
+
+  .footer-links a {
+    font-size: 12px;
+    color: rgba(255,255,255,0.35);
+    text-decoration: none;
+    transition: color 0.18s;
+  }
+
+  .footer-links a:hover { color: rgba(255,255,255,0.7); }
+
+  @keyframes fadeUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  @media (max-width: 768px) {
+    header { padding: 15px 20px; }
+    .hero  { padding: 60px 20px; }
+    .section { padding: 56px 20px; }
+    .stat-item { border-right: none; border-bottom: 1px solid var(--border); width: 100%; }
+    .step:not(:last-child)::after { display: none; }
+    footer { padding: 20px; flex-direction: column; align-items: flex-start; }
+    .cta-section { padding: 56px 20px; }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <a th:href="@{/}" class="logo">
+    <div class="logo-box">R</div>
+    <span>RevPay</span>
+  </a>
+  <nav>
+    <a th:href="@{/}">Home</a>
+    <a th:href="@{/login}">Login</a>
+    <a th:href="@{/register}" class="nav-btn">Register</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">Digital Payment Platform</div>
+  <h1>Send, Receive &amp; Manage<br><span class="accent">Money Securely</span></h1>
+  <p>RevPay gives personal and business users a complete platform to handle payments, invoices, loans, and analytics — all in one place.</p>
+  <div class="hero-btns">
+    <a th:href="@{/register}" class="btn-primary">Create an Account</a>
+    <a th:href="@{/login}" class="btn-outline">Login</a>
+  </div>
+</section>
+
+
+
+<!-- FEATURES -->
+<section class="section features-bg">
+  <div class="section-center">
+    <div class="label">Core Features</div>
+    <h2>Everything you need to manage payments</h2>
+    <p>Built for both personal users and growing businesses with enterprise-grade security.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon">🔒</div>
+      <h3>Secure Transactions</h3>
+      <p>256-bit encryption, transaction PIN, and real-time fraud detection on every payment.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">💸</div>
+      <h3>Send &amp; Request Money</h3>
+      <p>Transfer funds by username, email, phone, or account ID with an optional note.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📄</div>
+      <h3>Invoice Management</h3>
+      <p>Create itemized invoices, set due dates, and send them directly to customers.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📊</div>
+      <h3>Business Analytics</h3>
+      <p>Revenue reports, payment trends, top customers, and outstanding invoice summaries.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🏦</div>
+      <h3>Loan Applications</h3>
+      <p>Business users can apply for loans, track approval status, and manage repayments.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🔔</div>
+      <h3>Smart Notifications</h3>
+      <p>Real-time alerts for transactions, money requests, low balance, and card changes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ACCOUNT TYPES -->
+<section class="section accounts-section">
+  <div class="section-center">
+    <div class="label">Account Types</div>
+    <h2>Choose the account that fits you</h2>
+    <p>Personal or Business — RevPay has a tailored experience for both.</p>
+  </div>
+  <div class="accounts-grid">
+    <div class="account-card">
+      <div class="ac-icon">👤</div>
+      <h3>Personal Account</h3>
+      <p>For individuals who want a fast and secure way to send, receive, and manage money.</p>
+      <ul class="ac-list">
+        <li>Send &amp; request money</li>
+        <li>Wallet &amp; payment methods</li>
+        <li>Full transaction history</li>
+        <li>Export to CSV / PDF</li>
+        <li>In-app notifications</li>
+      </ul>
+      <a th:href="@{/register}" class="ac-btn">Register as Personal</a>
+    </div>
+    <div class="account-card featured">
+      <div class="ac-icon">🏢</div>
+      <h3>Business Account</h3>
+      <p>Everything in Personal, plus advanced tools to run and grow your business.</p>
+      <ul class="ac-list">
+        <li>Accept customer payments</li>
+        <li>Invoice creation &amp; tracking</li>
+        <li>Business loan applications</li>
+        <li>Analytics &amp; revenue reports</li>
+        <li>Business verification &amp; docs</li>
+      </ul>
+      <a th:href="@{/register}" class="ac-btn">Register as Business</a>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section how-section">
+  <div class="section-center">
+    <div class="label">How It Works</div>
+    <h2>Up and running in minutes</h2>
+    <p>Getting started with RevPay is quick and straightforward.</p>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h4>Create Account</h4>
+      <p>Register with your name, email, and phone number.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h4>Add Payment Method</h4>
+      <p>Link your card or bank account to your wallet.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h4>Send or Request</h4>
+      <p>Transfer money to anyone using email or phone.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h4>Track &amp; Manage</h4>
+      <p>Monitor all transactions and export reports easily.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Ready to get started with RevPay?</h2>
+  <p>Join thousands of personal and business users already on the platform.</p>
+  <div class="cta-btns">
+    <a th:href="@{/register}" class="btn-primary">Create a Free Account</a>
+    <a th:href="@{/login}" class="btn-outline">Login to Dashboard</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a th:href="@{/}" class="footer-logo">
+    <div class="logo-box">R</div>
+    <span>RevPay</span>
+  </a>
+  <p>© 2026 RevPay | Digital Payment Platform</p>
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Support</a>
+  </div>
+</footer>
+
+</body>
+</html>

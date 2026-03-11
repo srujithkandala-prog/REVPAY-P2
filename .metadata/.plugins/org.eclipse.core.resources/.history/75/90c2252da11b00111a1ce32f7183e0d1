@@ -1,0 +1,73 @@
+package com.revpay.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+
+import com.revpay.security.CustomUserDetailsService;
+
+@Configuration
+public class SecurityConfig {
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider(
+            CustomUserDetailsService service) {
+
+        DaoAuthenticationProvider auth = new DaoAuthenticationProvider();
+        auth.setUserDetailsService(service);
+        auth.setPasswordEncoder(passwordEncoder());
+
+        return auth;
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        http
+            .csrf(csrf -> csrf.disable())
+
+            .authorizeHttpRequests(auth -> auth
+
+                    // Public pages
+                    .requestMatchers(
+                            "/",
+                            "/login",
+                            "/register",
+
+                            // Forgot password flow
+                            "/forgot-password",
+                            "/verify-email",
+                            "/verify-answer",
+                            "/reset-password",
+
+                            // Static resources
+                            "/css/**",
+                            "/js/**",
+                            "/images/**"
+                    ).permitAll()
+
+                    .anyRequest().authenticated()
+            )
+
+            .formLogin(form -> form
+                    .loginPage("/login")
+                    .defaultSuccessUrl("/dashboard", true)
+                    .permitAll()
+            )
+
+            .logout(logout -> logout
+                    .logoutSuccessUrl("/login?logout")
+                    .permitAll()
+            );
+
+        return http.build();
+    }
+}

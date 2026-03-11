@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>RevPay — Create Account</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+
+/* ====== GLOBAL ====== */
+
+:root{
+  --primary:#2c7be5;
+  --primary-dark:#1b5fcc;
+  --bg:#f4f6f9;
+  --card:#ffffff;
+  --text:#1f2937;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --success:#16a34a;
+  --danger:#dc2626;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:linear-gradient(135deg,#eef2ff,#f4f6f9);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* ====== CARD ====== */
+
+.container{
+  width:460px;
+  max-width:95%;
+  background:var(--card);
+  padding:32px 28px;
+  border-radius:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+/* ====== HEADER ====== */
+
+.logo{
+  text-align:center;
+  font-size:22px;
+  font-weight:bold;
+  color:var(--primary);
+  margin-bottom:6px;
+}
+
+.subtitle{
+  text-align:center;
+  color:var(--muted);
+  font-size:14px;
+  margin-bottom:24px;
+}
+
+/* ====== INPUTS ====== */
+
+input,select{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:6px;
+  border:1px solid var(--border);
+  font-size:14px;
+  transition:.2s;
+}
+
+input:focus,select:focus{
+  outline:none;
+  border-color:var(--primary);
+  box-shadow:0 0 0 2px rgba(44,123,229,.15);
+}
+
+/* ====== BUTTON ====== */
+
+button{
+  width:100%;
+  padding:12px;
+  margin-top:18px;
+  border:none;
+  border-radius:6px;
+  background:var(--primary);
+  color:white;
+  font-size:15px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:.2s;
+}
+
+button:hover{
+  background:var(--primary-dark);
+}
+
+/* ====== BUSINESS BOX ====== */
+
+.business-box{
+  background:#f9fafb;
+  border:1px solid var(--border);
+  padding:16px;
+  border-radius:8px;
+  margin-top:16px;
+}
+
+/* ====== ALERTS ====== */
+
+.success{
+  background:#ecfdf5;
+  color:var(--success);
+  padding:10px;
+  border-radius:6px;
+  text-align:center;
+  margin-bottom:12px;
+  font-size:14px;
+}
+
+.error{
+  background:#fef2f2;
+  color:var(--danger);
+  padding:10px;
+  border-radius:6px;
+  text-align:center;
+  margin-bottom:12px;
+  font-size:14px;
+}
+
+/* ====== FOOTER ====== */
+
+.footer{
+  text-align:center;
+  font-size:13px;
+  margin-top:16px;
+  color:var(--muted);
+}
+
+.footer a{
+  color:var(--primary);
+  text-decoration:none;
+}
+
+.footer a:hover{
+  text-decoration:underline;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="logo">RevPay</div>
+<div class="subtitle">Create your secure account</div>
+
+<p class="success" th:if="${param.success}">
+Registration successful! Please login.
+</p>
+
+<p class="error" th:if="${param.error}">
+Registration failed. Please check details.
+</p>
+
+<form th:action="@{/register}" method="post" th:object="${user}">
+
+<!-- FULL NAME -->
+
+<input type="text"
+       th:field="*{fullName}"
+       placeholder="Full Name"
+       pattern="^[A-Za-z ]{3,50}$"
+       title="Only letters allowed"
+       required>
+
+<!-- EMAIL -->
+
+<input type="email"
+       th:field="*{email}"
+       placeholder="Email Address"
+       required>
+
+<!-- PHONE -->
+
+<input type="tel"
+       th:field="*{phone}"
+       placeholder="Phone Number"
+       pattern="[0-9]{10}"
+       title="Enter 10 digit phone number"
+       required>
+
+<!-- PASSWORD -->
+
+<input type="password"
+       name="password"
+       id="password"
+       placeholder="Password"
+       minlength="8"
+       required>
+
+<!-- CONFIRM PASSWORD -->
+
+<input type="password"
+       name="confirmPassword"
+       id="confirmPassword"
+       placeholder="Confirm Password"
+       required>
+
+<!-- SECURITY QUESTION -->
+
+<select th:field="*{securityQuestion}" required>
+
+<option value="">Security Question</option>
+<option value="What is your pet name?">What is your pet name?</option>
+<option value="What is your school name?">What is your school name?</option>
+<option value="What is your favorite food?">What is your favorite food?</option>
+<option value="What is your birthplace?">What is your birthplace?</option>
+
+</select>
+
+<!-- SECURITY ANSWER -->
+
+<input type="text"
+       th:field="*{securityAnswer}"
+       placeholder="Security Answer"
+       required>
+
+<!-- ACCOUNT TYPE -->
+
+<select th:field="*{role}" id="roleSelect" required>
+
+<option value="">Account Type</option>
+<option value="PERSONAL">Personal</option>
+<option value="BUSINESS">Business</option>
+
+</select>
+
+<!-- BUSINESS SECTION -->
+
+<div id="businessSection" class="business-box" style="display:none;">
+
+<b>Business Details</b>
+
+<input type="text"
+       name="businessName"
+       placeholder="Business Name">
+
+<input type="text"
+       name="gstNumber"
+       placeholder="GST / Tax ID">
+
+<select name="businessType">
+<option value="">Business Type</option>
+<option>Retail</option>
+<option>Ecommerce</option>
+<option>Services</option>
+<option>Manufacturing</option>
+</select>
+
+<input type="text"
+       name="businessAddress"
+       placeholder="Business Address">
+
+</div>
+
+<button type="submit">Create Account</button>
+
+</form>
+
+<div class="footer">
+Already have an account?
+<a href="/login">Login</a>
+</div>
+
+</div>
+
+<script>
+
+/* PASSWORD MATCH CHECK */
+
+const password=document.getElementById("password");
+const confirmPassword=document.getElementById("confirmPassword");
+
+confirmPassword.addEventListener("keyup",function(){
+
+if(password.value!==confirmPassword.value){
+
+confirmPassword.setCustomValidity("Passwords do not match");
+
+}else{
+
+confirmPassword.setCustomValidity("");
+
+}
+
+});
+
+
+/* BUSINESS SECTION TOGGLE */
+
+const roleSelect=document.getElementById("roleSelect");
+const businessSection=document.getElementById("businessSection");
+
+function toggleBusiness(){
+
+if(roleSelect.value==="BUSINESS"){
+
+businessSection.style.display="block";
+
+}else{
+
+businessSection.style.display="none";
+
+}
+
+}
+
+roleSelect.addEventListener("change",toggleBusiness);
+toggleBusiness();
+
+</script>
+
+</body>
+</html>

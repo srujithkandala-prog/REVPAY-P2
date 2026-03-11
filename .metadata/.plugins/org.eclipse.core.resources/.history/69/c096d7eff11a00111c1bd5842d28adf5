@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RevPay — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & CORE ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+    --navy-dark:   #0f172a;
+    --navy-subtle: #1e293b;
+    --accent-blue: #2563eb;
+    --gold:        #eab308;
+    --white:       #ffffff;
+    --border:      rgba(255,255,255,0.08);
+    --muted:       rgba(255,255,255,0.5);
+    --sidebar-w:   240px; /* Slightly wider for better text fit */
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--navy-dark);
+    color: var(--white);
+    display: flex; 
+    min-height: 100vh;
+    overflow-x: hidden; /* Prevent horizontal ghost scrolling */
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+    width: var(--sidebar-w);
+    background: var(--navy-subtle);
+    border-right: 1px solid var(--border);
+    position: fixed; top: 0; left: 0; bottom: 0;
+    z-index: 50; 
+    display: flex; flex-direction: column;
+}
+
+/* ── MAIN CONTENT AREA ── */
+.main {
+    flex: 1;
+    margin-left: var(--sidebar-w); /* Pushes content away from fixed sidebar */
+    display: flex;
+    flex-direction: column;
+    min-width: 0; /* CRITICAL: Allows flex child to shrink below its content size */
+}
+
+.topbar {
+    background: rgba(15,23,42,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 15px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 40;
+}
+
+.content {
+    padding: 30px;
+    width: 100%;
+    max-width: 1400px; /* Keeps layout from getting too wide on ultra-wide monitors */
+    margin: 0 auto;
+}
+
+/* ── RESPONSIVE GRIDS ── */
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Automatically drops to next row */
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.welcome-banner {
+    background: linear-gradient(135deg, var(--navy-subtle) 0%, #0f1f38 100%);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 25px;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 25px;
+}
+
+.grad-card {
+    border-radius: 16px; padding: 30px;
+    background: linear-gradient(135deg, #1d4ed8 0%, #5b21b6 100%);
+    margin-bottom: 25px;
+}
+
+/* ── TABLE / LIST STYLING ── */
+.card {
+    background: var(--navy-subtle);
+    border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px;
+}
+
+.txn-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+/* ── MOBILE BREAKPOINTS ── */
+@media (max-width: 1024px) {
+    :root { --sidebar-w: 200px; }
+}
+
+@media (max-width: 768px) {
+    .sidebar { display: none; } /* Hide sidebar on mobile */
+    .main { margin-left: 0; }
+    .content { padding: 20px; }
+    .welcome-banner { flex-direction: column; text-align: center; gap: 15px; }
+}
+
+/* Re-adding your specific icon/badge classes here as needed... */
+.stat-card { background: var(--navy-subtle); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+.stat-val { font-size: 24px; font-weight: 800; margin: 10px 0 5px; }
+.stat-label { color: var(--muted); font-size: 13px; }
+.amt-credit { color: #34d399; font-weight: 700; }
+.amt-debit { color: #f87171; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div style="padding: 25px; font-weight: 800; font-size: 20px; border-bottom: 1px solid var(--border);">
+      RevPay
+  </div>
+  <nav style="display: flex; flex-direction: column; padding: 10px;">
+      <a th:href="@{/dashboard}" style="color: white; padding: 12px; text-decoration: none; background: var(--accent-blue); border-radius: 8px; margin-bottom: 5px;">Dashboard</a>
+      <a th:href="@{/transactions-history}" style="color: var(--muted); padding: 12px; text-decoration: none;">History</a>
+      <a th:href="@{/profile}" style="color: var(--muted); padding: 12px; text-decoration: none;">Profile</a>
+      <a th:href="@{/logout}" style="color: #f87171; padding: 12px; text-decoration: none; margin-top: 20px;">Logout</a>
+  </nav>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div>
+      <h1 style="font-size: 18px;">Dashboard</h1>
+      <p style="font-size: 12px; color: var(--muted);" th:text="${#dates.format(#dates.createNow(), 'EEEE, dd MMMM yyyy')}"></p>
+    </div>
+    <div style="background: var(--accent-blue); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800;" 
+         th:text="${#strings.substring(username,0,1).toUpperCase()}">U</div>
+  </header>
+
+  <main class="content">
+    <div class="welcome-banner">
+      <div>
+        <h2 style="font-size: 22px;">Welcome back, <span th:text="${username}">User</span>!</h2>
+        <p>Your finances are looking good today.</p>
+      </div>
+      <div>
+          <a th:href="@{/send-money}" style="background: white; color: black; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 700;">Send Money</a>
+      </div>
+    </div>
+
+    <div class="grad-card">
+      <p style="font-size: 12px; text-transform: uppercase; opacity: 0.8; letter-spacing: 1px;">Available Balance</p>
+      <div style="font-size: 36px; font-weight: 800; margin: 10px 0;">₹ <span th:text="${walletBalance}">0.00</span></div>
+      <a th:href="@{/add-money}" style="color: white; text-decoration: underline; font-size: 14px;">+ Top up Wallet</a>
+    </div>
+
+    <div class="grid-3">
+      <div class="stat-card">
+        <p class="stat-label">Total Sent</p>
+        <p class="stat-val" style="color: #f87171;">₹ <span th:text="${totalSent}">0.00</span></p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Total Received</p>
+        <p class="stat-val" style="color: #34d399;">₹ <span th:text="${totalReceived}">0.00</span></p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Transactions</p>
+        <p class="stat-val" th:text="${totalTransactions}">0</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom: 20px; font-size: 16px;">Recent Transactions</h3>
+      <div th:if="${#lists.isEmpty(recentTransactions)}" style="padding: 30px; text-align: center; color: var(--muted);">
+          No transactions yet.
+      </div>
+      <div th:each="txn : ${recentTransactions}" class="txn-row">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div style="width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                <span th:text="${txn.type == 'credit' ? '📥' : '📤'}"></span>
+            </div>
+            <div>
+                <p style="font-weight: 700; font-size: 14px; text-transform: capitalize;" th:text="${txn.type}">Type</p>
+                <p style="font-size: 11px; color: var(--muted);" th:text="${txn.transactionDate}">Date</p>
+            </div>
+        </div>
+        <div th:class="${txn.type == 'credit' ? 'amt-credit' : 'amt-debit'}">
+            <span th:text="${txn.type == 'credit' ? '+' : '-'}"></span> ₹ <span th:text="${txn.amount}">0.00</span>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

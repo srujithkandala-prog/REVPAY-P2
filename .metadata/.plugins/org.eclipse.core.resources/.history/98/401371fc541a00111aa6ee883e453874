@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>RevPay Register</title>
+
+<style>
+body{
+    font-family: Arial;
+    background:#f4f6f9;
+}
+.container{
+    width:400px;
+    margin:50px auto;
+    background:white;
+    padding:30px;
+    border-radius:10px;
+    box-shadow:0 0 10px #ccc;
+}
+input,select{
+    width:100%;
+    padding:10px;
+    margin-top:10px;
+}
+button{
+    width:100%;
+    padding:10px;
+    background:#2c7be5;
+    color:white;
+    border:none;
+    margin-top:15px;
+}
+h2{
+    text-align:center;
+}
+.success{
+    color:green;
+    text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>RevPay Register</h2>
+
+<p class="success" th:if="${param.success}">
+Registration Successful!
+</p>
+
+<form th:action="@{/register}" method="post" th:object="${user}">
+
+<input type="text" th:field="*{fullName}" placeholder="Full Name" required>
+
+<input type="email"
+       name="email"
+       required
+       pattern="^[A-Za-z0-9+_.-]+@(.+)$"
+       placeholder="Enter Email">
+
+<input type="text" th:field="*{phone}" placeholder="Phone" required>
+
+<input type="password"
+       name="password"
+       required
+       minlength="8"
+       pattern="^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,}$"
+       placeholder="Strong Password">
+
+<select th:field="*{role}">
+<option value="PERSONAL">Personal</option>
+<option value="BUSINESS">Business</option>
+</select>
+
+<button type="submit">Register</button>
+
+</form>
+
+</div>
+
+</body>
+</html>

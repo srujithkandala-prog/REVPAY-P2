@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<title>Revenue Analytics</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<h2>Revenue Analytics</h2>
+
+<h3>Total Platform Revenue</h3>
+
+<h1 th:text="${revenue}"></h1>
+
+<canvas id="revenueChart" width="400" height="200"></canvas>
+
+<script>
+
+const ctx = document.getElementById('revenueChart');
+
+new Chart(ctx, {
+type: 'bar',
+
+data: {
+labels: ['Jan','Feb','Mar','Apr','May','Jun'],
+datasets: [{
+label: 'Revenue',
+data: [5000,8000,6000,9000,12000,15000],
+borderWidth: 1
+}]
+},
+
+options: {
+scales: {
+y: {
+beginAtZero: true
+}
+}
+}
+
+});
+
+</script>
+
+</body>
+
+</html>

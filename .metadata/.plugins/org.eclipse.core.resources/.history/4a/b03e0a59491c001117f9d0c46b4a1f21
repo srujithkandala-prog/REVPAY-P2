@@ -1,0 +1,33 @@
+package com.revpay.serviceimpl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.revpay.entity.Loan;
+import com.revpay.repository.LoanRepository;
+import com.revpay.service.LoanService;
+
+@Service
+public class LoanServiceImpl implements LoanService {
+
+    @Autowired
+    private LoanRepository loanRepository;
+
+    public List<Loan> getAllLoans() {
+        return loanRepository.findAll();
+    }
+
+    public Loan getLoanById(Long id) {
+        return loanRepository.findById(id).orElse(null);
+    }
+
+    public void saveLoan(Loan loan) {
+        loanRepository.save(loan);
+    }
+
+    public void deleteLoan(Long id) {
+        loanRepository.deleteById(id);
+    }
+}

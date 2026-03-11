@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>Profile Settings</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:#f1f5f9;
+color:#334155;
+}
+
+/* ===== LAYOUT ===== */
+
+.container{
+display:flex;
+height:100vh;
+}
+
+/* ===== SIDEBAR ===== */
+
+.sidebar{
+width:240px;
+background:linear-gradient(180deg,#0f172a,#020617);
+color:white;
+display:flex;
+flex-direction:column;
+}
+
+.sidebar h2{
+text-align:center;
+padding:20px;
+margin:0;
+border-bottom:1px solid #1e293b;
+}
+
+.menu{
+flex:1;
+}
+
+.sidebar a{
+display:block;
+color:#cbd5f5;
+padding:12px 20px;
+text-decoration:none;
+border-left:3px solid transparent;
+transition:0.25s;
+}
+
+.sidebar a i{
+margin-right:10px;
+}
+
+.sidebar a:hover{
+background:#1e293b;
+border-left:3px solid #38bdf8;
+padding-left:25px;
+color:white;
+}
+
+/* ===== MAIN ===== */
+
+.main{
+flex:1;
+padding:40px;
+overflow:auto;
+}
+
+/* HEADER */
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+
+.header h1{
+margin:0;
+}
+
+/* BUTTONS */
+
+.btn{
+padding:10px 18px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+font-size:14px;
+text-decoration:none;
+display:inline-block;
+}
+
+.btn-dashboard{
+background:#16a34a;
+color:white;
+}
+
+.btn-dashboard:hover{
+background:#15803d;
+}
+
+.btn-logout{
+background:#ef4444;
+color:white;
+}
+
+.btn-logout:hover{
+background:#dc2626;
+}
+
+/* CARD */
+
+.card{
+background:white;
+padding:30px;
+border-radius:12px;
+box-shadow:0 8px 20px rgba(0,0,0,0.05);
+max-width:700px;
+}
+
+/* TABS */
+
+.tabs{
+display:flex;
+border-bottom:2px solid #eee;
+margin-bottom:20px;
+}
+
+.tab{
+flex:1;
+padding:12px;
+text-align:center;
+cursor:pointer;
+font-weight:600;
+transition:0.2s;
+}
+
+.tab:hover{
+background:#f1f5f9;
+}
+
+.tab.active{
+border-bottom:3px solid #2563eb;
+color:#2563eb;
+}
+
+/* TAB CONTENT */
+
+.tab-content{
+display:none;
+}
+
+.tab-content.active{
+display:block;
+}
+
+/* INPUT */
+
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+margin-bottom:15px;
+border:1px solid #cbd5e1;
+border-radius:6px;
+font-size:14px;
+}
+
+/* BUTTON */
+
+button{
+width:100%;
+padding:12px;
+background:#2563eb;
+border:none;
+color:white;
+font-size:15px;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#1e40af;
+}
+
+/* ACTION BUTTONS */
+
+.quick-actions{
+margin-top:20px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.quick-actions a{
+flex:1;
+text-align:center;
+background:#0f172a;
+color:white;
+padding:10px;
+border-radius:6px;
+text-decoration:none;
+}
+
+.quick-actions a:hover{
+background:#1e293b;
+}
+
+/* ========================= */
+/* SUCCESS POPUP (NEW ADD) */
+/* ========================= */
+
+.success-popup{
+position:fixed;
+top:20px;
+right:20px;
+background:#16a34a;
+color:white;
+padding:14px 20px;
+border-radius:8px;
+box-shadow:0 8px 20px rgba(0,0,0,0.2);
+display:flex;
+align-items:center;
+gap:10px;
+font-weight:600;
+z-index:999;
+animation:fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn{
+from{
+opacity:0;
+transform:translateY(-10px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- ========================= -->
+<!-- SUCCESS MESSAGE POPUP -->
+<!-- ========================= -->
+
+<div th:if="${successMessage}" class="success-popup">
+
+<i class="fa-solid fa-circle-check"></i>
+
+<span th:text="${successMessage}"></span>
+
+</div>
+
+<div class="container">
+
+<!-- ===== SIDEBAR ===== -->
+
+<div class="sidebar">
+
+<h2 th:if="${user.role.name() == 'BUSINESS'}">RevPay Business</h2>
+<h2 th:if="${user.role.name() != 'BUSINESS'}">RevPay</h2>
+
+<div class="menu">
+
+<a th:if="${user.role.name() == 'BUSINESS'}"
+   href="/business-dashboard">
+<i class="fa-solid fa-chart-line"></i>Dashboard
+</a>
+
+<a th:if="${user.role.name() != 'BUSINESS'}"
+   href="/dashboard">
+<i class="fa-solid fa-chart-line"></i>Dashboard
+</a>
+
+<a href="/profile"><i class="fa-solid fa-user"></i>Profile</a>
+<a href="/send-money"><i class="fa-solid fa-paper-plane"></i>Send Money</a>
+<a href="/notifications"><i class="fa-solid fa-bell"></i>Notifications</a>
+<a href="/logout"><i class="fa-solid fa-right-from-bracket"></i>Logout</a>
+
+</div>
+
+</div>
+
+<!-- ===== MAIN ===== -->
+
+<div class="main">
+
+<div class="header">
+
+<h1>Profile Settings 👤</h1>
+
+<div>
+
+<a th:if="${user.role.name() == 'BUSINESS'}"
+   href="/business-dashboard"
+   class="btn btn-dashboard">
+
+<i class="fa-solid fa-arrow-left"></i> Dashboard
+
+</a>
+
+<a th:if="${user.role.name() != 'BUSINESS'}"
+   href="/dashboard"
+   class="btn btn-dashboard">
+
+<i class="fa-solid fa-arrow-left"></i> Dashboard
+
+</a>
+
+<a href="/logout" class="btn btn-logout">
+Logout
+</a>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<!-- TABS -->
+
+<div class="tabs">
+
+<div class="tab active" onclick="openTab(event,'profile')">
+Profile
+</div>
+
+<div class="tab" onclick="openTab(event,'security')">
+Security
+</div>
+
+<div class="tab" onclick="openTab(event,'pin')">
+Transaction PIN
+</div>
+
+</div>
+
+<!-- PROFILE TAB -->
+
+<div id="profile" class="tab-content active">
+
+<h3>Update Profile</h3>
+
+<form action="/update-profile" method="post">
+
+<input type="text"
+name="fullName"
+th:value="${user.fullName}"
+placeholder="Full Name"
+required>
+
+<input type="text"
+name="phone"
+th:value="${user.phone}"
+placeholder="Phone Number"
+required>
+
+<button type="submit">
+Update Profile
+</button>
+
+</form>
+
+</div>
+
+<!-- PASSWORD TAB -->
+
+<div id="security" class="tab-content">
+
+<h3>Change Password</h3>
+
+<form action="/change-password" method="post">
+
+<input type="password"
+name="currentPassword"
+placeholder="Current Password"
+required>
+
+<input type="password"
+name="newPassword"
+placeholder="New Password"
+required>
+
+<button type="submit">
+Change Password
+</button>
+
+</form>
+
+</div>
+
+<!-- PIN TAB -->
+
+<div id="pin" class="tab-content">
+
+<h3>Set Transaction PIN 🔒</h3>
+
+<form action="/set-transaction-pin" method="post">
+
+<input type="password"
+name="transactionPin"
+placeholder="Enter 4 digit PIN"
+pattern="[0-9]{4}"
+maxlength="4"
+required>
+
+<button type="submit">
+Save PIN
+</button>
+
+</form>
+
+</div>
+
+<!-- QUICK ACTIONS -->
+
+<div class="quick-actions">
+
+<a th:if="${user.role.name() == 'BUSINESS'}"
+   href="/business-dashboard">
+<i class="fa-solid fa-chart-line"></i> Dashboard
+</a>
+
+<a th:if="${user.role.name() != 'BUSINESS'}"
+   href="/dashboard">
+<i class="fa-solid fa-chart-line"></i> Dashboard
+</a>
+
+<a href="/send-money">
+<i class="fa-solid fa-paper-plane"></i> Send Money
+</a>
+
+<a href="/transactions">
+<i class="fa-solid fa-clock-rotate-left"></i> Transactions
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+function openTab(evt,tabName){
+
+var i,content,tab;
+
+content=document.getElementsByClassName("tab-content");
+
+for(i=0;i<content.length;i++){
+content[i].classList.remove("active");
+}
+
+tab=document.getElementsByClassName("tab");
+
+for(i=0;i<tab.length;i++){
+tab[i].classList.remove("active");
+}
+
+document.getElementById(tabName).classList.add("active");
+
+evt.currentTarget.classList.add("active");
+
+}
+
+/* ========================= */
+/* AUTO HIDE SUCCESS POPUP */
+/* ========================= */
+
+setTimeout(function(){
+
+var popup=document.querySelector(".success-popup");
+
+if(popup){
+popup.style.display="none";
+}
+
+},3000);
+
+</script>
+
+</body>
+</html>

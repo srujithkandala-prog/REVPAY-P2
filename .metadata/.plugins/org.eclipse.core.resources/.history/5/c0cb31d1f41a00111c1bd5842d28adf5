@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RevPay — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+    --navy-dark:   #0f172a;
+    --navy-subtle: #1e293b;
+    --navy-mid:    #111827;
+    --accent-blue: #2563eb;
+    --gold:        #eab308;
+    --white:       #ffffff;
+    --glass:       rgba(255,255,255,0.03);
+    --border:      rgba(255,255,255,0.08);
+    --muted:       rgba(255,255,255,0.5);
+    --sidebar-w:   230px;
+}
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--navy-dark);
+    color: var(--white);
+    line-height: 1.6;
+    display: flex; 
+    min-height: 100vh;
+    width: 100%; /* Ensure body fills screen */
+    -webkit-font-smoothing: antialiased;
+}
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--navy-dark); }
+::-webkit-scrollbar-thumb { background: var(--navy-subtle); border-radius: 4px; }
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── SIDEBAR (Layout Unchanged) ── */
+.sidebar {
+    width: var(--sidebar-w);
+    background: var(--navy-subtle);
+    border-right: 1px solid var(--border);
+    position: fixed; top: 0; left: 0; bottom: 0;
+    z-index: 50; overflow-y: auto;
+    display: flex; flex-direction: column;
+}
+.sidebar::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+    background-size: 36px 36px; pointer-events: none;
+}
+.sidebar-logo {
+    display: flex; align-items: center; gap: 11px;
+    padding: 22px 20px 18px;
+    text-decoration: none; position: relative; z-index: 1;
+    border-bottom: 1px solid var(--border); margin-bottom: 8px;
+}
+.logo-box {
+    width: 36px; height: 36px;
+    background: var(--white); color: var(--navy-dark);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 16px;
+    border: 2px solid var(--gold);
+    flex-shrink: 0;
+}
+.logo-text { display: flex; flex-direction: column; }
+.logo-text .s-name { color: white; font-size: 15px; font-weight: 800; }
+.logo-text .s-tag  {
+    font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--gold);
+    display: block; margin-top: 1px;
+}
+.nav-section {
+    padding: 12px 20px 4px;
+    font-size: 10px; font-weight: 700;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 2px; text-transform: uppercase;
+    position: relative; z-index: 1;
+}
+.nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; margin: 1px 8px;
+    text-decoration: none;
+    font-size: 13px; font-weight: 500;
+    color: rgba(255,255,255,0.5);
+    border-radius: 6px;
+    transition: all 0.2s; position: relative; z-index: 1;
+}
+.nav-icon {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: rgba(255,255,255,0.04);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; flex-shrink: 0; transition: background 0.2s;
+}
+.nav-item:hover { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.05); }
+.nav-item.active {
+    color: white; font-weight: 600;
+    background: rgba(37,99,235,0.15);
+    border: 1px solid rgba(37,99,235,0.25);
+}
+.nav-item.active .nav-icon {
+    background: var(--accent-blue);
+    box-shadow: 0 4px 10px rgba(37,99,235,0.35);
+}
+.sidebar-bottom {
+    margin-top: auto; padding: 10px 0 14px;
+    border-top: 1px solid var(--border); position: relative; z-index: 1;
+}
+
+/* ── MAIN (FIXED) ── */
+.main {
+    margin-left: var(--sidebar-w);
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    min-height: 100vh;
+    width: calc(100% - var(--sidebar-w)); /* Ensure it takes full remaining width */
+    min-width: 0; /* Prevents flex items from overflowing */
+}
+
+/* ── TOPBAR ── */
+.topbar {
+    background: rgba(15,23,42,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 30;
+}
+.topbar-title { font-size: 16px; font-weight: 800; letter-spacing: -0.3px; }
+.topbar-sub   { font-size: 12px; color: var(--muted); margin-top: 1px; }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+
+.tb-avatar {
+    width: 34px; height: 34px; border-radius: 7px;
+    background: var(--accent-blue);
+    color: white; font-weight: 800; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.3); cursor: pointer;
+}
+
+/* ── CONTENT ── */
+.content { padding: 28px 32px; flex: 1; width: 100%; }
+
+.welcome-banner {
+    background: linear-gradient(135deg, var(--navy-subtle) 0%, #0f1f38 100%);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 26px 30px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px; position: relative; overflow: hidden;
+    animation: fadeInUp 0.3s ease both;
+}
+
+.grad-card {
+    border-radius: 16px; padding: 24px 26px;
+    position: relative; overflow: hidden;
+    background: linear-gradient(135deg, #1d4ed8 0%, #5b21b6 100%);
+}
+
+.grad-amount {
+    font-size: 34px; font-weight: 800; color: white;
+    letter-spacing: -1.5px; margin-bottom: 18px;
+}
+
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.stat-card { background: var(--navy-subtle); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+
+.card { background: var(--navy-subtle); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
+
+.quick-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.quick-item {
+    display: flex; flex-direction: column; align-items: center; gap: 7px;
+    padding: 14px 6px; border-radius: 10px; border: 1px solid var(--border);
+    text-decoration: none; background: var(--glass);
+}
+
+.txn-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.amt-credit { color: #34d399; }
+.amt-debit  { color: #f87171; }
+
+.mb-20  { margin-bottom: 20px; }
+
+@media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main    { margin-left: 0; width: 100%; }
+    .content { padding: 20px 16px; }
+    .grid-3 { grid-template-columns: 1fr; }
+    .quick-grid { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <a th:href="@{/dashboard}" class="sidebar-logo">
+    <div class="logo-box">R</div>
+    <div class="logo-text">
+      <span class="s-name">RevPay</span>
+      <span class="s-tag">Personal</span>
+    </div>
+  </a>
+  <div class="nav-section">Main</div>
+  <a th:href="@{/dashboard}" class="nav-item active"><div class="nav-icon">&#127968;</div>Dashboard</a>
+  <a th:href="@{/profile}"   class="nav-item"><div class="nav-icon">&#128100;</div>Profile</a>
+  <div class="nav-section">Payments</div>
+  <a th:href="@{/send-money}"    class="nav-item"><div class="nav-icon">&#128184;</div>Send Money</a>
+  <a th:href="@{/add-money}"     class="nav-item"><div class="nav-icon">&#10133;</div>Add Money</a>
+  <a th:href="@{/request-money}" class="nav-item"><div class="nav-icon">&#128232;</div>Request Money</a>
+  <div class="sidebar-bottom">
+    <a th:href="@{/logout}" class="nav-item logout"><div class="nav-icon">&#128682;</div>Logout</a>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Dashboard</div>
+      <div class="topbar-sub" th:text="${#dates.format(#dates.createNow(),'EEEE, dd MMMM yyyy')}">Sunday, 08 March 2026</div>
+    </div>
+    <div class="topbar-right">
+      <span class="tb-badge" style="background:rgba(37,99,235,0.15); color:#93c5fd; padding:4px 10px; border-radius:5px; font-size:10px; font-weight:700;">PERSONAL</span>
+      <div class="tb-avatar" th:text="${username != null and !username.isEmpty() ? #strings.substring(username,0,1).toUpperCase() : 'R'}">R</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="welcome-banner">
+      <div class="welcome-text">
+        <h2>Welcome back, <span th:text="${username}">Rajashekar</span> &#128075;</h2>
+        <p>Here's your financial overview for today.</p>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <a th:href="@{/send-money}" style="background:#2563eb; color:white; padding:10px 18px; border-radius:7px; text-decoration:none; font-size:13px; font-weight:700;">Send Money</a>
+      </div>
+    </div>
+
+    <div class="grad-card mb-20">
+      <div style="font-size:10px; font-weight:700; opacity:0.6; text-transform:uppercase; margin-bottom:10px;">Wallet Balance</div>
+      <div class="grad-amount">₹<span th:text="${walletBalance}">0.00</span></div>
+      <div style="display:flex; gap:10px;">
+          <a th:href="@{/add-money}" style="background:white; color:#0f172a; padding:7px 14px; border-radius:7px; font-size:12px; font-weight:700; text-decoration:none;">+ Add Money</a>
+      </div>
+    </div>
+
+    <div class="grid-3 mb-20">
+      <div class="stat-card">
+        <div style="font-size:10px; font-weight:700; color:#f87171; margin-bottom:10px;">OUTGOING</div>
+        <div style="font-size:22px; font-weight:800;">₹<span th:text="${totalSent}">0.0</span></div>
+      </div>
+      <div class="stat-card">
+        <div style="font-size:10px; font-weight:700; color:#34d399; margin-bottom:10px;">INCOMING</div>
+        <div style="font-size:22px; font-weight:800;">₹<span th:text="${totalReceived}">0.0</span></div>
+      </div>
+      <div class="stat-card">
+        <div style="font-size:10px; font-weight:700; color:#93c5fd; margin-bottom:10px;">TOTAL TXNS</div>
+        <div style="font-size:22px; font-weight:800;" th:text="${totalTransactions}">0</div>
+      </div>
+    </div>
+
+    <div class="card mb-20">
+      <h3 style="font-size:14px; margin-bottom:16px;">Quick Actions</h3>
+      <div class="quick-grid">
+        <a th:href="@{/send-money}" class="quick-item"><span>💸</span><span style="font-size:11px; color:rgba(255,255,255,0.6)">Send</span></a>
+        <a th:href="@{/request-money}" class="quick-item"><span>📧</span><span style="font-size:11px; color:rgba(255,255,255,0.6)">Request</span></a>
+        <a th:href="@{/add-money}" class="quick-item"><span>➕</span><span style="font-size:11px; color:rgba(255,255,255,0.6)">Add</span></a>
+        <a th:href="@{/payment-methods}" class="quick-item"><span>💳</span><span style="font-size:11px; color:rgba(255,255,255,0.6)">Cards</span></a>
+        <a th:href="@{/transaction-history}" class="quick-item"><span>📜</span><span style="font-size:11px; color:rgba(255,255,255,0.6)">History</span></a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="font-size:14px; margin-bottom:16px;">Recent Transactions</h3>
+      <div th:if="${#lists.isEmpty(recentTransactions)}" style="text-align:center; padding:20px; color:var(--muted);">
+        <p>No transactions yet.</p>
+      </div>
+      <div th:each="txn : ${recentTransactions}" class="txn-row">
+        <div style="flex: 1;">
+          <div style="font-size:13px; font-weight:700;" th:text="${txn.type}">Type</div>
+          <div style="font-size:11px; color:var(--muted);" th:text="${txn.date}">Date</div>
+        </div>
+        <div th:class="${txn.type == 'credit' ? 'amt-credit' : 'amt-debit'}" 
+             th:text="${(txn.type == 'credit' ? '+' : '-') + ' ₹' + txn.amount}">₹0.00</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

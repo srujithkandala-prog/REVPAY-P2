@@ -1,0 +1,25 @@
+package com.revpay.serviceimpl;
+
+import org.springframework.stereotype.Service;
+import com.revpay.service.WalletService;
+
+@Service
+public class WalletServiceImpl implements WalletService {
+
+    private double balance = 0;
+
+    @Override
+    public double getBalance(Long userId) {
+        return balance;
+    }
+
+    @Override
+    public void addMoney(Long userId, double amount) {
+        balance += amount;
+    }
+
+    @Override
+    public void withdrawMoney(Long userId, double amount) {
+        balance -= amount;
+    }
+}

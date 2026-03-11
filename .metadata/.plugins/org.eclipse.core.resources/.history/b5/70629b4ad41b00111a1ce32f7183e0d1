@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<title>User Report</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6f9;
+padding:30px;
+}
+
+.top{
+display:flex;
+justify-content:space-between;
+}
+
+button{
+background:#2563eb;
+color:white;
+border:none;
+padding:8px 14px;
+border-radius:6px;
+cursor:pointer;
+}
+
+.card{
+background:white;
+padding:20px;
+margin-bottom:20px;
+border-radius:10px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+th,td{
+padding:10px;
+border:1px solid #ddd;
+}
+
+th{
+background:#0f172a;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="top">
+
+<h1>User Activity Report</h1>
+
+<a href="/admin-dashboard">
+<button>← Back to Dashboard</button>
+</a>
+
+</div>
+
+<div class="card">
+
+<canvas id="userChart"></canvas>
+
+</div>
+
+<table>
+
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Role</th>
+<th>Status</th>
+</tr>
+
+<tr th:each="u : ${users}">
+
+<td th:text="${u.fullName}"></td>
+<td th:text="${u.email}"></td>
+<td th:text="${u.role}"></td>
+<td th:text="${u.status}"></td>
+
+</tr>
+
+</table>
+
+<script>
+
+const ctx = document.getElementById('userChart');
+
+new Chart(ctx,{
+type:'bar',
+
+data:{
+labels:['Users'],
+datasets:[{
+label:'Total Users',
+data:[[${users.size()}]],
+backgroundColor:'purple'
+}]
+}
+
+});
+
+</script>
+
+</body>
+</html>

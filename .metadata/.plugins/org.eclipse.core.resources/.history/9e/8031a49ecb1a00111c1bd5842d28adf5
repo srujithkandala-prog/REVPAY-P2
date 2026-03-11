@@ -1,0 +1,87 @@
+package com.revpay.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import com.revpay.dto.RegisterRequest;
+import com.revpay.entity.User;
+import com.revpay.repository.UserRepository;
+
+@Controller
+public class AuthController {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    // =========================
+    // REGISTER PAGE
+    // =========================
+    @GetMapping("/register")
+    public String registerPage(Model model) {
+
+        model.addAttribute("user", new RegisterRequest());
+
+        return "register";
+    }
+
+    // =========================
+    // REGISTER USER
+    // =========================
+    @PostMapping("/register")
+    public String registerUser(
+            @ModelAttribute("user") RegisterRequest request,
+            Model model) {
+
+        // PASSWORD MATCH CHECK
+        if (!request.getPassword()
+                .equals(request.getConfirmPassword())) {
+
+            model.addAttribute("error",
+                    "Passwords do not match");
+
+            return "register";
+        }
+
+        // EMAIL CHECK
+        if (userRepository
+                .findByEmail(request.getEmail())
+                .isPresent()) {
+
+            model.addAttribute("error",
+                    "Email already registered");
+
+            return "register";
+        }
+
+        // CREATE USER
+        User user = new User();
+
+        user.setFullName(request.getFullName());
+        user.setEmail(request.getEmail());
+        user.setPhone(request.getPhone());
+
+        user.setPassword(
+                passwordEncoder.encode(
+                        request.getPassword()));
+
+        // IMPORTANT FIX
+        user.setRole(request.getRole());
+
+        user.setSecurityQuestion(
+                request.getSecurityQuestion());
+
+        user.setSecurityAnswer(
+                request.getSecurityAnswer());
+
+        userRepository.save(user);
+
+        return "redirect:/login?success";
+    }
+
+}

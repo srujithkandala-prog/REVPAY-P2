@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RevPay — Transactions History</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── CORE THEME ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+    --navy-dark:   #0f172a;
+    --navy-subtle: #1e293b;
+    --navy-mid:    #111827;
+    --accent-blue: #2563eb;
+    --gold:        #eab308;
+    --white:       #ffffff;
+    --glass:       rgba(255,255,255,0.03);
+    --border:      rgba(255,255,255,0.08);
+    --muted:       rgba(255,255,255,0.5);
+    --sidebar-w:   230px;
+}
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--navy-dark);
+    color: var(--white);
+    line-height: 1.6;
+    display: flex; min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── SIDEBAR (EXACT FROM DASHBOARD) ── */
+.sidebar {
+    width: var(--sidebar-w); background: var(--navy-subtle);
+    border-right: 1px solid var(--border); position: fixed; top: 0; left: 0; bottom: 0;
+    z-index: 50; overflow-y: auto; display: flex; flex-direction: column;
+}
+.sidebar-logo {
+    display: flex; align-items: center; gap: 11px; padding: 22px 20px 18px;
+    text-decoration: none; border-bottom: 1px solid var(--border); margin-bottom: 8px;
+}
+.logo-box {
+    width: 36px; height: 36px; background: var(--white); color: var(--navy-dark);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 16px; border: 2px solid var(--gold);
+}
+.logo-text .s-name { color: white; font-size: 15px; font-weight: 800; display: block;}
+.logo-text .s-tag  { font-size: 9px; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 1px;}
+
+.nav-section { padding: 12px 20px 4px; font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 2px;}
+.nav-item {
+    display: flex; align-items: center; gap: 10px; padding: 9px 12px; margin: 1px 8px;
+    text-decoration: none; font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.5);
+    border-radius: 6px; transition: all 0.2s;
+}
+.nav-icon { width: 28px; height: 28px; border-radius: 6px; background: rgba(255,255,255,0.04); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0;}
+.nav-item:hover { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.05); }
+.nav-item.active { color: white; background: rgba(37,99,235,0.15); border: 1px solid rgba(37,99,235,0.25); }
+.nav-item.active .nav-icon { background: var(--accent-blue); box-shadow: 0 4px 10px rgba(37,99,235,0.35); }
+.nav-badge { margin-left: auto; background: #dc2626; color: white; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; }
+.sidebar-bottom { margin-top: auto; padding: 10px 0 14px; border-top: 1px solid var(--border); }
+
+/* ── MAIN CONTENT ── */
+.main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+.topbar {
+    background: rgba(15,23,42,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border);
+    padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 30;
+}
+.content { padding: 32px; }
+
+/* ── TABLE STYLING ── */
+.card { background: var(--navy-subtle); border: 1px solid var(--border); border-radius: 14px; padding: 24px; overflow: hidden;}
+table { width: 100%; border-collapse: collapse; }
+thead th { text-align: left; font-size: 11px; text-transform: uppercase; color: var(--muted); padding: 12px 15px; border-bottom: 1px solid var(--border); }
+tbody td { padding: 15px; font-size: 13px; color: rgba(255,255,255,0.8); border-bottom: 1px solid rgba(255,255,255,0.04); }
+.amount-cell { font-family: monospace; font-weight: 600; color: var(--gold); }
+.date-cell { font-size: 12px; color: var(--muted); }
+
+@media (max-width: 768px) { .sidebar { display: none; } .main { margin-left: 0; } }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <a th:href="@{/dashboard}" class="sidebar-logo">
+    <div class="logo-box">R</div>
+    <div class="logo-text"><span class="s-name">RevPay</span><span class="s-tag">Personal</span></div>
+  </a>
+  <div class="nav-section">Main</div>
+  <a th:href="@{/dashboard}" class="nav-item"><div class="nav-icon">🏠</div>Dashboard</a>
+  <a th:href="@{/profile}"   class="nav-item"><div class="nav-icon">👤</div>Profile</a>
+  <div class="nav-section">Payments</div>
+  <a th:href="@{/send-money}"    class="nav-item"><div class="nav-icon">💸</div>Send Money</a>
+  <a th:href="@{/add-money}"     class="nav-item"><div class="nav-icon">➕</div>Add Money</a>
+  <a th:href="@{/request-money}" class="nav-item"><div class="nav-icon">📩</div>Request Money</a>
+  <a th:href="@{/withdraw-money}"      class="nav-item"><div class="nav-icon">🏦</div>Withdraw Money</a>
+  <div class="nav-section">Requests</div>
+  <a th:href="@{/incoming-requests}" class="nav-item">
+    <div class="nav-icon">📥</div>Incoming Requests
+    <span class="nav-badge" th:if="${incomingCount != null and incomingCount > 0}" th:text="${incomingCount}"></span>
+  </a>
+  <a th:href="@{/outgoing-requests}" class="nav-item">
+    <div class="nav-icon">📤</div>Outgoing Requests
+  </a>
+  <div class="nav-section">History</div>
+  <a th:href="@{/transactions}"        class="nav-item"><div class="nav-icon">🔄</div>Transactions</a>
+  <a th:href="@{/transactions-history}" class="nav-item active"><div class="nav-icon">📋</div>Transaction History</a>
+  <a th:href="@{/invoices}"            class="nav-item"><div class="nav-icon">📜</div>My Invoices</a>
+  <div class="nav-section">Account</div>
+  <a th:href="@{/payment-methods}" class="nav-item"><div class="nav-icon">💳</div>Payment Methods</a>
+  <a th:href="@{/notifications}"   class="nav-item"><div class="nav-icon">🔔</div>Notifications</a>
+  <div class="sidebar-bottom">
+    <a th:href="@{/logout}" class="nav-item"><div class="nav-icon">🚪</div>Logout</a>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div style="font-weight: 800; font-size: 16px;">Transaction History</div>
+      <div style="font-size: 12px; color: var(--muted);" th:text="${#dates.format(#dates.createNow(),'EEEE, dd MMMM yyyy')}">Date</div>
+    </div>
+    <div class="tb-avatar"
+th:text="${username != null ? #strings.substring(username,0,1).toUpperCase() : 'U'}">
+</div>
+
+  <div class="content">
+    <div class="card">
+      <div th:if="${transactions == null or #lists.isEmpty(transactions)}" style="text-align: center; padding: 40px; color: var(--muted);">
+          No transactions found for your account.
+      </div>
+      <table th:if="${transactions != null and !#lists.isEmpty(transactions)}">
+        <thead>
+          <tr>
+            <th>Sender</th>
+            <th>Receiver</th>
+            <th>Amount</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="t : ${transactions}">
+            <td th:text="${t.senderEmail}">Sender</td>
+            <td th:text="${t.receiverEmail}">Receiver</td>
+            <td class="amount-cell">₹ <span th:text="${t.amount}">0.00</span></td>
+            <td class="date-cell" th:text="${#temporals.format(t.transactionDate, 'dd-MM-yyyy HH:mm')}">Date</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

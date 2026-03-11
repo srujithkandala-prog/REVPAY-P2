@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Revenue Analytics - RevPay Admin</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: linear-gradient(135deg, #f8f9fa 0%, #f0f1f5 100%);
+            color: #1f2937;
+        }
+
+        .sidebar {
+            width: 280px; height: 100vh;
+            background: #0f1419;
+            color: white;
+            position: fixed;
+            left: 0; top: 0;
+            padding: 28px 20px;
+            overflow-y: auto;
+            border-right: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 36px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .logo {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, #6366f1 0%, #a78bfa 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .brand-text h3 { margin: 0; font-size: 16px; font-weight: 700; }
+        .brand-text p { margin: 0; font-size: 11px; color: rgba(255,255,255,0.5); text-transform: uppercase; }
+
+        .nav-section { margin-bottom: 28px; }
+        .nav-label { 
+            font-size: 11px; 
+            font-weight: 700; 
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: rgba(255,255,255,0.35);
+            margin-bottom: 14px;
+            display: block;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: rgba(255,255,255,0.65);
+            text-decoration: none;
+            font-size: 14px;
+            padding: 11px 14px;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            transition: 0.35s ease;
+            font-weight: 500;
+        }
+
+        .icon-box {
+            width: 36px; height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.06);
+            border-radius: 8px;
+            transition: 0.35s ease;
+            flex-shrink: 0;
+        }
+
+        .sidebar a:hover { background: rgba(99,102,241,0.15); color: rgba(255,255,255,0.95); }
+        .sidebar a:hover .icon-box { background: rgba(99,102,241,0.25); transform: translateX(4px); }
+
+        .sidebar a.active { 
+            background: rgba(99,102,241,0.2);
+            color: white;
+            border-left: 3px solid #6366f1;
+            padding-left: 11px;
+        }
+        .sidebar a.active .icon-box { background: #6366f1; color: white; box-shadow: 0 4px 12px rgba(99,102,241,0.4); }
+
+        .sidebar-nav { flex: 1; }
+        .sidebar-footer { margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08); }
+
+        .user-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 10px;
+            margin-bottom: 12px;
+            transition: 0.3s ease;
+        }
+        .user-card:hover { background: rgba(255,255,255,0.08); }
+
+        .avatar {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, #6366f1, #a78bfa);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .user-name { font-size: 13px; font-weight: 600; color: white; }
+        .user-role { font-size: 11px; color: rgba(255,255,255,0.5); }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: 10px;
+            background: rgba(239,68,68,0.08);
+            color: #fca5a5;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.3s ease;
+            border: 1px solid rgba(239,68,68,0.2);
+            font-weight: 500;
+        }
+        .logout-btn:hover { background: rgba(239,68,68,0.15); color: white; }
+
+        .content {
+            margin-left: 280px;
+            padding: 36px 40px;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header h1 { font-size: 32px; font-weight: 800; margin: 0; letter-spacing: -1px; }
+
+        .section {
+            background: white;
+            border-radius: 14px;
+            padding: 28px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.04);
+            margin-bottom: 36px;
+        }
+
+        .section-header {
+            margin-bottom: 28px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .section-title { font-size: 18px; font-weight: 700; margin: 0; }
+        .section-sub { font-size: 12px; color: #6b7280; margin-top: 4px; }
+
+        .revenue-card {
+            background: linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(167,139,250,0.1) 100%);
+            border: 1px solid rgba(99,102,241,0.2);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 28px;
+        }
+
+        .revenue-label { 
+            font-size: 12px; 
+            font-weight: 600; 
+            color: #6b7280;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .revenue-value { 
+            font-size: 40px; 
+            font-weight: 800; 
+            color: #111827;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+
+        .revenue-sub { 
+            font-size: 12px; 
+            color: #6366f1;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 260px; }
+            .content { margin-left: 260px; padding: 24px; }
+            .header h1 { font-size: 28px; }
+            .revenue-value { font-size: 32px; }
+            .section { padding: 20px; }
+            .chart-container { height: 300px; }
+        }
+
+        @media (max-width: 640px) {
+            .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); }
+            .content { margin-left: 0; padding: 16px; }
+            .header h1 { font-size: 24px; }
+            .revenue-value { font-size: 28px; }
+            .chart-container { height: 250px; }
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 4px; }
+    </style>
+</head>
+
+<body>
+ 
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo"><i class="bi bi-lightning-charge-fill"></i></div>
+            <div class="brand-text">
+                <h3>RevPay</h3>
+                <p>Admin Panel</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <span class="nav-label">Overview</span>
+                <a href="/admin-dashboard">
+                    <div class="icon-box"><i class="bi bi-speedometer2"></i></div>
+                    Dashboard
+                </a>
+                <a href="/admin/users">
+                    <div class="icon-box"><i class="bi bi-people-fill"></i></div>
+                    Users
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <span class="nav-label">Finance</span>
+                <a href="/admin/transactions">
+                    <div class="icon-box"><i class="bi bi-arrow-left-right"></i></div>
+                    Transactions
+                </a>
+                <a href="/admin/loans">
+                    <div class="icon-box"><i class="bi bi-bank2"></i></div>
+                    Loans
+                </a>
+                <a href="/admin/revenue" class="active">
+                    <div class="icon-box"><i class="bi bi-graph-up"></i></div>
+                    Revenue
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <span class="nav-label">Monitoring</span>
+                <a href="/admin/system-health">
+                    <div class="icon-box"><i class="bi bi-cpu"></i></div>
+                    System Health
+                </a>
+                <a href="/admin/live-transactions">
+                    <div class="icon-box"><i class="bi bi-broadcast"></i></div>
+                    Live Monitor
+                </a>
+                <a href="/admin/fraud-alerts">
+                    <div class="icon-box"><i class="bi bi-shield-exclamation"></i></div>
+                    Fraud Alerts
+                </a>
+                <a href="/admin/reports">
+                    <div class="icon-box"><i class="bi bi-file-earmark-text"></i></div>
+                    Reports
+                </a>
+                
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-card">
+                <div class="avatar">A</div>
+                <div>
+                    <div class="user-name">Admin User</div>
+                    <div class="user-role">Manager</div>
+                </div>
+            </div>
+            <a href="/logout" class="logout-btn">
+                <i class="bi bi-box-arrow-right"></i>
+                Logout
+            </a>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="header">
+            <h1>Revenue Analytics</h1>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <h3 class="section-title">Total Platform Revenue</h3>
+                <p class="section-sub">Overview of all platform earnings</p>
+            </div>
+
+            <div class="revenue-card">
+                <div class="revenue-label">Total Revenue</div>
+                <div class="revenue-value" th:text="${revenue}">0.00</div>
+                <div class="revenue-sub">Platform earnings across all transactions</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <h3 class="section-title">Monthly Revenue Trend</h3>
+                <p class="section-sub">Revenue performance over the last 6 months</p>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('revenueChart');
+        
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Revenue',
+                        data: [5000, 8000, 6000, 9000, 12000, 15000],
+                        backgroundColor: '#0ea5e9',
+                        borderColor: '#0284c7',
+                        borderWidth: 2,
+                        borderRadius: 8,
+                        borderSkipped: false,
+                        hoverBackgroundColor: '#0284c7'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                usePointStyle: true,
+                                padding: 16,
+                                font: {
+                                    family: '"Plus Jakarta Sans", sans-serif',
+                                    size: 13,
+                                    weight: '600'
+                                },
+                                color: '#6b7280'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                font: {
+                                    family: '"Plus Jakarta Sans", sans-serif',
+                                    size: 12,
+                                    weight: '500'
+                                },
+                                color: '#9ca3af',
+                                padding: 12
+                            },
+                            grid: {
+                                drawBorder: false,
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: {
+                                    family: '"Plus Jakarta Sans", sans-serif',
+                                    size: 12,
+                                    weight: '500'
+                                },
+                                color: '#9ca3af',
+                                padding: 12
+                            },
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

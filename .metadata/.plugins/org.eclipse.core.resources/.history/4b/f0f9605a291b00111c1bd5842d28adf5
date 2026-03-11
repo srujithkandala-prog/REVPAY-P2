@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>RevPay Business Dashboard</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+/* GLOBAL */
+
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:linear-gradient(120deg,#f1f5f9,#e2e8f0,#f8fafc);
+background-size:300% 300%;
+animation:bgMove 15s infinite alternate;
+}
+
+@keyframes bgMove{
+0%{background-position:left;}
+100%{background-position:right;}
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:250px;
+height:100vh;
+position:fixed;
+background:linear-gradient(180deg,#0f172a,#020617);
+color:white;
+padding-top:20px;
+box-shadow:4px 0 15px rgba(0,0,0,0.2);
+}
+
+.sidebar h2{
+text-align:center;
+margin-bottom:25px;
+}
+
+.sidebar a{
+display:block;
+color:#cbd5f5;
+padding:13px 22px;
+text-decoration:none;
+transition:0.25s;
+border-left:3px solid transparent;
+}
+
+.sidebar a i{
+margin-right:10px;
+}
+
+.sidebar a:hover{
+background:#1e293b;
+border-left:3px solid #38bdf8;
+padding-left:28px;
+box-shadow:inset 0 0 10px rgba(56,189,248,0.3);
+}
+
+/* MAIN */
+
+.main{
+margin-left:250px;
+padding:35px;
+}
+
+/* HEADER */
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+}
+
+.user-card{
+background:white;
+padding:12px 18px;
+border-radius:8px;
+box-shadow:0 6px 15px rgba(0,0,0,0.08);
+}
+
+/* WALLET */
+
+.wallet-card{
+background:linear-gradient(135deg,#2563eb,#1e40af,#1d4ed8);
+color:white;
+padding:30px;
+border-radius:14px;
+margin-bottom:25px;
+box-shadow:0 10px 30px rgba(0,0,0,0.15);
+animation:floatCard 4s infinite ease-in-out;
+}
+
+.wallet{
+font-size:36px;
+font-weight:bold;
+}
+
+@keyframes floatCard{
+0%{transform:translateY(0px);}
+50%{transform:translateY(-6px);}
+100%{transform:translateY(0px);}
+}
+
+/* ANALYTICS */
+
+.analytics{
+display:flex;
+gap:20px;
+flex-wrap:wrap;
+margin-bottom:30px;
+}
+
+.box{
+flex:1;
+min-width:220px;
+background:white;
+padding:22px;
+border-radius:12px;
+box-shadow:0 6px 18px rgba(0,0,0,0.08);
+transition:0.25s;
+}
+
+.box:hover{
+transform:translateY(-6px) scale(1.02);
+box-shadow:0 12px 28px rgba(0,0,0,0.12);
+}
+
+.revenue{
+color:#22c55e;
+font-weight:bold;
+font-size:18px;
+}
+
+/* QUICK ACTIONS */
+
+.actions{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+gap:18px;
+margin-bottom:30px;
+}
+
+.action-card{
+background:white;
+padding:20px;
+border-radius:12px;
+text-align:center;
+box-shadow:0 6px 18px rgba(0,0,0,0.08);
+cursor:pointer;
+transition:0.3s;
+}
+
+.action-card i{
+font-size:24px;
+margin-bottom:10px;
+display:block;
+color:#2563eb;
+}
+
+.action-card:hover{
+background:#2563eb;
+color:white;
+transform:scale(1.08);
+box-shadow:0 12px 30px rgba(0,0,0,0.15);
+}
+
+.action-card:hover i{
+color:white;
+}
+
+/* TRANSACTIONS */
+
+.card{
+background:white;
+padding:25px;
+border-radius:12px;
+box-shadow:0 6px 18px rgba(0,0,0,0.08);
+}
+
+/* TABLE */
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+}
+
+th{
+background:#0f172a;
+color:white;
+padding:12px;
+}
+
+td{
+padding:12px;
+border-bottom:1px solid #e2e8f0;
+}
+
+tr:hover{
+background:#f1f5f9;
+}
+
+/* FOOTER */
+
+.footer{
+text-align:center;
+margin-top:40px;
+color:#64748b;
+font-size:13px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<h2>RevPay Business</h2>
+
+<a href="/business-dashboard"><i class="fa-solid fa-chart-line"></i>Dashboard</a>
+<a href="/profile"><i class="fa-solid fa-user"></i>Profile</a>
+<a href="/send-money"><i class="fa-solid fa-paper-plane"></i>Send Money</a>
+<a href="/add-money"><i class="fa-solid fa-wallet"></i>Add Money</a>
+<a href="/request-money"><i class="fa-solid fa-hand-holding-dollar"></i>Request Money</a>
+<a href="/withdraw-money"><i class="fa-solid fa-money-bill-wave"></i>Withdraw</a>
+<a href="/transactions-history"><i class="fa-solid fa-clock"></i>Transactions</a>
+<a href="/create-invoice"><i class="fa-solid fa-file-invoice"></i>Create Invoice</a>
+<a href="/invoices"><i class="fa-solid fa-receipt"></i>Invoices</a>
+<a href="/apply-loan"><i class="fa-solid fa-landmark"></i>Apply Loan</a>
+<a href="/my-loans"><i class="fa-solid fa-coins"></i>My Loans</a>
+<a href="/payment-methods"><i class="fa-solid fa-credit-card"></i>Payment Methods</a>
+<a href="/notifications"><i class="fa-solid fa-bell"></i>Notifications</a>
+<a href="/logout"><i class="fa-solid fa-right-from-bracket"></i>Logout</a>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<div class="header">
+
+<div>
+<h2>Welcome Business, <span th:text="${user.fullName}"></span> 🚀</h2>
+</div>
+
+<div class="user-card">
+<i class="fa-solid fa-user"></i>
+<span th:text="${user.fullName}"></span>
+</div>
+
+</div>
+
+<!-- WALLET -->
+
+<div class="wallet-card">
+
+<h3>Wallet Balance</h3>
+
+<div class="wallet">
+₹ <span th:text="${wallet}"></span>
+</div>
+
+</div>
+
+<!-- ANALYTICS -->
+
+<div class="analytics">
+
+<div class="box">
+<h4>Total Revenue</h4>
+<p class="revenue">
+₹ <span th:text="${revenue}"></span>
+</p>
+</div>
+
+<div class="box">
+<h4>Total Transactions</h4>
+<p><b th:text="${transactions.size()}"></b></p>
+</div>
+
+</div>
+
+<!-- QUICK ACTIONS -->
+
+<div class="actions">
+
+<div class="action-card" onclick="location.href='/send-money'">
+<i class="fa-solid fa-paper-plane"></i>
+Send Money
+</div>
+
+<div class="action-card" onclick="location.href='/create-invoice'">
+<i class="fa-solid fa-file-invoice"></i>
+Create Invoice
+</div>
+
+<div class="action-card" onclick="location.href='/transactions-history'">
+<i class="fa-solid fa-clock"></i>
+Transactions
+</div>
+
+<div class="action-card" onclick="location.href='/notifications'">
+<i class="fa-solid fa-bell"></i>
+Notifications
+</div>
+
+</div>
+
+<!-- RECENT PAYMENTS -->
+
+<div class="card">
+
+<h3>Recent Payments</h3>
+
+<table th:if="${transactions.size()>0}">
+
+<tr>
+<th>Sender</th>
+<th>Receiver</th>
+<th>Amount</th>
+<th>Date</th>
+</tr>
+
+<tr th:each="t,iter : ${transactions}" th:if="${iter.index<5}">
+
+<td th:text="${t.senderEmail}"></td>
+<td th:text="${t.receiverEmail}"></td>
+<td>₹ <span th:text="${t.amount}"></span></td>
+<td th:text="${#temporals.format(t.transactionDate,'dd-MM-yyyy HH:mm')}"></td>
+
+</tr>
+
+</table>
+
+<p th:if="${transactions.size()==0}">
+No transactions yet.
+</p>
+
+</div>
+
+<div class="footer">
+© 2026 RevPay Business • Smart Payment Platform
+</div>
+
+</div>
+
+</body>
+</html>

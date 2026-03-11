@@ -1,0 +1,45 @@
+package com.revpay.dto;
+
+import java.time.LocalDateTime;
+
+public class LoanPaymentDTO {
+
+    private Long loanId;
+    private double amount;
+    private LocalDateTime paymentDate;
+    private String status;
+
+    public LoanPaymentDTO(){}
+
+    public Long getLoanId() {
+        return loanId;
+    }
+
+    public void setLoanId(Long loanId) {
+        this.loanId = loanId;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public LocalDateTime getPaymentDate() {
+        return paymentDate;
+    }
+
+    public void setPaymentDate(LocalDateTime paymentDate) {
+        this.paymentDate = paymentDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+}

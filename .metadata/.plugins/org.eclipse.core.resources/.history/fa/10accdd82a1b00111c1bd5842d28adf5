@@ -1,0 +1,185 @@
+package com.revpay.controller;
+
+import java.security.Principal;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import com.revpay.entity.Notification;
+import com.revpay.entity.Transaction;
+import com.revpay.entity.User;
+import com.revpay.repository.NotificationRepository;
+import com.revpay.repository.TransactionRepository;
+import com.revpay.repository.UserRepository;
+
+@Controller
+public class TransactionController {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
+
+    // =========================
+    // SEND MONEY PAGE
+    // =========================
+    @GetMapping("/send-money")
+    public String sendMoneyPage(Model model, Principal principal) {
+
+        String email = principal.getName();
+
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if(user == null){
+            return "redirect:/login";
+        }
+
+        model.addAttribute("user", user);
+        model.addAttribute("wallet", user.getWalletBalance());
+
+        return "send-money";
+    }
+
+    // =========================
+    // SEND MONEY LOGIC
+    // =========================
+    @PostMapping("/send-money")
+    public String sendMoney(@RequestParam String receiverEmail,
+                            @RequestParam Double amount,
+                            @RequestParam String pin,
+                            Principal principal,
+                            Model model) {
+
+        String senderEmail = principal.getName();
+
+        User sender = userRepository.findByEmail(senderEmail).orElse(null);
+        User receiver = userRepository.findByEmail(receiverEmail).orElse(null);
+
+        if (sender == null || receiver == null) {
+
+            model.addAttribute("error", "User not found");
+            model.addAttribute("user", sender);
+            model.addAttribute("wallet", sender.getWalletBalance());
+
+            return "send-money";
+        }
+
+        if (sender.getTransactionPin() == null ||
+                !sender.getTransactionPin().equals(pin)) {
+
+            model.addAttribute("error", "Invalid Transaction PIN");
+            model.addAttribute("user", sender);
+            model.addAttribute("wallet", sender.getWalletBalance());
+
+            return "send-money";
+        }
+
+        if (sender.getWalletBalance() < amount) {
+
+            model.addAttribute("error", "Insufficient balance");
+            model.addAttribute("user", sender);
+            model.addAttribute("wallet", sender.getWalletBalance());
+
+            return "send-money";
+        }
+
+        // WALLET UPDATE
+        sender.setWalletBalance(sender.getWalletBalance() - amount);
+        receiver.setWalletBalance(receiver.getWalletBalance() + amount);
+
+        userRepository.save(sender);
+        userRepository.save(receiver);
+
+        // SAVE TRANSACTION
+        Transaction t = new Transaction();
+        t.setSenderEmail(senderEmail);
+        t.setReceiverEmail(receiverEmail);
+        t.setAmount(amount);
+        t.setType("SENT");
+
+        transactionRepository.save(t);
+
+        // SENDER NOTIFICATION
+        Notification n1 = new Notification();
+        n1.setUserEmail(senderEmail);
+        n1.setMessage("You sent ₹" + amount + " to " + receiverEmail);
+        notificationRepository.save(n1);
+
+        // RECEIVER NOTIFICATION
+        Notification n2 = new Notification();
+        n2.setUserEmail(receiverEmail);
+        n2.setMessage("You received ₹" + amount + " from " + senderEmail);
+        notificationRepository.save(n2);
+
+        return "redirect:/dashboard";
+    }
+
+    // =========================
+    // WITHDRAW PAGE
+    // =========================
+    @GetMapping("/withdraw-money")
+    public String withdrawPage(Model model, Principal principal) {
+
+        String email = principal.getName();
+
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if(user == null){
+            return "redirect:/login";
+        }
+
+        model.addAttribute("user", user);
+        model.addAttribute("wallet", user.getWalletBalance());
+
+        return "withdraw-money";
+    }
+
+    // =========================
+    // WITHDRAW LOGIC
+    // =========================
+    @PostMapping("/withdraw-money")
+    public String withdrawMoney(@RequestParam Double amount,
+                                Principal principal,
+                                Model model) {
+
+        String email = principal.getName();
+
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if (user == null)
+            return "redirect:/dashboard";
+
+        if (user.getWalletBalance() < amount) {
+
+            model.addAttribute("error", "Insufficient balance");
+            model.addAttribute("user", user);
+            model.addAttribute("wallet", user.getWalletBalance());
+
+            return "withdraw-money";
+        }
+
+        user.setWalletBalance(user.getWalletBalance() - amount);
+        userRepository.save(user);
+
+        Transaction t = new Transaction();
+        t.setSenderEmail(email);
+        t.setReceiverEmail("BANK");
+        t.setAmount(amount);
+        t.setType("WITHDRAW");
+
+        transactionRepository.save(t);
+
+        Notification n = new Notification();
+        n.setUserEmail(email);
+        n.setMessage("You withdrew ₹" + amount + " from wallet.");
+        notificationRepository.save(n);
+
+        return "redirect:/dashboard";
+    }
+}

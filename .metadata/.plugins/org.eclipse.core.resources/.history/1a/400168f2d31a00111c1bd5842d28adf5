@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>Loan Repayments</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6f9;
+}
+
+.container{
+width:95%;
+margin:auto;
+margin-top:40px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+th,td{
+padding:12px;
+border:1px solid #ddd;
+text-align:center;
+}
+
+button{
+padding:6px 12px;
+background:#2563eb;
+color:white;
+border:none;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Loan Repayments</h2>
+
+<table>
+
+<tr>
+<th>User</th>
+<th>Loan Amount</th>
+<th>Remaining</th>
+<th>EMI</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+<tr th:each="loan : ${loans}">
+
+<td th:text="${loan.user.email}"></td>
+
+<td th:text="${loan.amount}"></td>
+
+<td th:text="${loan.remainingAmount}"></td>
+
+<td th:text="${loan.emiAmount}"></td>
+
+<td th:text="${loan.status}"></td>
+
+<td>
+
+<a th:href="@{'/admin/pay-loan/' + ${loan.id}}">
+<button>Mark EMI Paid</button>
+</a>
+
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>Add Money</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+body{
+margin:0;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+font-family:'Segoe UI',sans-serif;
+
+background-image:url("https://images.unsplash.com/photo-1559526324-4b87b5e36e44");
+background-size:cover;
+background-position:center;
+}
+
+/* GLASS CARD */
+
+.container{
+width:420px;
+padding:40px;
+
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(12px);
+
+border-radius:15px;
+box-shadow:0 10px 40px rgba(0,0,0,0.3);
+color:white;
+text-align:center;
+}
+
+/* TITLE */
+
+h2{
+margin-bottom:25px;
+}
+
+/* INPUT */
+
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+margin-bottom:15px;
+border:none;
+border-radius:6px;
+}
+
+/* BUTTON */
+
+button{
+width:100%;
+padding:12px;
+border:none;
+background:#2563eb;
+color:white;
+font-size:15px;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#1e40af;
+}
+
+.dashboard{
+display:block;
+margin-top:15px;
+color:white;
+text-decoration:none;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2><i class="fa-solid fa-wallet"></i> Add Money</h2>
+
+<form th:action="@{/add-money}" method="post">
+
+<input type="number"
+step="0.01"
+name="amount"
+placeholder="Enter Amount"
+required>
+
+<button type="submit">
+Add Money
+</button>
+
+</form>
+
+<a href="/business-dashboard" class="dashboard">
+← Back to Dashboard
+</a>
+
+</div>
+
+</body>
+</html>

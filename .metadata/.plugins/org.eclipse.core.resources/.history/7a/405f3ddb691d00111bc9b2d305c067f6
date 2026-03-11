@@ -1,0 +1,476 @@
+package com.revpay.controller;
+
+import java.security.Principal;
+import java.util.List;
+import com.revpay.service.OtpService;
+import java.util.Random;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import com.revpay.entity.AdminLog;
+import com.revpay.entity.Loan;
+import com.revpay.entity.Transaction;
+import com.revpay.entity.User;
+
+import com.revpay.repository.AdminLogRepository;
+import com.revpay.repository.LoanPaymentRepository;
+import com.revpay.repository.LoanRepository;
+import com.revpay.repository.TransactionRepository;
+import com.revpay.repository.UserRepository;
+
+@Controller
+public class AdminController {
+
+@Autowired
+private UserRepository userRepository;
+
+@Autowired
+private TransactionRepository transactionRepository;
+
+@Autowired
+private LoanRepository loanRepository;
+
+@Autowired
+private LoanPaymentRepository loanPaymentRepository;
+
+@Autowired
+private AdminLogRepository adminLogRepository;
+
+
+
+// =========================
+// LOG ADMIN ACTION
+// =========================
+private void logAction(String action, Principal principal){
+
+if(principal == null) return;
+
+AdminLog log = new AdminLog();
+log.setAdminEmail(principal.getName());
+log.setAction(action);
+
+adminLogRepository.save(log);
+
+}
+
+
+
+// =========================
+// EMI HISTORY
+// =========================
+@GetMapping("/admin/emi-history")
+public String emiHistory(Model model){
+
+model.addAttribute("payments", loanPaymentRepository.findAll());
+
+return "admin-emi-history";
+}
+
+
+
+// =========================
+// ADMIN DASHBOARD
+// =========================
+@GetMapping("/admin-dashboard")
+public String adminDashboard(Model model){
+
+List<User> users = userRepository.findAll();
+List<Transaction> transactions = transactionRepository.findAll();
+List<Loan> loans = loanRepository.findAll();
+
+long pendingLoans =
+loans.stream()
+.filter(l -> "PENDING".equals(l.getStatus()))
+.count();
+
+model.addAttribute("totalUsers", users.size());
+model.addAttribute("totalTransactions", transactions.size());
+model.addAttribute("totalLoans", loans.size());
+model.addAttribute("pendingLoans", pendingLoans);
+
+model.addAttribute("transactions",
+transactions.stream().limit(10).toList());
+
+return "admin-dashboard";
+}
+
+
+
+// =========================
+// VIEW USERS
+// =========================
+@GetMapping("/admin/users")
+public String viewUsers(Model model){
+
+List<User> users =
+userRepository.findAll()
+.stream()
+.filter(u -> !"DELETED".equals(u.getStatus()))
+.toList();
+
+model.addAttribute("users", users);
+
+return "admin-users";
+}
+
+
+
+// =========================
+// DELETE USER
+// =========================
+@GetMapping("/admin/delete-user/{id}")
+public String deleteUser(@PathVariable Long id,
+Principal principal){
+
+User user = userRepository.findById(id).orElse(null);
+
+if(user != null){
+
+user.setStatus("DELETED");
+
+userRepository.save(user);
+
+logAction("Deleted user: "+user.getEmail(), principal);
+
+}
+
+return "redirect:/admin/users";
+}
+
+
+
+// =========================
+// BLOCK USER
+// =========================
+@GetMapping("/admin/block-user/{id}")
+public String blockUser(@PathVariable Long id,
+Principal principal){
+
+User user = userRepository.findById(id).orElse(null);
+
+if(user != null){
+
+user.setStatus("BLOCKED");
+
+userRepository.save(user);
+
+logAction("Blocked user: "+user.getEmail(), principal);
+
+}
+
+return "redirect:/admin/users";
+}
+
+
+
+// =========================
+// VIEW TRANSACTIONS
+// =========================
+@GetMapping("/admin/transactions")
+public String viewTransactions(Model model){
+
+model.addAttribute("transactions", transactionRepository.findAll());
+
+return "admin-transactions";
+}
+
+
+
+// =========================
+// SEARCH TRANSACTIONS
+// =========================
+@GetMapping("/admin/search-transactions")
+public String searchTransactions(
+@RequestParam String email,
+Model model){
+
+List<Transaction> transactions =
+transactionRepository.findBySenderEmailOrReceiverEmail(email,email);
+
+model.addAttribute("transactions",transactions);
+
+return "admin-transactions";
+}
+
+
+
+// =========================
+// VIEW LOANS
+// =========================
+@GetMapping("/admin/loans")
+public String viewLoans(Model model){
+
+model.addAttribute("loans", loanRepository.findAll());
+
+return "admin-loans";
+}
+
+
+
+// =========================
+// APPROVE LOAN
+// =========================
+@GetMapping("/admin/approve-loan/{id}")
+public String approveLoan(@PathVariable Long id,
+Principal principal){
+
+Loan loan = loanRepository.findById(id).orElse(null);
+
+if(loan != null){
+
+loan.setStatus("APPROVED");
+loan.setRemainingAmount(loan.getAmount());
+
+loanRepository.save(loan);
+
+logAction("Approved loan id: "+loan.getId(), principal);
+
+}
+
+return "redirect:/admin/loans";
+}
+
+
+
+// =========================
+// REJECT LOAN
+// =========================
+@GetMapping("/admin/reject-loan/{id}")
+public String rejectLoan(@PathVariable Long id,
+Principal principal){
+
+Loan loan = loanRepository.findById(id).orElse(null);
+
+if(loan != null){
+
+loan.setStatus("REJECTED");
+
+loanRepository.save(loan);
+
+logAction("Rejected loan id: "+loan.getId(), principal);
+
+}
+
+return "redirect:/admin/loans";
+}
+
+
+
+// =========================
+// FRAUD ALERTS
+// =========================
+@GetMapping("/admin/fraud-alerts")
+public String fraudAlerts(Model model){
+
+List<Transaction> suspicious =
+transactionRepository.findAll().stream()
+.filter(t -> t.getAmount() > 50000)
+.filter(t -> !t.getSenderEmail().equals(t.getReceiverEmail()))
+.toList();
+
+model.addAttribute("alerts", suspicious);
+
+return "admin-fraud";
+}
+
+
+
+// =========================
+// REVENUE ANALYTICS
+// =========================
+@GetMapping("/admin/revenue")
+public String revenue(Model model){
+
+List<Transaction> transactions = transactionRepository.findAll();
+
+double revenue =
+transactions.stream()
+.mapToDouble(t -> t.getAmount()*0.01)
+.sum();
+
+model.addAttribute("revenue", revenue);
+
+return "admin-revenue";
+}
+
+
+
+// =========================
+// ADMIN REPORTS PAGE
+// =========================
+@GetMapping("/admin/reports")
+public String reports(){
+return "admin-reports";
+}
+
+
+
+// =========================
+// REPORT : TRANSACTIONS
+// =========================
+@GetMapping("/admin/reports/transactions")
+public String transactionReport(Model model){
+
+model.addAttribute("transactions",
+transactionRepository.findAll());
+
+return "admin-report-transactions";
+}
+
+
+
+// =========================
+// REPORT : LOANS
+// =========================
+@GetMapping("/admin/reports/loans")
+public String loanReport(Model model){
+
+model.addAttribute("loans",
+loanRepository.findAll());
+
+return "admin-report-loans";
+}
+
+
+
+// =========================
+// REPORT : USERS
+// =========================
+@GetMapping("/admin/reports/users")
+public String userReport(Model model){
+
+model.addAttribute("users",
+userRepository.findAll());
+
+return "admin-report-users";
+}
+
+
+
+// =========================
+// REPORT : REVENUE
+// =========================
+@GetMapping("/admin/reports/revenue")
+public String revenueReport(Model model){
+
+List<Transaction> transactions = transactionRepository.findAll();
+
+double revenue =
+transactions.stream()
+.mapToDouble(t -> t.getAmount()*0.01)
+.sum();
+
+model.addAttribute("transactions", transactions);
+model.addAttribute("revenue", revenue);
+
+return "admin-report-revenue";
+}
+
+
+
+// =========================
+// TOP CUSTOMERS
+// =========================
+@GetMapping("/admin/top-customers")
+public String topCustomers(Model model){
+
+model.addAttribute("transactions",
+transactionRepository.findAll());
+
+return "admin-top-customers";
+}
+
+
+
+// =========================
+// LOAN ANALYTICS
+// =========================
+@GetMapping("/admin/loan-analytics")
+public String loanAnalytics(Model model){
+
+List<Loan> loans = loanRepository.findAll();
+
+long approved =
+loans.stream().filter(l -> "APPROVED".equals(l.getStatus())).count();
+
+long rejected =
+loans.stream().filter(l -> "REJECTED".equals(l.getStatus())).count();
+
+long pending =
+loans.stream().filter(l -> "PENDING".equals(l.getStatus())).count();
+
+model.addAttribute("approvedLoans", approved);
+model.addAttribute("rejectedLoans", rejected);
+model.addAttribute("pendingLoans", pending);
+
+return "admin-loan-analytics";
+}
+
+
+
+// =========================
+// LIVE TRANSACTION MONITOR
+// =========================
+@GetMapping("/admin/live-transactions")
+public String liveTransactions(Model model){
+
+List<Transaction> transactions =
+transactionRepository.findAll().stream()
+.sorted((a,b) -> b.getTransactionDate().compareTo(a.getTransactionDate()))
+.limit(50)
+.toList();
+
+model.addAttribute("transactions", transactions);
+
+return "admin-live-transactions";
+}
+
+
+
+// =========================
+// SYSTEM HEALTH MONITOR
+// =========================
+@GetMapping("/admin/system-health")
+public String systemHealth(Model model){
+
+long totalUsers = userRepository.count();
+long totalTransactions = transactionRepository.count();
+long totalLoans = loanRepository.count();
+
+long memoryUsed =
+Runtime.getRuntime().totalMemory()
+- Runtime.getRuntime().freeMemory();
+
+long memoryTotal =
+Runtime.getRuntime().totalMemory();
+
+model.addAttribute("totalUsers", totalUsers);
+model.addAttribute("totalTransactions", totalTransactions);
+model.addAttribute("totalLoans", totalLoans);
+
+model.addAttribute("serverStatus","RUNNING");
+
+model.addAttribute("memoryUsed", memoryUsed/1024/1024);
+model.addAttribute("memoryTotal", memoryTotal/1024/1024);
+
+return "admin-system-health";
+}
+
+
+
+// =========================
+// ADMIN LOGS
+// =========================
+@GetMapping("/admin/logs")
+public String adminLogs(Model model){
+
+model.addAttribute("logs",
+adminLogRepository.findAllByOrderByCreatedDateDesc());
+
+return "admin-logs";
+}
+
+}

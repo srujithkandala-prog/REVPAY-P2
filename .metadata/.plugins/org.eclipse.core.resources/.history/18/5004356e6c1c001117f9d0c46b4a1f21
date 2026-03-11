@@ -1,0 +1,18 @@
+package com.revpay.service;
+
+import static org.junit.Assert.assertNotNull;
+
+import org.junit.Test;
+
+public class OtpServiceTest {
+
+    private OtpService otpService = new OtpService();
+
+    @Test
+    public void testGenerateOtp() {
+
+        String otp = otpService.generateOtp();
+
+        assertNotNull(otp);
+    }
+}

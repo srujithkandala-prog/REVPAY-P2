@@ -1,0 +1,15 @@
+package com.revpay.repository;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.revpay.entity.LoanPayment;
+
+public interface LoanPaymentRepository extends JpaRepository<LoanPayment, Long> {
+
+    List<LoanPayment> findByLoanId(Long loanId);
+
+    List<LoanPayment> findByBusinessEmail(String email);
+
+}

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>RevPay Register</title>
+
+<style>
+
+body{
+    font-family: Arial;
+    background:#f4f6f9;
+}
+
+.container{
+    width:420px;
+    margin:50px auto;
+    background:white;
+    padding:30px;
+    border-radius:10px;
+    box-shadow:0 0 10px #ccc;
+}
+
+input,select{
+    width:100%;
+    padding:10px;
+    margin-top:10px;
+}
+
+button{
+    width:100%;
+    padding:10px;
+    background:#2c7be5;
+    color:white;
+    border:none;
+    margin-top:15px;
+}
+
+h2{
+    text-align:center;
+}
+
+.success{
+    color:green;
+    text-align:center;
+}
+
+.error{
+    color:red;
+    font-size:13px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>RevPay Register</h2>
+
+<p class="success" th:if="${param.success}">
+Registration Successful!
+</p>
+
+<form th:action="@{/register}" method="post" th:object="${user}">
+
+<!-- FULL NAME -->
+
+<input type="text"
+       th:field="*{fullName}"
+       placeholder="Full Name"
+       pattern="^[A-Za-z ]{3,50}$"
+       title="Only letters allowed"
+       required>
+
+<!-- EMAIL -->
+
+<input type="email"
+       th:field="*{email}"
+       placeholder="Enter Email"
+       required>
+
+<!-- PHONE -->
+
+<input type="tel"
+       th:field="*{phone}"
+       placeholder="Phone Number"
+       pattern="[0-9]{10}"
+       title="Enter 10 digit phone number"
+       required>
+
+<!-- PASSWORD -->
+
+<input type="password"
+       name="password"
+       id="password"
+       placeholder="Strong Password"
+       minlength="8"
+       pattern="^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,}$"
+       title="Must contain uppercase, lowercase and number"
+       required>
+
+<!-- CONFIRM PASSWORD -->
+
+<input type="password"
+       id="confirmPassword"
+       placeholder="Confirm Password"
+       required>
+
+<!-- SECURITY QUESTION -->
+
+<select th:field="*{securityQuestion}" required>
+
+<option value="">Select Security Question</option>
+
+<option value="What is your pet name?">
+What is your pet name?
+</option>
+
+<option value="What is your school name?">
+What is your school name?
+</option>
+
+<option value="What is your favorite food?">
+What is your favorite food?
+</option>
+
+<option value="What is your birthplace?">
+What is your birthplace?
+</option>
+
+</select>
+
+<!-- SECURITY ANSWER -->
+
+<input type="text"
+       th:field="*{securityAnswer}"
+       placeholder="Security Answer"
+       required>
+
+<!-- ROLE -->
+
+<select th:field="*{role}" id="roleSelect">
+
+<option value="PERSONAL">Personal</option>
+
+<option value="BUSINESS">Business</option>
+
+</select>
+
+
+<!-- ================= BUSINESS SECTION ================= -->
+
+<div id="businessSection" style="display:none;">
+
+<h3 style="margin-top:20px;">Business Details</h3>
+
+<input type="text"
+       name="businessName"
+       placeholder="Business Name">
+
+<input type="text"
+       name="gstNumber"
+       placeholder="Tax ID / GST">
+
+<select name="businessType">
+
+<option value="">Select Business Type</option>
+<option>Retail</option>
+<option>Ecommerce</option>
+<option>Services</option>
+<option>Manufacturing</option>
+
+</select>
+
+<input type="text"
+       name="businessAddress"
+       placeholder="Business Address">
+
+</div>
+
+<!-- ==================================================== -->
+
+<button type="submit">Register</button>
+<div style="text-align:center;margin-top:15px;">
+    <a href="/login">⬅ Back to Login</a>
+</div>
+
+</form>
+
+</div>
+
+<script>
+
+/* Password Match Validation */
+
+const password = document.getElementById("password");
+const confirmPassword = document.getElementById("confirmPassword");
+
+confirmPassword.addEventListener("keyup",function(){
+
+if(password.value !== confirmPassword.value){
+
+confirmPassword.setCustomValidity("Passwords do not match");
+
+}else{
+
+confirmPassword.setCustomValidity("");
+
+}
+
+});
+
+
+/* BUSINESS TOGGLE SCRIPT */
+
+const roleSelect = document.getElementById("roleSelect");
+const businessSection = document.getElementById("businessSection");
+
+roleSelect.addEventListener("change",function(){
+
+if(roleSelect.value === "BUSINESS"){
+
+businessSection.style.display="block";
+
+}else{
+
+businessSection.style.display="none";
+
+}
+
+});
+
+</script>
+
+</body>
+</html>

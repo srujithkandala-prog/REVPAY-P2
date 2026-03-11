@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>Admin - Business Verifications</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f1f5f9;
+padding:30px;
+}
+
+.card{
+background:white;
+padding:25px;
+border-radius:10px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+h2{
+margin-bottom:20px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th{
+background:#0f172a;
+color:white;
+padding:10px;
+}
+
+td{
+padding:10px;
+border-bottom:1px solid #ddd;
+text-align:center;
+}
+
+a{
+text-decoration:none;
+padding:5px 10px;
+border-radius:5px;
+margin:2px;
+}
+
+.approve{
+background:#16a34a;
+color:white;
+}
+
+.reject{
+background:#dc2626;
+color:white;
+}
+
+.view{
+background:#2563eb;
+color:white;
+}
+
+.pending{
+color:#92400e;
+font-weight:bold;
+}
+
+.approved{
+color:#166534;
+font-weight:bold;
+}
+
+.rejected{
+color:#991b1b;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Business Verification Requests 📄</h2>
+
+<table>
+
+<tr>
+<th>Business Email</th>
+<th>Document Name</th>
+<th>Document</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+<tr th:each="v : ${list}">
+
+<td th:text="${v.businessEmail}"></td>
+
+<td th:text="${v.documentName}"></td>
+
+<td>
+<a class="view"
+th:href="@{/${v.documentPath}}"
+target="_blank">
+View
+</a>
+</td>
+
+<td>
+
+<span th:if="${v.status=='PENDING'}"
+class="pending">
+Pending
+</span>
+
+<span th:if="${v.status=='APPROVED'}"
+class="approved">
+Approved
+</span>
+
+<span th:if="${v.status=='REJECTED'}"
+class="rejected">
+Rejected
+</span>
+
+</td>
+
+<td>
+
+<a th:if="${v.status=='PENDING'}"
+class="approve"
+th:href="@{/approve-verification/{id}(id=${v.id})}">
+Approve
+</a>
+
+<a th:if="${v.status=='PENDING'}"
+class="reject"
+th:href="@{/reject-verification/{id}(id=${v.id})}">
+Reject
+</a>
+
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+</body>
+
+</html>

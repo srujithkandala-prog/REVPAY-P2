@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>Incoming Requests</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:#f1f5f9;
+color:#334155;
+}
+
+.container{
+display:flex;
+height:100vh;
+}
+
+
+.sidebar{
+width:240px;
+background:linear-gradient(180deg,#0f172a,#020617);
+color:white;
+display:flex;
+flex-direction:column;
+}
+
+.sidebar h2{
+text-align:center;
+padding:20px;
+margin:0;
+border-bottom:1px solid #1e293b;
+}
+
+.sidebar a{
+display:block;
+color:#cbd5f5;
+padding:12px 20px;
+text-decoration:none;
+border-left:3px solid transparent;
+transition:0.25s;
+}
+
+.sidebar a i{
+margin-right:10px;
+}
+
+.sidebar a:hover{
+background:#1e293b;
+border-left:3px solid #38bdf8;
+padding-left:25px;
+color:white;
+}
+
+.main{
+flex:1;
+padding:40px;
+overflow:auto;
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+
+.header h2{
+margin:0;
+}
+
+.btn{
+padding:8px 15px;
+border-radius:6px;
+text-decoration:none;
+font-size:14px;
+color:white;
+}
+
+.dashboard{
+background:#16a34a;
+}
+
+.dashboard:hover{
+background:#15803d;
+}
+
+.card{
+background:white;
+padding:30px;
+border-radius:12px;
+box-shadow:0 10px 25px rgba(0,0,0,0.08);
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+}
+
+th{
+background:#0f172a;
+color:white;
+padding:12px;
+}
+
+td{
+padding:12px;
+border-bottom:1px solid #e2e8f0;
+}
+
+tr:hover{
+background:#f8fafc;
+}
+
+
+.status{
+padding:4px 10px;
+border-radius:12px;
+font-size:12px;
+font-weight:bold;
+}
+
+.pending{
+background:#fef3c7;
+color:#92400e;
+}
+
+.accepted{
+background:#dcfce7;
+color:#166534;
+}
+
+.declined{
+background:#fee2e2;
+color:#991b1b;
+}
+
+.action-btn{
+padding:6px 12px;
+border-radius:6px;
+text-decoration:none;
+font-size:13px;
+color:white;
+margin-right:5px;
+}
+
+.accept{
+background:#22c55e;
+}
+
+.accept:hover{
+background:#16a34a;
+}
+
+.decline{
+background:#ef4444;
+}
+
+.decline:hover{
+background:#dc2626;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+
+
+<div class="sidebar">
+
+<h2>RevPay </h2>
+
+<a href="/business-dashboard"><i class="fa-solid fa-chart-line"></i>Dashboard</a>
+<a href="/profile"><i class="fa-solid fa-user"></i>Profile</a>
+<a href="/send-money"><i class="fa-solid fa-paper-plane"></i>Send Money</a>
+<a href="/request-money"><i class="fa-solid fa-hand-holding-dollar"></i>Request Money</a>
+<a href="/incoming-requests"><i class="fa-solid fa-arrow-down"></i>Incoming Requests</a>
+<a href="/transactions"><i class="fa-solid fa-money-bill-transfer"></i>Transactions</a>
+<a href="/logout"><i class="fa-solid fa-right-from-bracket"></i>Logout</a>
+
+</div>
+
+
+
+<div class="main">
+
+<div class="header">
+
+<h2>Incoming Money Requests 💰</h2>
+
+<a href="/business-dashboard" class="btn dashboard">
+<i class="fa-solid fa-arrow-left"></i> Dashboard
+</a>
+
+</div>
+
+<div class="card">
+
+<table>
+
+<tr>
+<th>Requester</th>
+<th>Amount</th>
+<th>Purpose</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+<tr th:each="r : ${requests}">
+
+<td th:text="${r.requesterEmail}"></td>
+
+<td>
+₹ <span th:text="${r.amount}"></span>
+</td>
+
+<td th:text="${r.purpose}"></td>
+
+<td>
+
+<span th:if="${r.status=='PENDING'}"
+class="status pending">Pending</span>
+
+<span th:if="${r.status=='ACCEPTED'}"
+class="status accepted">Accepted</span>
+
+<span th:if="${r.status=='DECLINED'}"
+class="status declined">Declined</span>
+
+</td>
+
+<td>
+
+<a th:if="${r.status=='PENDING'}"
+th:href="@{/accept-request/{id}(id=${r.id})}"
+class="action-btn accept">
+<i class="fa-solid fa-check"></i> Accept
+</a>
+
+<a th:if="${r.status=='PENDING'}"
+th:href="@{/decline-request/{id}(id=${r.id})}"
+class="action-btn decline">
+<i class="fa-solid fa-xmark"></i> Decline
+</a>
+
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>

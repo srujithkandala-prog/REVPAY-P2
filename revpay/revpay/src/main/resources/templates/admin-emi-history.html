@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>EMI Payment History</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f1f5f9;
+margin:0;
+}
+
+.sidebar{
+width:220px;
+height:100vh;
+background:#0f172a;
+position:fixed;
+color:white;
+padding-top:20px;
+}
+
+.sidebar a{
+display:block;
+padding:12px;
+color:white;
+text-decoration:none;
+}
+
+.sidebar a:hover{
+background:#1e293b;
+}
+
+.main{
+margin-left:220px;
+padding:30px;
+}
+
+table{
+width:100%;
+background:white;
+border-collapse:collapse;
+}
+
+th,td{
+padding:12px;
+border-bottom:1px solid #ddd;
+text-align:center;
+}
+
+th{
+background:#2563eb;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>Admin Panel</h2>
+
+<a href="/admin-dashboard">Dashboard</a>
+
+<a href="/admin/emi-history">EMI History</a>
+<a href="/logout">Logout</a>
+
+</div>
+
+<div class="main">
+
+<h2>EMI Payment History</h2>
+
+<table>
+
+<tr>
+<th>Loan ID</th>
+<th>Business Email</th>
+<th>Amount Paid</th>
+<th>Payment Date</th>
+<th>Remaining Balance</th>
+</tr>
+
+<tr th:each="p : ${payments}">
+
+<td th:text="${p.loanId}"></td>
+
+<td th:text="${p.businessEmail}"></td>
+
+<td th:text="${p.amountPaid}"></td>
+
+<td th:text="${p.paymentDate}"></td>
+
+<td th:text="${p.remainingBalance}"></td>
+
+</tr>
+
+</table>
+
+</div>
+
+</body>
+</html>

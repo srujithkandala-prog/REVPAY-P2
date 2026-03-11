@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<title>Live Transactions</title>
+
+<meta http-equiv="refresh" content="5">
+
+<style>
+
+body{
+font-family:Arial;
+margin:0;
+background:#f4f6f9;
+}
+
+.sidebar{
+width:220px;
+height:100vh;
+background:#0f172a;
+color:white;
+position:fixed;
+padding:20px;
+overflow-y:auto;
+}
+
+.sidebar a{
+display:block;
+color:white;
+padding:10px 0;
+text-decoration:none;
+}
+
+.sidebar a:hover{
+color:#38bdf8;
+}
+
+.main{
+margin-left:240px;
+padding:30px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+th,td{
+padding:12px;
+border-bottom:1px solid #ddd;
+text-align:left;
+}
+
+th{
+background:#1e293b;
+color:white;
+}
+
+.high{
+color:red;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>RevPay Admin</h2>
+
+<a href="/admin-dashboard">Dashboard</a>
+<a href="/admin/users">Users</a>
+<a href="/admin/transactions">Transactions</a>
+<a href="/admin/loans">Loans</a>
+<a href="/admin/loan-repayments">Loan Repayments</a>
+
+<hr>
+
+<a href="/admin/live-transactions">Live Monitor</a>
+<a href="/admin/fraud-alerts">Fraud Alerts</a>
+<a href="/admin/revenue">Revenue</a>
+<a href="/admin/reports">Reports</a>
+<a href="/admin/top-customers">Top Customers</a>
+<a href="/admin/loan-analytics">Loan Analytics</a>
+<a href="/admin/transaction-analytics">Transaction Analytics</a>
+
+<hr>
+
+<a href="/logout">Logout</a>
+
+</div>
+
+
+<div class="main">
+
+<h1>Live Transaction Monitor</h1>
+
+<p>Auto refresh every 5 seconds</p>
+
+<table>
+
+<tr>
+<th>ID</th>
+<th>Sender</th>
+<th>Receiver</th>
+<th>Amount</th>
+<th>Date</th>
+<th>Status</th>
+</tr>
+
+<tr th:each="t : ${transactions}">
+
+<td th:text="${t.id}"></td>
+
+<td th:text="${t.senderEmail}"></td>
+
+<td th:text="${t.receiverEmail}"></td>
+
+<td th:class="${t.amount > 50000} ? 'high' : ''">
+₹ <span th:text="${t.amount}"></span>
+</td>
+
+<td th:text="${#temporals.format(t.transactionDate,'dd-MM-yyyy HH:mm')}"></td>
+
+<td th:text="${t.type}"></td>
+
+</tr>
+
+</table>
+
+</div>
+
+</body>
+
+</html>

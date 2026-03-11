@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>Add Money</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:#f1f5f9;
+}
+
+.container{
+display:flex;
+height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:240px;
+background:linear-gradient(180deg,#0f172a,#020617);
+color:white;
+}
+
+.sidebar h2{
+text-align:center;
+padding:20px;
+border-bottom:1px solid #1e293b;
+}
+
+.sidebar a{
+display:block;
+padding:12px 20px;
+color:#cbd5f5;
+text-decoration:none;
+border-left:3px solid transparent;
+}
+
+.sidebar a:hover{
+background:#1e293b;
+border-left:3px solid #38bdf8;
+}
+
+/* MAIN */
+
+.main{
+flex:1;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+}
+
+/* CARD */
+
+.card{
+background:white;
+padding:35px;
+border-radius:12px;
+box-shadow:0 10px 25px rgba(0,0,0,0.08);
+width:420px;
+text-align:center;
+}
+
+/* WALLET */
+
+.wallet{
+background:#2563eb;
+color:white;
+padding:12px;
+border-radius:6px;
+margin-bottom:20px;
+}
+
+/* INPUT */
+
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+margin-bottom:15px;
+border:1px solid #cbd5e1;
+border-radius:6px;
+}
+
+/* BUTTON */
+
+button{
+width:100%;
+padding:12px;
+background:#2563eb;
+border:none;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#1e40af;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<h2 th:text="${user.role.name() == 'BUSINESS'} ? 'RevPay Business' : 'RevPay'"></h2>
+
+<a th:href="${user.role.name() == 'BUSINESS'} ? '/business-dashboard' : '/dashboard'">
+Dashboard
+</a>
+
+<a href="/profile">Profile</a>
+<a href="/send-money">Send Money</a>
+<a href="/add-money">Add Money</a>
+<a href="/request-money">Request Money</a>
+<a href="/transactions">Transactions</a>
+<a href="/notifications">Notifications</a>
+<a href="/logout">Logout</a>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<div class="card">
+
+<h2>Add Money to Wallet</h2>
+
+<div class="wallet">
+Wallet Balance: ₹ <span th:text="${wallet}"></span>
+</div>
+
+<form th:action="@{/add-money}" method="post">
+
+<input type="number"
+step="0.01"
+name="amount"
+placeholder="Enter amount"
+required>
+
+<button type="submit">
+Add Money
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>
